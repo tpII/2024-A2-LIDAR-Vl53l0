@@ -1,4 +1,0 @@
-Aca el Backend
-
-Tratemos de no crear carpetas internas innecesarias.
-
