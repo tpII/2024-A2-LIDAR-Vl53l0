@@ -1,0 +1,10 @@
+Bitacora
+
+Durante el mes de agosto y hasta el 12 de Septiembre se realizo principalmente trabajo de investigacion sobre como realizar el royecto.
+Principalmente sobre como realizar el mapeop, que tecnologias utilizar, y demas. 
+Y por otro lado se realizo el dise;o prototipo del vehiculo.
+
+15 de Septiembre
+
+Se creo el workspace para el backend, frontend, y mcu. 
+Y se implemento la DB y el primer controlador en el back, lograndoc crear, y obtener mensages desde la db.
