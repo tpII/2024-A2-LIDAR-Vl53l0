@@ -18,6 +18,9 @@ public class Message {
     @CreatedDate
     private Date date;
 
+    public Message(String message) {
+        this.message = message;
+    }
     public Message(String message, Date date) {
         this.message = message;
         this.date = date;
@@ -45,5 +48,14 @@ public class Message {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id='" + id + '\'' +
+                ", message='" + message + '\'' +
+                ", date=" + date +
+                '}';
     }
 }

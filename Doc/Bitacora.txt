@@ -8,3 +8,7 @@ Y por otro lado se realizo el dise;o prototipo del vehiculo.
 
 Se creo el workspace para el backend, frontend, y mcu. 
 Y se implemento la DB y el primer controlador en el back, lograndoc crear, y obtener mensages desde la db.
+
+16 de Septiembre
+
+Se creo el servicio para comunicar el back con el ESP32
