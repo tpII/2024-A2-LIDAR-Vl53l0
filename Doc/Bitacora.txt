@@ -12,3 +12,4 @@ Y se implemento la DB y el primer controlador en el back, lograndoc crear, y obt
 16 de Septiembre
 
 Se creo el servicio para comunicar el back con el ESP32
+Se crearon las librerias i2c y lights para el MCU
