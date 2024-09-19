@@ -57,5 +57,9 @@
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
-  "cmake.sourceDirectory": "E:/TdP2/Repository/2024-A2-LIDAR-Vl53l0/Microcontroller"
+  "cmake.sourceDirectory": "E:/TdP2/Repository/2024-A2-LIDAR-Vl53l0/Microcontroller",
+  "files.associations": {
+    "xstring": "c",
+    "thread": "c"
+  }
 }

@@ -1,0 +1,208 @@
+#include "http_client.h"
+#include "esp_log.h"
+#include "esp_http_client.h"
+#include "cJSON.h"
+#include <string.h>
+#include <stdlib.h>
+
+static const char *TAG = "HTTP_CLIENT";
+static const char *URL = "http://localhost:8080/";
+
+static esp_err_t create_json_data(char *, const char **, const char **, const size_t);
+static esp_err_t deserealize_json_data(const char *,char **,char **, size_t *);
+
+esp_err_t http_post(const char *message_type, const char **keys, const char **values, const size_t length)
+{
+
+    char *json_data = NULL;
+    esp_err_t err = create_json_data(json_data, keys, values, length);
+    if (err != ESP_OK || json_data == NULL)
+    {
+        ESP_LOGE(TAG, "Error creating JSON data: %s", esp_err_to_name(err));
+        return 1;
+    }
+
+    esp_http_client_config_t config = {
+        .url = strcat(URL, message_type),
+        .method = HTTP_METHOD_POST,
+    };
+
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+    esp_http_client_set_post_field(client, json_data, strlen(json_data));
+
+    // Realizar la solicitud HTTP POST
+    esp_err_t err2 = esp_http_client_perform(client);
+
+    if (err2 == ESP_OK)
+    {
+        ESP_LOGI(TAG, "HTTP POST Status = %d, content_length = %lld",
+                 esp_http_client_get_status_code(client),
+                 esp_http_client_get_content_length(client));
+    }
+    else
+    {
+        ESP_LOGE(TAG, "HTTP POST request failed: %s", esp_err_to_name(err2));
+    }
+
+    esp_http_client_cleanup(client);
+    return ESP_OK;
+}
+
+esp_err_t http_get(const char *message_type, char *msg, size_t length)
+{
+    esp_http_client_config_t config = {
+        .url = strcat(URL, message_type),
+        .method = HTTP_METHOD_GET,
+    };
+
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    if (client == NULL) {
+        ESP_LOGE(TAG, "Error initializing HTTP client");
+        return ESP_FAIL;
+    }
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+    
+    // Realizar la solicitud HTTP GET
+    esp_err_t err = esp_http_client_perform(client);
+    if (err == ESP_OK)
+    {
+        ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %lld",
+                 esp_http_client_get_status_code(client),
+                 esp_http_client_get_content_length(client));
+
+        // Obtener la respuesta del servidor
+        int content_length = esp_http_client_get_content_length(client);
+        if (content_length > 0)
+        {
+            // Reservar memoria para la respuesta JSON
+            char *buffer = malloc(content_length + 1);
+            if (buffer == NULL) {
+                ESP_LOGE(TAG, "Failed to allocate memory for response");
+                esp_http_client_cleanup(client);
+                return ESP_ERR_NO_MEM;
+            }
+
+            // Leer el cuerpo de la respuesta
+            esp_http_client_read(client, buffer, content_length);
+            buffer[content_length] = '\0'; // Asegurarse de que la cadena esté terminada en NULL
+
+            ESP_LOGI(TAG, "HTTP GET Response: %s", buffer);
+
+            // Deserializar el JSON utilizando la función deserealize_json_data
+            esp_err_t deserialization_err = deserealize_json_data(buffer, keys, values, length);
+            if (deserialization_err != ESP_OK)
+            {
+                ESP_LOGE(TAG, "Error deserializing JSON data");
+                free(buffer); // Liberar memoria asignada para la respuesta
+                esp_http_client_cleanup(client);
+                return deserialization_err;
+            }
+
+            // Liberar la memoria después de usarla
+            free(buffer);
+        }
+        else
+        {
+            ESP_LOGE(TAG, "No content in HTTP GET response");
+            esp_http_client_cleanup(client);
+            return 1;
+        }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "HTTP GET request failed: %s", esp_err_to_name(err));
+        esp_http_client_cleanup(client);
+        return err;
+    }
+
+    esp_http_client_cleanup(client);
+    return ESP_OK;
+}
+
+static esp_err_t create_json_data(char *msg, const char **keys, const char **values, const size_t lenght)
+{
+    cJSON *root = cJSON_CreateObject();
+
+    for (size_t i = 0; i < lenght; i++)
+    {
+        if (!cJSON_AddStringToObject(root, keys[i], values[i]))
+        {
+            cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
+            return 1;
+        }
+    }
+
+    msg = cJSON_Print(root);
+    if (*msg == NULL)
+    {
+        cJSON_Delete(root);
+        return 1; // Error si no se puede generar el string JSON
+    }
+    cJSON_Delete(root);
+
+    return ESP_OK; // Retornar éxito
+}
+
+static esp_err_t deserealize_json_data(const char *msg, char **keys, char **values, size_t length)
+{
+
+    cJSON *json = cJSON_Parse(msg);
+    if (json == NULL)
+    {
+        ESP_LOGE("JSON", "Error parsing JSON data");
+        return ESP_FAIL;
+    }
+
+    // Ensure there are enough keys and values
+    if (
+        *length != cJSON_GetArraySize(json))
+    {
+        ESP_LOGE("JSON", "Length mismatch between provided arrays and JSON object");
+        cJSON_Delete(json); // Clean up
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    // Obtener el tamaño del JSON (número de elementos)
+    size_t num_items = cJSON_GetArraySize(json);
+    if (num_items == 0)
+    {
+        ESP_LOGE("JSON", "No se encontraron elementos en el JSON");
+        cJSON_Delete(json);
+        return ESP_FAIL;
+    }
+
+    // Actualizar el valor de salida 'length' con el número de pares clave-valor
+    *length = num_items;
+
+    // Iterate through the JSON object and fill the keys and values arrays
+    cJSON *item = NULL;
+    int i = 0;
+    cJSON_ArrayForEach(item, json)
+    {
+        if (i >= *length)
+            break;
+
+        // Get key and value as strings
+        const char *key = item->string;
+        const char *value = cJSON_GetStringValue(item);
+
+        if (key == NULL || value == NULL)
+        {
+            ESP_LOGE("JSON", "Error reading key-value pair");
+            cJSON_Delete(json); // Clean up
+            return ESP_FAIL;
+        }
+
+        // Assign key and value to the provided arrays
+        keys[i] = key;
+        values[i] = value;
+
+        i++;
+    }
+
+    // Clean up JSON object
+    cJSON_Delete(json);
+
+    return ESP_OK;
+}
