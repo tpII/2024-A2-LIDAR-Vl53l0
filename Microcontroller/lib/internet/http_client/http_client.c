@@ -9,7 +9,7 @@ static const char *TAG = "HTTP_CLIENT";
 static const char *URL = "http://localhost:8080/";
 
 static esp_err_t create_json_data(char *, const char **, const char **, const size_t);
-static esp_err_t deserealize_json_data(const char *,char **,char **, size_t *);
+static esp_err_t deserealize_json_data(const char *,char *, const size_t);
 
 esp_err_t http_post(const char *message_type, const char **keys, const char **values, const size_t length)
 {
@@ -19,7 +19,7 @@ esp_err_t http_post(const char *message_type, const char **keys, const char **va
     if (err != ESP_OK || json_data == NULL)
     {
         ESP_LOGE(TAG, "Error creating JSON data: %s", esp_err_to_name(err));
-        return 1;
+        return ESP_FAIL;
     }
 
     esp_http_client_config_t config = {
@@ -90,13 +90,13 @@ esp_err_t http_get(const char *message_type, char *msg, size_t length)
             ESP_LOGI(TAG, "HTTP GET Response: %s", buffer);
 
             // Deserializar el JSON utilizando la función deserealize_json_data
-            esp_err_t deserialization_err = deserealize_json_data(buffer, keys, values, length);
+            esp_err_t deserialization_err = deserealize_json_data(buffer, *msg, length);
             if (deserialization_err != ESP_OK)
             {
                 ESP_LOGE(TAG, "Error deserializing JSON data");
                 free(buffer); // Liberar memoria asignada para la respuesta
                 esp_http_client_cleanup(client);
-                return deserialization_err;
+                return ESP_FAIL;
             }
 
             // Liberar la memoria después de usarla
@@ -144,10 +144,10 @@ static esp_err_t create_json_data(char *msg, const char **keys, const char **val
     return ESP_OK; // Retornar éxito
 }
 
-static esp_err_t deserealize_json_data(const char *msg, char **keys, char **values, size_t length)
+static esp_err_t deserealize_json_data(const char *data, char *msg, const size_t message_length)
 {
 
-    cJSON *json = cJSON_Parse(msg);
+    cJSON *json = cJSON_Parse(data);
     if (json == NULL)
     {
         ESP_LOGE("JSON", "Error parsing JSON data");
@@ -156,9 +156,9 @@ static esp_err_t deserealize_json_data(const char *msg, char **keys, char **valu
 
     // Ensure there are enough keys and values
     if (
-        *length != cJSON_GetArraySize(json))
+        cJSON_GetArraySize(json) != 1)
     {
-        ESP_LOGE("JSON", "Length mismatch between provided arrays and JSON object");
+        ESP_LOGE("JSON", "Length mismatch between espected message and JSON object");
         cJSON_Delete(json); // Clean up
         return ESP_ERR_INVALID_SIZE;
     }
@@ -172,34 +172,47 @@ static esp_err_t deserealize_json_data(const char *msg, char **keys, char **valu
         return ESP_FAIL;
     }
 
-    // Actualizar el valor de salida 'length' con el número de pares clave-valor
-    *length = num_items;
-
+   
     // Iterate through the JSON object and fill the keys and values arrays
+    const char *instruccion = NULL;
+    const char *time = NULL;
+
     cJSON *item = NULL;
-    int i = 0;
+    
     cJSON_ArrayForEach(item, json)
     {
-        if (i >= *length)
-            break;
-
-        // Get key and value as strings
         const char *key = item->string;
         const char *value = cJSON_GetStringValue(item);
 
-        if (key == NULL || value == NULL)
-        {
-            ESP_LOGE("JSON", "Error reading key-value pair");
-            cJSON_Delete(json); // Clean up
+        if(key == NULL || value == NULL){
+            ESP_LOGE("JSON", "Error getting key or value from JSON object");
+            cJSON_Delete(json);
             return ESP_FAIL;
         }
 
-        // Assign key and value to the provided arrays
-        keys[i] = key;
-        values[i] = value;
-
-        i++;
+        if (strcmp(key, "instruccion") == 0)
+        {
+            instruccion = value;
+        }
+        else if (strcmp(key, "time") == 0)
+        {
+            time = value;
+        }
     }
+
+    if(instruccion == NULL || time == NULL){
+        ESP_LOGE("JSON", "Error getting instruccion or time from JSON object");
+        cJSON_Delete(json);
+        return ESP_FAIL;
+    }
+
+    if(strlen(instruccion) > message_length || strlen(time) > message_length){
+        ESP_LOGE("JSON", "Message length exceeds buffer size");
+        cJSON_Delete(json);
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    strncpy(msg, instruccion, message_length);
 
     // Clean up JSON object
     cJSON_Delete(json);
