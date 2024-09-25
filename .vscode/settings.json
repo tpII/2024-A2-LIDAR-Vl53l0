@@ -60,7 +60,8 @@
   "cmake.sourceDirectory": "E:/TdP2/Repository/2024-A2-LIDAR-Vl53l0/Microcontroller",
   "files.associations": {
     "xstring": "c",
-    "thread": "c"
+    "thread": "c",
+    "http_client.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }
