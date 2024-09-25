@@ -13,3 +13,9 @@ Y se implemento la DB y el primer controlador en el back, lograndoc crear, y obt
 
 Se creo el servicio para comunicar el back con el ESP32
 Se crearon las librerias i2c y lights para el MCU
+
+19 de Septiembre
+Creacion de las librerias http
+
+24 y 25 de Septiembre
+Correccion de las librerias http

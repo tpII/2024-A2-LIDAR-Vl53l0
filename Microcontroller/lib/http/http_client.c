@@ -9,14 +9,17 @@
 static const char *TAG = "HTTP_CLIENT";
 static const char *URL = "http://localhost:8080/";
 
-static esp_err_t create_json_data(char *, const char **, const char **, const size_t);
+static esp_err_t create_json_data(char **, const char **, const char **, const size_t);
 static esp_err_t deserealize_json_data(const char *,char *, const size_t);
 
 esp_err_t http_post(const char *message_type, const char **keys, const char **values, const size_t length)
 {
 
+    char full_url[512];
+    snprintf(full_url, sizeof(full_url), "%s%s", URL, message_type);  // Concatenar URL
+
     char *json_data = NULL;
-    esp_err_t err = create_json_data(json_data, keys, values, length);
+    esp_err_t err = create_json_data(&json_data, keys, values, length);
     if (err != ESP_OK || json_data == NULL)
     {
         ESP_LOGE(TAG, "Error creating JSON data: %s", esp_err_to_name(err));
@@ -24,11 +27,11 @@ esp_err_t http_post(const char *message_type, const char **keys, const char **va
     }
 
     esp_http_client_config_t config = {
-        .url = strcat(URL, message_type),
-        .method = HTTP_METHOD_POST,
+        .url = full_url
     };
 
     esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
     esp_http_client_set_header(client, "Content-Type", "application/json");
     esp_http_client_set_post_field(client, json_data, strlen(json_data));
 
@@ -44,16 +47,20 @@ esp_err_t http_post(const char *message_type, const char **keys, const char **va
     else
     {
         ESP_LOGE(TAG, "HTTP POST request failed: %s", esp_err_to_name(err2));
+        return ESP_FAIL;
     }
 
     esp_http_client_cleanup(client);
+    free(json_data); // Liberar memoria asignada para el JSON
     return ESP_OK;
 }
 
 esp_err_t http_get(const char *message_type, char *msg, size_t length)
 {
+    char full_url[512];
+    snprintf(full_url, sizeof(full_url), "%s%s", URL, message_type);  // Concatenar URL
     esp_http_client_config_t config = {
-        .url = strcat(URL, message_type),
+        .url = full_url,
         .method = HTTP_METHOD_GET,
     };
 
@@ -91,7 +98,7 @@ esp_err_t http_get(const char *message_type, char *msg, size_t length)
             ESP_LOGI(TAG, "HTTP GET Response: %s", buffer);
 
             // Deserializar el JSON utilizando la función deserealize_json_data
-            esp_err_t deserialization_err = deserealize_json_data(buffer, *msg, length);
+            esp_err_t deserialization_err = deserealize_json_data(buffer, msg, length);
             if (deserialization_err != ESP_OK)
             {
                 ESP_LOGE(TAG, "Error deserializing JSON data");
@@ -121,26 +128,30 @@ esp_err_t http_get(const char *message_type, char *msg, size_t length)
     return ESP_OK;
 }
 
-static esp_err_t create_json_data(char *msg, const char **keys, const char **values, const size_t lenght)
+static esp_err_t create_json_data(char **msg, const char **keys, const char **values, const size_t lenght)
 {
     cJSON *root = cJSON_CreateObject();
+    if (root == NULL) {
+        ESP_LOGE(TAG, "Error creating JSON object");
+        return ESP_FAIL;
+    }
 
     for (size_t i = 0; i < lenght; i++)
     {
         if (!cJSON_AddStringToObject(root, keys[i], values[i]))
         {
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
-            return 1;
+            return ESP_FAIL;
         }
     }
 
-    msg = cJSON_Print(root);
+    *msg = cJSON_Print(root);
+    cJSON_Delete(root);
     if (*msg == NULL)
     {
-        cJSON_Delete(root);
-        return 1; // Error si no se puede generar el string JSON
+        return ESP_FAIL; // Error si no se puede generar el string JSON
     }
-    cJSON_Delete(root);
+    
 
     return ESP_OK; // Retornar éxito
 }
