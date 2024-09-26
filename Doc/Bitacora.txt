@@ -19,3 +19,7 @@ Creacion de las librerias http
 
 24 y 25 de Septiembre
 Correccion de las librerias http
+
+26 de Septiembre
+Correccion de las librerias i2c
+Implementacion inicial de libreria para sensor lidar

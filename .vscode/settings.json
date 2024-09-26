@@ -61,7 +61,9 @@
   "files.associations": {
     "xstring": "c",
     "thread": "c",
-    "http_client.h": "c"
+    "http_client.h": "c",
+    "i2cc": "c",
+    "i2c_wrapper.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }
