@@ -1,5 +1,6 @@
 /*  WiFi softAP Example */
 #include "ap_server.h"
+#include <esp_log.h>
 static const char *TAG = "wifi softAP";
 //static const UBaseType_t taskPriority = 1;
 
@@ -28,20 +29,35 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
-void wifi_init_softap(void)
+esp_err_t wifi_init_softap(void)
 {
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_err_t err = esp_netif_init();
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "esp_netif_init failed.");
+        return err;
+    }
+
+    esp_err_t event_err = esp_event_loop_create_default();
+    if (event_err != ESP_OK) {
+        ESP_LOGE(TAG, "Default event loop creation failed.");
+        return event_err;
+    }
+
     esp_netif_create_default_wifi_ap();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        NULL));
+    esp_err_t wifi_init_err = esp_wifi_init(&cfg);
+    if (wifi_init_err != ESP_OK) {
+        ESP_LOGE(TAG, "WiFi Allocate failed.");
+        return wifi_init_err;
+    }
+
+    esp_err_t event_handler_err = esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL);
+    if (event_handler_err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register an instance of event handler to the default loop.");
+        return event_handler_err;
+    }
 
     wifi_config_t wifi_config = {
         .ap = {
@@ -57,13 +73,30 @@ void wifi_init_softap(void)
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;
     }
 
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
+    esp_err_t wifi_mode_err = esp_wifi_set_mode(WIFI_MODE_AP);
+    if (wifi_mode_err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set the WiFi operating mode.");
+        return wifi_mode_err;
+    }
+
+    esp_err_t wifi_config_err = esp_wifi_set_config(WIFI_IF_AP, &wifi_config);
+    if (wifi_config_err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set the configuration of the AP.");
+        return wifi_config_err;
+    }
+    
+    esp_err_t wifi_start_err = esp_wifi_start();
+    if (wifi_start_err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start WiFi.");
+        return wifi_start_err;
+    }
 
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
             ESP_WIFI_SSID, ESP_WIFI_PASS, ESP_WIFI_CHANNEL);
+    
+    return ESP_OK;
 }
+
 /*
 void app_main(void)
 {

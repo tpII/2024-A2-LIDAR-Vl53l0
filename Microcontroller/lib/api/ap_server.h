@@ -20,5 +20,5 @@
 
 void vTask1(void *pvParameters);  //funcion de prueba para freeRTOS
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
-void wifi_init_softap(void);
+esp_err_t wifi_init_softap(void);
 #endif
