@@ -23,3 +23,6 @@ Correccion de las librerias http
 26 de Septiembre
 Correccion de las librerias i2c y lights
 Implementacion inicial de libreria para sensor lidar
+
+28 de Septiembre
+Se creo la libreria ap_server para configurar al ESP32 como un Access Point
