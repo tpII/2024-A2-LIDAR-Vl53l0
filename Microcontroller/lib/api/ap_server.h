@@ -19,8 +19,8 @@
 #define ESP_WIFI_CHANNEL   1//CONFIG_ESP_WIFI_CHANNEL
 #define MAX_STA_CONN       4//CONFIG_ESP_MAX_STA_CONN
 
-void vTask1(void *pvParameters);  //funcion de prueba para freeRTOS
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 esp_err_t wifi_init_softap(void);
-esp_err_t initialize_server(void)
+esp_err_t initialize_server(void);
+
 #endif

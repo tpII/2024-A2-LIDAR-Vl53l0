@@ -1,21 +1,8 @@
 #include "ap_server.h"
 
 static const char *TAG = "wifi softAP";
-//static const UBaseType_t taskPriority = 1;
 
-void vTask1(void *pvParameters)
-{
-    for (;;)
-    {
-        // Display the core on which the task is running
-        printf("Task1 is running on core %d\n", xPortGetCoreID());
-        // Wait 3 seconds
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-    }
-}
-
-static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-                                    int32_t event_id, void* event_data)
+static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
