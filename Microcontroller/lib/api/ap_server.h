@@ -12,12 +12,17 @@
 #include <portmacro.h>
 #include "lwip/err.h"
 #include "lwip/sys.h"
-#include <esp_log.h>
+#include "lwip/sockets.h"
 
 #define ESP_WIFI_SSID      "Cyclops"//CONFIG_ESP_WIFI_SSID
 #define ESP_WIFI_PASS      "A2TdP2"//CONFIG_ESP_WIFI_PASSWORD
 #define ESP_WIFI_CHANNEL   1//CONFIG_ESP_WIFI_CHANNEL
 #define MAX_STA_CONN       4//CONFIG_ESP_MAX_STA_CONN
+
+#define PORT 7777
+#define KEEPALIVE_IDLE              5 // TCP keep-alive idle time. In idle time without receiving any data from peer, will send keep-alive probe packet
+#define KEEPALIVE_INTERVAL          5 // TCP keep-alive interval time
+#define KEEPALIVE_COUNT             3 // TCP keep-alive packet retry send counts
 
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 esp_err_t wifi_init_softap(void);
