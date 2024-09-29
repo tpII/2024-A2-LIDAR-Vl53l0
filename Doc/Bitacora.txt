@@ -16,6 +16,7 @@ Se crearon las librerias i2c y lights para el MCU
 
 19 de Septiembre
 Creacion de las librerias http
+Creacion del Diagrama electrico 
 
 24 y 25 de Septiembre
 Correccion de las librerias http
@@ -24,6 +25,8 @@ Correccion de las librerias http
 Correccion de las librerias i2c y lights
 Implementacion inicial de libreria para sensor lidar
 Inicio de impresion de la pate principal del vehiculo
+Inicio del diseño del PCB
 
-28
+
+28 de Septiembre
 Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
