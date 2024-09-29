@@ -12,6 +12,7 @@
 #include <portmacro.h>
 #include "lwip/err.h"
 #include "lwip/sys.h"
+#include <esp_log.h>
 
 #define ESP_WIFI_SSID      "Cyclops"//CONFIG_ESP_WIFI_SSID
 #define ESP_WIFI_PASS      "A2TdP2"//CONFIG_ESP_WIFI_PASSWORD
@@ -21,4 +22,5 @@
 void vTask1(void *pvParameters);  //funcion de prueba para freeRTOS
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 esp_err_t wifi_init_softap(void);
+esp_err_t initialize_server(void)
 #endif

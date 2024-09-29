@@ -1,6 +1,5 @@
-/*  WiFi softAP Example */
 #include "ap_server.h"
-#include <esp_log.h>
+
 static const char *TAG = "wifi softAP";
 //static const UBaseType_t taskPriority = 1;
 
@@ -97,26 +96,17 @@ esp_err_t wifi_init_softap(void)
     return ESP_OK;
 }
 
-/*
-void app_main(void)
+esp_err_t initialize_server(void)
 {
-    //Initialize NVS
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
       ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
+      err = nvs_flash_init();
+      return err;
     }
-    ESP_ERROR_CHECK(ret);
-
-    TaskHandle_t xHandle1 = NULL;
-    xTaskCreatePinnedToCore(vTask1,       // Entry function of the task
-                            "Task1",      // Name of the task
-                            10000,        // The number of words to allocate for use as the task's stack (arbitrary size enough for this task)
-                            NULL,         // No parameter passed to the task
-                            taskPriority, // Priority of the task
-                            &xHandle1,    // Handle to the created task
-                            0);           // Task must be executed on core 0
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
     wifi_init_softap();
-}*/
+
+    return ESP_OK;
+}
