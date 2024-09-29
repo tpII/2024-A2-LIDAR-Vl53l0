@@ -23,3 +23,7 @@ Correccion de las librerias http
 26 de Septiembre
 Correccion de las librerias i2c y lights
 Implementacion inicial de libreria para sensor lidar
+Inicio de impresion de la pate principal del vehiculo
+
+28
+Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
