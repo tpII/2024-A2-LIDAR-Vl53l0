@@ -30,3 +30,7 @@ Inicio del diseño del PCB
 
 28 de Septiembre
 Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
+
+30 de Septiembre
+Creacion de Interface, Service y Controller de la entidad SensorValue
+Creacion de entidad Instruction junto con su Interface, Service y Controller.
