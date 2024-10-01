@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/sensorvalue")
+@RequestMapping("/sensor")
 public class SensorValueController {
     
     private final SensorValueService sensorValueService;
@@ -35,7 +35,7 @@ public class SensorValueController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteMessage(@PathVariable String id) {
         sensorValueService.deleteSensorValue(id);
     }

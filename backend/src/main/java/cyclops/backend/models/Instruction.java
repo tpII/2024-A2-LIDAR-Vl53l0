@@ -17,6 +17,8 @@ public class Instruction {
     @CreatedDate
     private Date date;
 
+    public Instruction() {}
+    
     public Instruction(String instruction, String parameter1, String parameter2) {
         this.instruction = instruction;
         this.parameter1 = parameter1;

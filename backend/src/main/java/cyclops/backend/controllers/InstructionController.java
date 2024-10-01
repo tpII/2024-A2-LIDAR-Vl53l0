@@ -36,7 +36,7 @@ public class InstructionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
     }
     
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteInstruction(@PathVariable String id) {
         instructionService.deleteInstruction(id);
     }
