@@ -63,7 +63,8 @@
     "thread": "c",
     "http_client.h": "c",
     "i2cc": "c",
-    "i2c_wrapper.h": "c"
+    "i2c_wrapper.h": "c",
+    "ap_server.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }
