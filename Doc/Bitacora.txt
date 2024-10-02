@@ -29,3 +29,6 @@ Se creo la libreria ap_server para configurar al ESP32 como un Access Point
 
 29 de Septiembre
 Agrego servidor TCP en la libreria ap_server
+
+2 de Octubre
+Agrego servidor http para empezar a testear

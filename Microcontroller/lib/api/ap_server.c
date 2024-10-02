@@ -6,6 +6,7 @@ static const char *TAG = "wifi softAP";
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 static void tcp_server(void *pvParameters);
 
+// no es necesario por el momento
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
@@ -171,6 +172,6 @@ esp_err_t initialize_server(void)
     ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
     wifi_init_softap();
 
-    xTaskCreatePinnedToCore(tcp_server, "TCP Server", 4096, NULL, 1, NULL, 0);
+   // xTaskCreatePinnedToCore(tcp_server, "TCP Server", 4096, NULL, 1, NULL, 0);
     return ESP_OK;
 }
