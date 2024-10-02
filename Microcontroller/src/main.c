@@ -18,7 +18,7 @@ void app_main(void) {
 
    esp_err_t err2 = initialize_server();
    if(err2){
-     ESP_LOGE(TAG, "Error ocurred trying to initialize server: err %d", err);
+     ESP_LOGE(TAG, "Error ocurred trying to initialize server: err %d", err2);
    }
 
 }
