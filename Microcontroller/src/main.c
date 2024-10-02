@@ -9,14 +9,16 @@ static const char *TAG = "MAIN";
 
 void app_main(void) {
 
+/* ya se realiza el wifi_init_softap dentro del initialize_server
     esp_err_t err =  wifi_init_softap();
     if(err){
         ESP_LOGE(TAG, "Error ocurred trying to establish wifi AP: err %d", err);
     }
-   
+*/
+
    esp_err_t err2 = initialize_server();
    if(err2){
      ESP_LOGE(TAG, "Error ocurred trying to initialize server: err %d", err);
    }
-   
+
 }
