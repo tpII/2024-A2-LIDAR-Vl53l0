@@ -24,7 +24,6 @@
 #define KEEPALIVE_INTERVAL          5 // TCP keep-alive interval time
 #define KEEPALIVE_COUNT             3 // TCP keep-alive packet retry send counts
 
-static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 esp_err_t wifi_init_softap(void);
 esp_err_t initialize_server(void);
 
