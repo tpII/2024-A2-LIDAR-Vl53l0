@@ -21,4 +21,6 @@ void app_main(void) {
      ESP_LOGE(TAG, "Error ocurred trying to initialize server: err %d", err2);
    }
 
+  start_http_server();
+
 }

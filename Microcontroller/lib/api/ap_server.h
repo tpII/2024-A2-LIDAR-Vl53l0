@@ -15,7 +15,7 @@
 #include "lwip/sockets.h"
 
 #define ESP_WIFI_SSID      "Cyclops"//CONFIG_ESP_WIFI_SSID
-#define ESP_WIFI_PASS      "A2TdP2"//CONFIG_ESP_WIFI_PASSWORD
+#define ESP_WIFI_PASS      "A2TdP2Lidar"//CONFIG_ESP_WIFI_PASSWORD
 #define ESP_WIFI_CHANNEL   1//CONFIG_ESP_WIFI_CHANNEL
 #define MAX_STA_CONN       4//CONFIG_ESP_MAX_STA_CONN
 
