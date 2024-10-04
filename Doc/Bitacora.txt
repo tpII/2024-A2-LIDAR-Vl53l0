@@ -34,3 +34,7 @@ Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
 
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
+
+
+04 de Octubre
+Se creó la librería de control de los motores DC
