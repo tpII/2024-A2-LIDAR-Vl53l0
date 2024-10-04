@@ -1,20 +1,30 @@
 #include "motors.h"
 
-// Función para inicializar los pines
-void setup_gpio() {
-    gpio_pad_select_gpio(MOTOR1_PIN1);
-    gpio_pad_select_gpio(MOTOR1_PIN2);
-    gpio_pad_select_gpio(MOTOR2_PIN1);
-    gpio_pad_select_gpio(MOTOR2_PIN2);
+MOTOR_STRUCT MOTOR1 = {MOTOR1_PIN1, MOTOR1_PIN2};
+MOTOR_STRUCT MOTOR2 = {MOTOR2_PIN1, MOTOR2_PIN2};
 
-    gpio_set_direction(MOTOR1_PIN1, GPIO_MODE_OUTPUT);
-    gpio_set_direction(MOTOR1_PIN2, GPIO_MODE_OUTPUT);
-    gpio_set_direction(MOTOR2_PIN1, GPIO_MODE_OUTPUT);
-    gpio_set_direction(MOTOR2_PIN2, GPIO_MODE_OUTPUT);
+// Función para inicializar los pines
+void motors_setup() {
+    gpio_config_t io_conf;
+
+    // Configurar los pines de los motores como salidas
+    io_conf.intr_type = GPIO_INTR_DISABLE;  // Deshabilitar interrupciones
+    io_conf.mode = GPIO_MODE_OUTPUT;        // Configurar como salida
+    io_conf.pin_bit_mask = (1ULL << MOTOR1_PIN1) | (1ULL << MOTOR1_PIN2) |
+                           (1ULL << MOTOR2_PIN1) | (1ULL << MOTOR2_PIN2);  // Máscara de pines
+    io_conf.pull_down_en = 0;               // Deshabilitar pull-down
+    io_conf.pull_up_en = 0;                 // Deshabilitar pull-up
+    gpio_config(&io_conf);                  // Aplicar configuración
+
+    // Asegurarse de que los pines de los motores estén en estado bajo al inicio (apagados)
+    gpio_set_level(MOTOR1_PIN1, 0);
+    gpio_set_level(MOTOR1_PIN2, 0);
+    gpio_set_level(MOTOR2_PIN1, 0);
+    gpio_set_level(MOTOR2_PIN2, 0);
 }
 
 // Función controladora de los motores
-void MOTOR_COMMANDS(DIRECTIONS D){
+void motors_command(DIRECTIONS D){
     switch (D){
     case FORWARD:
         gpio_set_level(MOTOR1.PIN1, 1);
@@ -55,36 +65,4 @@ void MOTOR_COMMANDS(DIRECTIONS D){
     }
 }
 
-// Tarea para controlar los motores
-void motor_control_task(void *arg) {
-    while (1) {
-        MOTOR_COMMANDS(FORWARD);
-        vTaskDelay(pdMS_TO_TICKS(2000));  // Gira durante 2 segundos
 
-        MOTOR_COMMANDS(STOP);
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Espera 1 segundo
-
-        MOTOR_COMMANDS(BACKWARD);
-        vTaskDelay(pdMS_TO_TICKS(2000));  // Gira durante 2 segundos
-
-        MOTOR_COMMANDS(STOP);
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Espera 1 segundo
-
-        MOTOR_COMMANDS(FORWARD);
-        vTaskDelay(pdMS_TO_TICKS(2000));  // Gira durante 2 segundos
-
-        MOTOR_COMMANDS(STOP);
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Espera 1 segundo
-
-        MOTOR_COMMANDS(BACKWARD);
-        vTaskDelay(pdMS_TO_TICKS(2000));  // Gira durante 2 segundos
-
-        MOTOR_COMMANDS(STOP);
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Espera 1 segundo
-    }
-}
-
-void app_main() {
-    setup_gpio();  // Inicializar GPIO
-    xTaskCreate(motor_control_task, "motor_control_task", 2048, NULL, 1, NULL);  // Crear tarea de control
-}
