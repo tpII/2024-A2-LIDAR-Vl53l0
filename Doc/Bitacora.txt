@@ -30,3 +30,7 @@ Inicio del diseño del PCB
 
 28 de Septiembre
 Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
+
+
+01 de Octubre
+Se generó la carpeta "Build" dentro de "Microcontroller"
