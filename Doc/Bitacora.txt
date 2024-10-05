@@ -31,10 +31,15 @@ Inicio del diseño del PCB
 28 de Septiembre
 Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
 
+30 de Septiembre
+Creacion de Interface, Service y Controller de la entidad SensorValue
+Creacion de entidad Instruction junto con su Interface, Service y Controller.
 
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
 
-
 04 de Octubre
 Se creó la librería de control de los motores DC
+Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron como se esperaba
+Esto implico testear los otores, el driver, y la fuente.
+El diseño 3D tiene defectos a corregir

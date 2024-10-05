@@ -36,7 +36,7 @@ public class MessageController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteMessage(@PathVariable String id) {
         messageService.deleteMessage(id);
     }
