@@ -7,6 +7,7 @@
 #define ERROR_LED GPIO_NUM_12
 
 //Functions declarations
+void lights_init(void);
 
 void error_init(void);
 
