@@ -63,7 +63,9 @@
     "thread": "c",
     "http_client.h": "c",
     "i2cc": "c",
-    "i2c_wrapper.h": "c"
+    "i2c_wrapper.h": "c",
+    "servomotor.h": "c",
+    "http_handler.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }

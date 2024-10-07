@@ -1,42 +1,23 @@
+#include "esp_err.h"
 #include "motors.h"
 #include "lights.h"
 
-// Tarea para controlar los motores
-void motor_control_task(void *arg)
-{
-  while (1)
-  {
-    motors_command(FORWARD);
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Gira durante 2 segundos
+#include "servomotor.h"
 
-    motors_command(STOP);
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Espera 1 segundo
-
-    motors_command(BACKWARD);
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Gira durante 2 segundos
-
-    motors_command(STOP);
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Espera 1 segundo
-
-    motors_command(FORWARD);
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Gira durante 2 segundos
-
-    motors_command(STOP);
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Espera 1 segundo
-
-    motors_command(BACKWARD);
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Gira durante 2 segundos
-
-    motors_command(STOP);
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Espera 1 segundo
-  }
+esp_err_t initializa_system(){
+  lights_init();
+  esp_err_t err = servomotor_init();
+  if(err != ESP_OK) return err;
+  return ESP_OK;
 }
 
 void app_main()
 {
-  /*motors_setup();  // Inicializar GPIO
-  xTaskCreate(motor_control_task, "motor_control_task", 2048, NULL, 1, NULL);  // Crear tarea de control
-  */
+
+  if(initializa_system() != ESP_OK) {
+    abort();
+  }
+  /*
   lights_init();
   while (1)
   {
@@ -45,4 +26,5 @@ void app_main()
     error_led_off();
     vTaskDelay(pdMS_TO_TICKS(5000)); // Gira durante 2 segundos
   }
+  */
 }
