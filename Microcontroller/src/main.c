@@ -1,4 +1,3 @@
-
 #include "http_handler.h"
 #include "esp_log.h"
 

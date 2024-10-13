@@ -18,6 +18,8 @@ public class Message {
     @CreatedDate
     private Date date;
 
+    public Message() {}
+    
     public Message(String message) {
         this.message = message;
     }
