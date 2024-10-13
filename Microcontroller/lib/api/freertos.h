@@ -8,5 +8,6 @@
 
 esp_err_t initialize_access_point(void);
 esp_err_t initialize_http_server(void);
+esp_err_t complete_initialization(void);
 
 #endif
