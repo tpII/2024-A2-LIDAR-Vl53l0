@@ -3,6 +3,7 @@
 
 #include "ap_server.h"
 #include "http_server.h"
+#include "freertos.h"
 
 #include <stdio.h>
 #include <string.h>
