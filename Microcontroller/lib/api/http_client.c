@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 static const char *TAG = "HTTP_CLIENT";
-static const char *URL = "http://localhost:8080/";
+static const char *URL = "http://192.168.4.2:8080/";
 
 static esp_err_t create_json_data(char **, const char **, const char **, const size_t);
 static esp_err_t deserealize_json_data(const char *,char *, const size_t);
@@ -17,7 +17,7 @@ esp_err_t http_post(const char *message_type, const char **keys, const char **va
 
     char full_url[512];
     snprintf(full_url, sizeof(full_url), "%s%s", URL, message_type);  // Concatenar URL
-
+    ESP_LOGI(TAG,"ENDPOINT TO CALL: %s",full_url);
     char *json_data = NULL;
     esp_err_t err = create_json_data(&json_data, keys, values, length);
     if (err != ESP_OK || json_data == NULL)
@@ -59,6 +59,7 @@ esp_err_t http_get(const char *message_type, char *msg, size_t length)
 {
     char full_url[512];
     snprintf(full_url, sizeof(full_url), "%s%s", URL, message_type);  // Concatenar URL
+    ESP_LOGI(TAG,"ENDPOINT TO CALL: %s",full_url);
     esp_http_client_config_t config = {
         .url = full_url,
         .method = HTTP_METHOD_GET,

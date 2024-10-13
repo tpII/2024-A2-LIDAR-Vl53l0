@@ -1,6 +1,8 @@
 #include "ap_server.h"
 #include <lwip/inet.h>
 
+
+
 static const char *TAG = "wifi softAP";
 
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
@@ -56,7 +58,7 @@ esp_err_t wifi_init_softap(void)
             .ssid_len = strlen(ESP_WIFI_SSID),
             .channel = ESP_WIFI_CHANNEL,
             .password = ESP_WIFI_PASS,
-            .max_connection = MAX_STA_CONN,
+            .max_connection = MAX_NUM_CONNECTIONS,
             .authmode = WIFI_AUTH_WPA_WPA2_PSK
         },
     };
