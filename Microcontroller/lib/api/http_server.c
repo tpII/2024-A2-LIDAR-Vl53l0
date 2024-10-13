@@ -3,7 +3,7 @@
 static esp_err_t home_get_handler(httpd_req_t *req);
 static esp_err_t post_handler(httpd_req_t *req);
 
-void start_http_server(void) {
+esp_err_t start_http_server(void) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
     if (httpd_start(&server, &config) == ESP_OK) {
@@ -23,6 +23,9 @@ void start_http_server(void) {
         };
         httpd_register_uri_handler(server, &uri_post);
     }
+    else return ESP_FAIL;
+
+    return ESP_OK;
 }
 
 // handlers

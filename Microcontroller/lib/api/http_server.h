@@ -4,6 +4,6 @@
 #include <esp_http_server.h>
 #include <cJSON.h>
 
-void start_http_server(void);
+esp_err_t start_http_server(void);
 
 #endif 
