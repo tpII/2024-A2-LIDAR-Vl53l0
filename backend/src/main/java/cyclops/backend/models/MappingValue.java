@@ -5,8 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
 //@Document(collection = "sensorvalues")
-@TimeSeries(collection = "sensorvalues", timeField = "date")
-public class SensorValue {
+@TimeSeries(collection = "MappingValues", timeField = "date")
+public class MappingValue {
 
     @Id
     private String id;
@@ -16,7 +16,9 @@ public class SensorValue {
     @CreatedDate
     private String date;
 
-    public SensorValue(long distance, int angle, String date) {
+    public MappingValue(){}
+
+    public MappingValue(long distance, int angle, String date) {
         this.distance = distance;
         this.angle = angle;
         this.date = date;
