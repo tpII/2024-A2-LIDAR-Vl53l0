@@ -18,6 +18,8 @@ esp_err_t http_post(const char *message_type, const char **keys, const char **va
     char full_url[512];
     snprintf(full_url, sizeof(full_url), "%s%s", URL, message_type);  // Concatenar URL
     ESP_LOGI(TAG,"ENDPOINT TO CALL: %s",full_url);
+    printf("Keys: %s,%s\n",keys[0],keys[1]);
+    printf("Values: %s, %s\n", values[0], values[1]);
     char *json_data = NULL;
     esp_err_t err = create_json_data(&json_data, keys, values, length);
     if (err != ESP_OK || json_data == NULL)
