@@ -49,3 +49,10 @@ Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron 
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
 
+11 de Octubre
+Se realizaron correciones al diseño 3D del pa parte princiapl, y se continuo con las partes superiores
+Se testeo la libreria HTTP del MCU al BACKEND y funcionan.
+
+14 de Octubre
+Se opto por implementar MQTT en ves de HTTP entre el MCU y el backend
+Se implmento MQTT en el BACKEND
