@@ -4,9 +4,15 @@
 
 static const char *TAG = "MQTT_SERVER";
 static const char *URL = "mqtt://192.168.4.2:1883";
+static const char *ID = "ESP32";
 static esp_mqtt_client_handle_t mqtt_client = NULL;
+static const char *TOPICS[] = {"Instruction","Messages","Mapping","Battery"};
 
-esp_err_t mqtt_connect()
+static esp_err_t mqtt_connect(void);
+static esp_err_t mqtt_subscribe(const char *);
+static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t); 
+
+static esp_err_t mqtt_connect()
 {
     ESP_LOGI(TAG,"INITIALIZING MQTT");
     esp_mqtt_client_config_t mqtt_config = {
@@ -17,7 +23,7 @@ esp_err_t mqtt_connect()
         },
         .credentials = {
             .username = NULL,                  // Sin nombre de usuario
-            .client_id = NULL,                 // ID de cliente, puede ser NULL para usar el predeterminado
+            .client_id = ID,                   // ID de cliente, puede ser NULL para usar el predeterminado
             .set_null_client_id = true,        // Establecer ID de cliente como NULL
             .authentication.password = NULL,   // Sin contraseña
         },
@@ -48,6 +54,10 @@ esp_err_t mqtt_connect()
         return ESP_FAIL;
     }
 
+
+    // Registrar el manejador de eventos
+    esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_DATA, mqtt_event_handler, NULL);
+
     esp_err_t err = esp_mqtt_client_start(mqtt_client);
     if (err != ESP_OK)
     {
@@ -56,6 +66,26 @@ esp_err_t mqtt_connect()
     }
 
     ESP_LOGI(TAG, "MQTT client connected to %s", URL);
+    return ESP_OK;
+}
+
+// Manejo de eventos MQTT
+static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
+    switch (event->event_id) {
+        case MQTT_EVENT_DATA: {
+            if (event->data_len) {
+                char received_data[event->data_len + 1]; // +1 para el null terminador
+                memcpy(received_data, event->data, event->data_len);
+                received_data[event->data_len] = '\0'; // Agregar null terminador
+
+                ESP_LOGI(TAG, "Received message from topic %s: %s", event->topic, received_data);
+            }
+            break;
+        }
+        // Manejar otros eventos si es necesario
+        default:
+            break;
+    }
     return ESP_OK;
 }
 
@@ -77,7 +107,7 @@ esp_err_t mqtt_publish(const char *topic, const char *payload) {
 }
 
 // Función para suscribirse a un tópico
-esp_err_t mqtt_subscribe(const char *topic) {
+static esp_err_t mqtt_subscribe(const char *topic) {
     if (mqtt_client == NULL) {
         ESP_LOGE(TAG, "MQTT client not initialized");
         return ESP_FAIL;
@@ -108,5 +138,24 @@ esp_err_t mqtt_disconnect() {
 
     mqtt_client = NULL; // Limpiar el puntero del cliente
     ESP_LOGI(TAG, "MQTT client disconnected");
+    return ESP_OK;
+}
+
+esp_err_t mqtt_start(){
+
+    int topics_size = sizeof(TOPICS) / sizeof(TOPICS[0]);
+    esp_err_t err =  mqtt_connect();
+    while(err != ESP_OK){
+       err =  mqtt_connect();
+    }
+    esp_err_t err2;
+    for(uint8_t i = 0; i < topics_size; i++){
+        err2 = mqtt_subscribe(TOPICS[i]);
+        if(err2 != ESP_OK){
+            ESP_LOGE(TAG,"Error subscribing to topic: %s",TOPICS[i]);
+            return err2;
+        }
+    }
+
     return ESP_OK;
 }

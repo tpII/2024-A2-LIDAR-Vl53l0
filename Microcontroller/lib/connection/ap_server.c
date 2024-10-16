@@ -1,8 +1,6 @@
 #include "ap_server.h"
 #include <lwip/inet.h>
 
-
-
 static const char *TAG = "wifi softAP";
 static SemaphoreHandle_t client_connected_semaphore;
 
@@ -183,9 +181,10 @@ esp_err_t initialize_server(void)
     }
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
-    wifi_init_softap();
-
-   // xTaskCreatePinnedToCore(tcp_server, "TCP Server", 4096, NULL, 1, NULL, 0);
+    esp_err_t err2 = wifi_init_softap();
+    if(err2 != ESP_OK){
+        ESP_LOGE(TAG, "Error initializing WiFi Soft AP: %s", esp_err_to_name(err2));
+    }
     return ESP_OK;
 }
 

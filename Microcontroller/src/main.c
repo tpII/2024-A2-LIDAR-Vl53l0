@@ -21,7 +21,7 @@ esp_err_t initialize()
 
   while(wait_for_client_connection() != ESP_OK);
   vTaskDelay(pdMS_TO_TICKS(200));                 //ESPERO 200ms por seguridad
-  mqtt_connect();
+  mqtt_start();
 
   return ESP_OK;
 }
