@@ -1,8 +1,6 @@
-#include "http_handler.h"
 #include "esp_log.h"
-
 #include "ap_server.h"
-#include "http_server.h"
+#include "mqtt_server.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -21,7 +19,9 @@ esp_err_t initialize()
     return ESP_FAIL;
   }
 
-  start_http_server();
+  while(wait_for_client_connection() != ESP_OK);
+  vTaskDelay(pdMS_TO_TICKS(200));                 //ESPERO 200ms por seguridad
+  mqtt_connect();
 
   return ESP_OK;
 }
@@ -47,11 +47,11 @@ void task()
     //Testing SendSensorValue
     */
 
-    ESP_LOGI(TAG,"Sensor Value to Send: %d",id);
-    esp_err_t err2 = sendSensorValue(id,id);
-    if(err2 != ESP_OK) ESP_LOGE(TAG,"POST FAIL => %s",esp_err_to_name(err2));
-    vTaskDelay(pdMS_TO_TICKS(5000));
-    id++;
+    //ESP_LOGI(TAG,"Sensor Value to Send: %d",id);
+    //esp_err_t err2 = sendSensorValue(id,id);
+    //if(err2 != ESP_OK) ESP_LOGE(TAG,"POST FAIL => %s",esp_err_to_name(err2));
+    //vTaskDelay(pdMS_TO_TICKS(5000));
+    //id++;
   }
 }
 
@@ -65,5 +65,5 @@ void app_main(void)
     while(1);
   }
   ESP_LOGI(TAG,"INITIALIZE SUCCESS");
-  task();
+  //task();
 }

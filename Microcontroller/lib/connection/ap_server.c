@@ -4,9 +4,11 @@
 
 
 static const char *TAG = "wifi softAP";
+static SemaphoreHandle_t client_connected_semaphore;
 
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 static void tcp_server(void *pvParameters);
+
 
 // no es necesario por el momento
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
@@ -15,15 +17,22 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         ESP_LOGI(TAG, "station %02X:%02X:%02X:%02X:%02X:%02X join, AID=%d",
          event->mac[0], event->mac[1], event->mac[2], event->mac[3], event->mac[4], event->mac[5], event->aid);
+        // Libera el semáforo cuando se conecte un dispositivo
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
         ESP_LOGI(TAG, "station %02X:%02X:%02X:%02X:%02X:%02X join, AID=%d",
          event->mac[0], event->mac[1], event->mac[2], event->mac[3], event->mac[4], event->mac[5], event->aid);
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_AP_STAIPASSIGNED) {
+        ESP_LOGI(TAG, "IP asignada a cliente");
+        xSemaphoreGive(client_connected_semaphore);
     }
 }
 
-esp_err_t wifi_init_softap(void)
-{
+esp_err_t wifi_init_softap(void){
+
+    // Inicializa el semáforo binario
+    client_connected_semaphore = xSemaphoreCreateBinary();
+
     esp_err_t err = esp_netif_init();
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "esp_netif_init failed.");
@@ -51,6 +60,8 @@ esp_err_t wifi_init_softap(void)
         ESP_LOGE(TAG, "Failed to register an instance of event handler to the default loop.");
         return event_handler_err;
     }
+
+    esp_event_handler_instance_register(IP_EVENT, IP_EVENT_AP_STAIPASSIGNED, &wifi_event_handler, NULL, NULL);
 
     wifi_config_t wifi_config = {
         .ap = {
@@ -175,5 +186,13 @@ esp_err_t initialize_server(void)
     wifi_init_softap();
 
    // xTaskCreatePinnedToCore(tcp_server, "TCP Server", 4096, NULL, 1, NULL, 0);
+    return ESP_OK;
+}
+
+esp_err_t wait_for_client_connection() {
+    ESP_LOGI(TAG, "Esperando a que un dispositivo se conecte...");
+    // Bloquea hasta que el semáforo sea liberado por la conexión de un dispositivo
+    xSemaphoreTake(client_connected_semaphore, portMAX_DELAY);
+    ESP_LOGI(TAG, "¡Dispositivo conectado!");
     return ESP_OK;
 }

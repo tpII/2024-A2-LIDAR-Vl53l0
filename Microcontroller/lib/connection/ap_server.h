@@ -28,5 +28,6 @@
 
 esp_err_t wifi_init_softap(void);
 esp_err_t initialize_server(void);
+esp_err_t wait_for_client_connection(void); 
 
 #endif
