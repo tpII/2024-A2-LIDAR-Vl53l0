@@ -57,16 +57,18 @@ esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
     values[0] = buffer1;
     values[1] = buffer2;
     const char *keys[2] = {"distance", "angle"};
-    cJSON *msg = NULL;
+    cJSON *json = NULL;
 
-    esp_err_t err = create_json_data(&msg, keys, values, 2);
+    esp_err_t err = create_json_data(&json, keys, values, 2);
+
+    print_json_data(json);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err));
         return err;
     }
 
-    esp_err_t err2 = mqtt_publish(MAPPING_VALUE, msg);
+    esp_err_t err2 = mqtt_publish(MAPPING_VALUE, json);
     if (err2 != ESP_OK)
     {
         ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err));

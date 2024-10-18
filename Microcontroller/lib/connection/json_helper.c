@@ -112,24 +112,6 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
 
     return ESP_OK;
 }
-/*
-void print_json_data(cJSON *json) {
-    if (json != NULL) {
-        // Convertir el JSON a una cadena de caracteres
-        char *json_str = cJSON_Print(json);
-        if (json_str != NULL) {
-            // Imprimir el JSON
-            ESP_LOGI(TAG, "JSON creado: %s", json_str);
-            // Liberar la memoria después de usarla
-            cJSON_free(json_str);
-        } else {
-            ESP_LOGE(TAG, "Error al convertir JSON a cadena");
-        }
-    } else {
-        ESP_LOGE(TAG, "JSON es NULL");
-    }
-}
-*/
 
 void print_json_data(const char *json_str) {
     if (json_str != NULL) {

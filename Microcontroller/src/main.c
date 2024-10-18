@@ -48,10 +48,10 @@ void task()
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     //Testing SendSensorValue
-    //ESP_LOGI(TAG,"Sensor Value to Send: %d",id);
-    //esp_err_t err2 = sendSensorValue(id,id);
-    //if(err2 != ESP_OK) ESP_LOGE(TAG,"POST FAIL => %s",esp_err_to_name(err2));
-    //vTaskDelay(pdMS_TO_TICKS(5000));
+    ESP_LOGI(TAG,"Sensor Value to Send: %d",id);
+    esp_err_t err2 = sendMappingValue(id,id);
+    if(err2 != ESP_OK) ESP_LOGE(TAG,"POST FAIL => %s",esp_err_to_name(err2));
+    vTaskDelay(pdMS_TO_TICKS(5000));
     
     id++;
   }
