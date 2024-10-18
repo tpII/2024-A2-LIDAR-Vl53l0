@@ -17,16 +17,18 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     for (size_t i = 0; i < lenght; i++)
     {
         if (!cJSON_AddStringToObject(root, keys[i], values[i]))
-        {
+        {   
+            ESP_LOGE(TAG, "Error adding key-value to JSON");
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
             return ESP_FAIL;
         }
     }
 
-    *msg = cJSON_Print(root);
+    *msg = cJSON_PrintUnformatted(root); 
     cJSON_Delete(root);
     if (*msg == NULL)
     {
+        ESP_LOGE(TAG, "Error converting JSON to string");
         return ESP_FAIL; // Error si no se puede generar el string JSON
     }
     
@@ -109,4 +111,31 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
     cJSON_Delete(json);
 
     return ESP_OK;
+}
+/*
+void print_json_data(cJSON *json) {
+    if (json != NULL) {
+        // Convertir el JSON a una cadena de caracteres
+        char *json_str = cJSON_Print(json);
+        if (json_str != NULL) {
+            // Imprimir el JSON
+            ESP_LOGI(TAG, "JSON creado: %s", json_str);
+            // Liberar la memoria después de usarla
+            cJSON_free(json_str);
+        } else {
+            ESP_LOGE(TAG, "Error al convertir JSON a cadena");
+        }
+    } else {
+        ESP_LOGE(TAG, "JSON es NULL");
+    }
+}
+*/
+
+void print_json_data(const char *json_str) {
+    if (json_str != NULL) {
+        // Imprimir el JSON que ya está en formato de cadena
+        ESP_LOGI(TAG, "JSON creado: %s", json_str);
+    } else {
+        ESP_LOGE(TAG, "JSON es NULL o no válido");
+    }
 }

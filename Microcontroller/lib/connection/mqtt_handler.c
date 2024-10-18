@@ -2,6 +2,7 @@
 #include "mqtt_server.h"
 #include "json_helper.h"
 #include "esp_log.h"
+#include "instruction_buffer.h"
 
 #define INSTRUCTIONS_BUFFER_SIZE 10
 #define MESSAGE_MAX_LENGTH 40
@@ -19,23 +20,25 @@ static const char *TAG = "MQTT_HANDLER";
 esp_err_t getInstruccionMessage(char *msg)
 {
 
-    return getInstruccionMessage(msg);
+    return getInstruction(msg);
 }
 
 esp_err_t sendControlMessage(const char *msg, const size_t length)
 {
     const char *key[1] = {"message"};
     const char *values[1] = {msg};
-    cJSON *msg = NULL;
+    cJSON *json = NULL;
+   
+    esp_err_t err = create_json_data(&json, key, values, 1);
+    print_json_data(json);
 
-    esp_err_t err = create_json_data(&msg, key, values, 1);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err));
         return err;
     }
 
-    esp_err_t err2 = mqtt_publish(CONTROL_MESSAGE, msg);
+    esp_err_t err2 = mqtt_publish(CONTROL_MESSAGE, json);
     if (err2 != ESP_OK)
     {
         ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err));

@@ -3,6 +3,7 @@
 #include "freertos/semphr.h"
 #include "json_helper.h"
 #include <string.h>
+#include "esp_log.h"
 
 #define INSTRUCTIONS_BUFFER_SIZE 10
 #define INSTRUCTION_MAX_LENGTH 40
@@ -12,17 +13,21 @@ char instructions_buffer[INSTRUCTIONS_BUFFER_SIZE][INSTRUCTION_MAX_LENGTH];
 static uint8_t push_index = 0;
 static uint8_t get_index = 0;
 static SemaphoreHandle_t buffer_access;
-static char *TAG = "INSTRUCTION_BUFFER";
+static const char *TAG = "INSTRUCTION_BUFFER";
 
 static void initBuffer(void);
 
 static void initBuffer()
 {
-    buffer_access = xSemaphoreCreateMutex();
+    if (buffer_access == NULL) {
+        buffer_access = xSemaphoreCreateMutex();
+    }
 }
 
+
 esp_err_t getInstruction(char *inst)
-{
+{   
+    initBuffer();
     // Toma el semáforo antes de acceder al buffer
     if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)
     {
@@ -49,8 +54,9 @@ esp_err_t getInstruction(char *inst)
 
 esp_err_t saveInstruction(char *json)
 {
+    initBuffer();
 
-    const char *inst;
+    char inst[INSTRUCTION_MAX_LENGTH];
     esp_err_t err = deserealize_json_data(json, inst, INSTRUCTION_MAX_LENGTH);
     if (err != ESP_OK)
     {
