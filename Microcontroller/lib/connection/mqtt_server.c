@@ -1,6 +1,10 @@
 #include "mqtt_server.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
+#include "json_helper.h"
+#include "instruction_buffer.h"
+#include "esp_system.h" 
+
 #define NUM_TOPICS 4
 
 static const char *TAG = "MQTT_SERVER";
@@ -16,6 +20,7 @@ static esp_err_t mqtt_subscribe(const char *);
 //static esp_err_t mqtt_event_handler(esp_mqtt_event_t *);
 static void mqtt_event_handler(void *, esp_event_base_t, int32_t, void *);
 static void mqtt_subscribing(void);
+static void instruction_handler(char *, size_t length);
 
 static esp_err_t mqtt_connect()
 {
@@ -57,12 +62,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         MQTT_CONNEECTED=1;
-        
-        /*msg_id = esp_mqtt_client_subscribe(client, "/topic/test1", 0);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-        msg_id = esp_mqtt_client_subscribe(client, "/topic/test2", 1);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);*/
         mqtt_subscribing();
         break;
     case MQTT_EVENT_DISCONNECTED:
@@ -81,8 +80,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-        printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        if(strncmp(event->topic, "Instruction", event->topic_len) == 0){
+            ESP_LOGI(TAG,"Instruction received");
+            instruction_handler(event->data,event->data_len);
+        } else {
+            ESP_LOGW(TAG,"ERROR: Message received from an unexpected Topic(%s)",event->topic);
+        }
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -192,4 +195,28 @@ static void mqtt_subscribing()
             ESP_LOGI(TAG, "Successful subscription to: %s", TOPICS[i]);
         }
     }
+}
+
+static void instruction_handler(char *str, size_t length){
+
+    char *inst;
+    esp_err_t err = deserealize_json_data(str,inst, length);
+    if(err != ESP_OK){
+        ESP_LOGE(TAG,"Error deserializing Instruction");
+    } else{
+
+        if(strncmp(inst, "REBOOT",strlen(inst)) == 0){
+            ESP_LOGW("RESTART", "Reiniciando el MCU...");
+            esp_restart();  // Llamada para reiniciar el MCU
+        } else {
+            if(saveInstruction(inst) != ESP_OK){
+                ESP_LOGE(TAG,"Error saving Instruction");
+            }
+        }
+  
+
+    }
+
+
+
 }

@@ -99,7 +99,7 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
         return ESP_FAIL;
     }
 
-    if(strlen(instruccion) > message_length || strlen(time) > message_length){
+    if(strlen(instruccion) > message_length){
         ESP_LOGE("JSON", "Message length exceeds buffer size");
         cJSON_Delete(json);
         return ESP_ERR_INVALID_SIZE;
