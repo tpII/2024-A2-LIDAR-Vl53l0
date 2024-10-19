@@ -1,16 +1,14 @@
 #include "message_log.h"
 
-static char * get_message(void);
-static char * get_date(void);
-
-static char * get_message(void)
-{
-    // pass
-}
+static void get_date(char *date, size_t size);
+static void get_time(char *buffer, size_t size);
 
 void write_message(char *msg)
 {
-    //
+    FILE * file;
+    file = open_report_log();
+    char time_buffer[9]; 
+    get_time(time_buffer, sizeof(time_buffer));
 }
 
 void get_report_log(void)
@@ -28,15 +26,14 @@ FILE * open_report_log(void)
         printf("Unable to create or open file.\n");
     }
     
-    char *date = get_date();
-    if (date != NULL) {
-        fputs(date, file);  
-    }
-
+    char date_buffer[50]; 
+    get_date(date_buffer, sizeof(date_buffer));
+    fputs(date_buffer, file);  
+    
     return file;
 }
 
-static char * get_date(void)
+static void get_date(char *date, size_t size)
 {
     time_t t;
     struct tm *tm_info;
@@ -46,9 +43,18 @@ static char * get_date(void)
 
     char buffer[11]; 
     strftime(buffer, sizeof(buffer), "%Y-%m-%d", tm_info);
+ 
+    snprintf(date, size, "Date: %s", buffer);
 
-    char date[50]; 
-    snprintf(date, sizeof(date), "Date: %s", buffer);
+}
 
-    return date;
+static void get_time(char *buffer, size_t size)
+{
+    time_t t;
+    struct tm *tm_info;
+
+    time(&t);
+    tm_info = localtime(&t);
+
+    strftime(buffer, size, "%H:%M:%S", tm_info);
 }
