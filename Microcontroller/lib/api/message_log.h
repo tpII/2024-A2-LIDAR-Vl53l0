@@ -7,8 +7,8 @@
 
 #define DATA_SIZE 1000  // revisar
 
-void write_message(char *msg);
 void get_report_log(void);
-void create_report_log(void);
+uint8_t add_date_to_log(void);
+uint8_t write_message(char *msg);
 
 #endif 

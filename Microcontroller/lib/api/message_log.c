@@ -3,20 +3,7 @@
 static void get_date(char *date, size_t size);
 static void get_time(char *buffer, size_t size);
 
-void write_message(char *msg)
-{
-    FILE * file;
-    file = open_report_log();
-    char time_buffer[9]; 
-    get_time(time_buffer, sizeof(time_buffer));
-}
-
-void get_report_log(void)
-{
-    //
-}
-
-FILE * open_report_log(void)
+uint8_t write_message(char *msg)
 {
     FILE * file;
     file = fopen("data/report-log.txt", "a");
@@ -24,13 +11,41 @@ FILE * open_report_log(void)
     if(file == NULL)
     {
         printf("Unable to create or open file.\n");
+        return -1;
+    }
+
+    char time_buffer[9]; 
+    get_time(time_buffer, sizeof(time_buffer));
+    fputs(time_buffer, file);
+    fputs("\n", file);
+    fputs(msg, file);
+    fputs("\n", file);
+    fclose(file);
+    return 0;
+}
+
+void get_report_log(void)
+{
+    //
+}
+
+uint8_t add_date_to_log(void)
+{
+    FILE * file;
+    file = fopen("data/report-log.txt", "a");
+    
+    if(file == NULL)
+    {
+        printf("Unable to create or open file.\n");
+        return -1;
     }
     
     char date_buffer[50]; 
     get_date(date_buffer, sizeof(date_buffer));
     fputs(date_buffer, file);  
     
-    return file;
+    fclose(file);
+    return 0;
 }
 
 static void get_date(char *date, size_t size)
