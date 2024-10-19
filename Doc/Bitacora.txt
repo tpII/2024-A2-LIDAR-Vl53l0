@@ -49,3 +49,5 @@ Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron 
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
 
+19 de Octubre
+Creo libreria para recibir mensajes de error o informativos y agregarlos a un report log
