@@ -7,7 +7,8 @@
 #include "http_server.h"
 
 esp_err_t initialize_access_point(void);
-esp_err_t initialize_http_server(void);
+esp_err_t initialize_mqtt_server(void);
 esp_err_t complete_initialization(void);
+esp_err_t abort_tasks(void);
 
 #endif
