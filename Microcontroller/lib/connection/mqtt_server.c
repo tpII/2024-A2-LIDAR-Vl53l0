@@ -3,21 +3,20 @@
 #include "mqtt_client.h"
 #include "json_helper.h"
 #include "instruction_buffer.h"
-#include "esp_system.h" 
+#include "esp_system.h"
 
 #define NUM_TOPICS 4
 
 static const char *TAG = "MQTT_SERVER";
 static const char *URL = "mqtt://192.168.4.2:1883";
-static const char *ID = "ESP32";
 static esp_mqtt_client_handle_t mqtt_client = NULL;
 static const char *TOPICS[] = {"Instruction", "Messages", "Mapping", "Battery"};
-
+static char inst[40] = {0};
 static uint32_t MQTT_CONNEECTED = 0;
 
 static esp_err_t mqtt_connect(void);
 static esp_err_t mqtt_subscribe(const char *);
-//static esp_err_t mqtt_event_handler(esp_mqtt_event_t *);
+// static esp_err_t mqtt_event_handler(esp_mqtt_event_t *);
 static void mqtt_event_handler(void *, esp_event_base_t, int32_t, void *);
 static void mqtt_subscribing(void);
 static void instruction_handler(char *, size_t length);
@@ -55,18 +54,16 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 {
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%ld", base, event_id);
     esp_mqtt_event_handle_t event = event_data;
-    esp_mqtt_client_handle_t client = event->client;
-    int msg_id;
     switch ((esp_mqtt_event_id_t)event_id)
     {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-        MQTT_CONNEECTED=1;
+        MQTT_CONNEECTED = 1;
         mqtt_subscribing();
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
-        MQTT_CONNEECTED=0;
+        MQTT_CONNEECTED = 0;
         break;
 
     case MQTT_EVENT_SUBSCRIBED:
@@ -80,11 +77,15 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-        if(strncmp(event->topic, "Instruction", event->topic_len) == 0){
-            ESP_LOGI(TAG,"Instruction received");
-            instruction_handler(event->data,event->data_len);
-        } else {
-            ESP_LOGW(TAG,"ERROR: Message received from an unexpected Topic(%s)",event->topic);
+        if (strncmp(event->topic, "Instruction", event->topic_len) == 0)
+        {
+            ESP_LOGI(TAG, "Instruction received");
+
+            instruction_handler(event->data, event->data_len);
+        }
+        else
+        {
+            ESP_LOGW(TAG, "ERROR: Message received from an unexpected Topic(%s)", event->topic);
         }
         break;
     case MQTT_EVENT_ERROR:
@@ -95,7 +96,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     }
 }
-
 
 // Función para publicar un mensaje en un tópico
 esp_err_t mqtt_publish(const char *topic, const char *payload)
@@ -197,26 +197,40 @@ static void mqtt_subscribing()
     }
 }
 
-static void instruction_handler(char *str, size_t length){
+static void instruction_handler(char *str, size_t length)
+{
 
-    char *inst;
-    esp_err_t err = deserealize_json_data(str,inst, length);
-    if(err != ESP_OK){
-        ESP_LOGE(TAG,"Error deserializing Instruction");
-    } else{
-
-        if(strncmp(inst, "REBOOT",strlen(inst)) == 0){
-            ESP_LOGW("RESTART", "Reiniciando el MCU...");
-            esp_restart();  // Llamada para reiniciar el MCU
-        } else {
-            if(saveInstruction(inst) != ESP_OK){
-                ESP_LOGE(TAG,"Error saving Instruction");
-            }
-        }
-  
-
+    memset(inst, 0, sizeof(inst));
+    char *message = (char *)malloc(length + 1);
+    if (message == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for MQTT message");
     }
 
+    // Copiar los datos y agregar el terminador nulo manualmente
+    memcpy(message, str, length);
+    message[length] = '\0'; // Termina la cadena con '\0'
+    esp_err_t err = deserealize_json_data(message, inst, length);
+    free(message);
 
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error deserializing Instruction");
+    }
+    else
+    {
 
+        if (strncmp(inst, "REBOOT", strlen("REBOOT")) == 0)
+        {
+            ESP_LOGW("RESTART", "Reiniciando el MCU...");
+            esp_restart(); // Llamada para reiniciar el MCU
+        }
+        else
+        {
+            if (saveInstruction(inst) != ESP_OK)
+            {
+                ESP_LOGE(TAG, "Error saving Instruction");
+            }
+        }
+    }
 }

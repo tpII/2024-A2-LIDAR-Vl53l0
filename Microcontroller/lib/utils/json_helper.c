@@ -9,7 +9,8 @@ static const char *TAG = "JSON_HELPER";
 esp_err_t create_json_data(char **msg, const char **keys, const char **values, const size_t lenght)
 {
     cJSON *root = cJSON_CreateObject();
-    if (root == NULL) {
+    if (root == NULL)
+    {
         ESP_LOGE(TAG, "Error creating JSON object");
         return ESP_FAIL;
     }
@@ -17,25 +18,23 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     for (size_t i = 0; i < lenght; i++)
     {
         if (!cJSON_AddStringToObject(root, keys[i], values[i]))
-        {   
+        {
             ESP_LOGE(TAG, "Error adding key-value to JSON");
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
             return ESP_FAIL;
         }
     }
 
-    *msg = cJSON_PrintUnformatted(root); 
+    *msg = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     if (*msg == NULL)
     {
         ESP_LOGE(TAG, "Error converting JSON to string");
         return ESP_FAIL; // Error si no se puede generar el string JSON
     }
-    
 
     return ESP_OK; // Retornar éxito
 }
-
 
 esp_err_t deserealize_json_data(const char *data, char *msg, const size_t message_length)
 {
@@ -47,77 +46,57 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
         return ESP_FAIL;
     }
 
-    // Ensure there are enough keys and values
-    if (
-        cJSON_GetArraySize(json) != 1)
+    // Verificar que el JSON tiene las claves esperadas
+    cJSON *instruction_json = cJSON_GetObjectItem(json, "instruction");
+    cJSON *time_json = cJSON_GetObjectItem(json, "time");
+
+    if (instruction_json == NULL || time_json == NULL)
     {
-        ESP_LOGE("JSON", "Length mismatch between espected message and JSON object");
-        cJSON_Delete(json); // Clean up
-        return ESP_ERR_INVALID_SIZE;
+        ESP_LOGE("JSON", "Missing expected keys 'instruction' or 'time'");
+        cJSON_Delete(json); // Limpiar el objeto JSON
+        return ESP_ERR_INVALID_ARG;
     }
 
-    // Obtener el tamaño del JSON (número de elementos)
-    size_t num_items = cJSON_GetArraySize(json);
-    if (num_items == 0)
+    // Obtener los valores
+    const char *instruction = cJSON_GetStringValue(instruction_json);
+    const char *time = cJSON_GetStringValue(time_json);
+
+    if (instruction == NULL || time == NULL)
     {
-        ESP_LOGE("JSON", "No se encontraron elementos en el JSON");
-        cJSON_Delete(json);
+        ESP_LOGE("JSON", "Error getting values for 'instruction' or 'time'");
+        cJSON_Delete(json); // Limpiar el objeto JSON
         return ESP_FAIL;
     }
 
-   
-    // Iterate through the JSON object and fill the keys and values arrays
-    const char *instruccion = NULL;
-    const char *time = NULL;
+    // Loggear las claves y valores para debug
+    ESP_LOGW(TAG, "Key: instruction -> value: %s", instruction);
+    ESP_LOGW(TAG, "Key: time -> value: %s", time);
 
-    cJSON *item = NULL;
-    
-    cJSON_ArrayForEach(item, json)
+    // Validar el tamaño del mensaje
+    if (strlen(instruction) > message_length)
     {
-        const char *key = item->string;
-        const char *value = cJSON_GetStringValue(item);
-
-        if(key == NULL || value == NULL){
-            ESP_LOGE("JSON", "Error getting key or value from JSON object");
-            cJSON_Delete(json);
-            return ESP_FAIL;
-        }
-
-        if (strcmp(key, "instruccion") == 0)
-        {
-            instruccion = value;
-        }
-        else if (strcmp(key, "time") == 0)
-        {
-            time = value;
-        }
-    }
-
-    if(instruccion == NULL || time == NULL){
-        ESP_LOGE("JSON", "Error getting instruccion or time from JSON object");
-        cJSON_Delete(json);
-        return ESP_FAIL;
-    }
-
-    if(strlen(instruccion) > message_length){
         ESP_LOGE("JSON", "Message length exceeds buffer size");
         cJSON_Delete(json);
         return ESP_ERR_INVALID_SIZE;
     }
 
-    strncpy(msg, instruccion, message_length);
-
-    // Clean up JSON object
+    // Copiar el valor de la instrucción al buffer
+    strncpy(msg, instruction, message_length);
+    // Limpiar el objeto JSON
     cJSON_Delete(json);
 
     return ESP_OK;
 }
 
-void print_json_data(const char *json_str) {
-    if (json_str != NULL) {
+void print_json_data(const char *json_str)
+{
+    if (json_str != NULL)
+    {
         // Imprimir el JSON que ya está en formato de cadena
         ESP_LOGI(TAG, "JSON creado: %s", json_str);
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "JSON es NULL o no válido");
     }
 }

@@ -52,17 +52,9 @@ esp_err_t getInstruction(char *inst)
     return ESP_FAIL;
 }
 
-esp_err_t saveInstruction(char *json)
+esp_err_t saveInstruction(char *inst)
 {
     initBuffer();
-
-    char inst[INSTRUCTION_MAX_LENGTH];
-    esp_err_t err = deserealize_json_data(json, inst, INSTRUCTION_MAX_LENGTH);
-    if (err != ESP_OK)
-    {
-        ESP_LOGW(TAG, "Fails to save instruction");
-        return ESP_FAIL;
-    }
 
     // Toma el semáforo antes de acceder al buffer
     if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)
