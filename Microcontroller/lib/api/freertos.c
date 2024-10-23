@@ -49,8 +49,7 @@ static void access_point(void *pvParameters)
 
 static void mqtt_server(void *pvParameters)
 {
-    esp_err_t err; 
-    //mqtt
+    esp_err_t err; // = mqtt_connect(); // realizar merge para poder utilizar funcion
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize MQTT server: err %d", err);
     }
