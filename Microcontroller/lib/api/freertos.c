@@ -12,6 +12,7 @@ TaskHandle_t ap_handler;
 TaskHandle_t mqtt_handler;
 TaskHandle_t abort_handler;
 
+// inicializacion  de servidores y conexion
 esp_err_t complete_initialization(void){
     esp_err_t err = initialize_access_point();
     if (err != ESP_OK) {
@@ -55,6 +56,7 @@ static void mqtt_server(void *pvParameters)
     }
 }
 
+// abort all the tasks
 esp_err_t abort_tasks(void)
 {
     xTaskCreatePinnedToCore(abort, "Abort Tasks", 4096, NULL, 1, &abort_handler, 0);
@@ -63,22 +65,30 @@ esp_err_t abort_tasks(void)
 
 static void abort(void *pvParameters)
 {
+    char *msg;
     if (mqtt_handler == NULL) {
-        // enviar error al report log
+        msg = "Error! MQTT Handler is NULL, task cannot be deleted.";
         goto EXIT;
     }
     else {
         vTaskDelete(mqtt_handler);
+        msg = "The task to initialize the MQTT server was deleted succesfully!.";
     }
 
     if (ap_handler == NULL) {
-        // enviar error al report log 
+        msg = "Error! Access Point Handler is NULL, task cannot be deleted.";
         goto EXIT;
     }
     else {
         vTaskDelete(ap_handler);
+        msg = "The task to initialize the Access Point server was deleted succesfully!.";
     }
 
     EXIT:
+        /* importar libreria de message_log
+        if (write_message(msg) == -1) {
+            printf("Error writing to report log\n");
+        }
+        */
         vTaskDelete(NULL);
 }
