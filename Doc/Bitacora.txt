@@ -51,3 +51,7 @@ El diseño 3D tiene defectos a corregir
 
 13 de Octubre
 Agrego libreria de FreeRTOS
+
+23 de Octubre
+Modifico inicializacion de servidor HTTP ya que se utilizara MQTT
+Agrego funcion para abortar tareas
