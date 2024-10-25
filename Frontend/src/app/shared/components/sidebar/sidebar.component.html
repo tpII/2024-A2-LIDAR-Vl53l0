@@ -1,27 +1,23 @@
 <as-split direction="horizontal" [gutterSize]="10" unit="percent">
-    <!-- Sidebar -->
-    <as-split-area [size]="isExpanded ? 20 : 5" [minSize]="minSizeSidenav" [maxSize]="maxSizeSidenav">
-      <mat-sidenav-container class="example-container">
-        <mat-sidenav mode="side" [(opened)]="isExpanded" class="sidenav">
-          <div (click)="toggleSidebar()" class="toggle-button">
-            <!-- Botón o icono para expandir/collapse -->
-            <mat-icon>menu</mat-icon>
-          </div>
-          <div class="sidebar-content">
-            <!-- Contenido de la sidebar -->
-            <p *ngIf="isExpanded">Expanded Content</p>
-            <p *ngIf="!isExpanded">Collapsed Content</p>
-          </div>
-        </mat-sidenav>
-      </mat-sidenav-container>
-    </as-split-area>
-  
-    <!-- Contenido principal -->
-    <as-split-area [size]="75">
-      <div class="main-content">
-        <!-- Contenido principal -->
-        <p>Main Content</p>
-      </div>
-    </as-split-area>
-  </as-split>
-  
+  <!-- Sidebar -->
+  <as-split-area [size]="isExpanded ? maxSizeSidenav : minSizeSidenav" [minSize]="minSizeSidenav" [maxSize]="maxSizeSidenav">
+    <mat-sidenav-container class="example-container">
+      <mat-sidenav mode="side" [(opened)]="isExpanded" class="sidenav">
+        <div (click)="toggleSidebar()" class="toggle-button">
+          <mat-icon>menu</mat-icon>
+        </div>
+        <div class="sidebar-content">
+          <p *ngIf="isExpanded">Expanded Content</p>
+          <p *ngIf="!isExpanded">Collapsed Content</p>
+        </div>
+      </mat-sidenav>
+    </mat-sidenav-container>
+  </as-split-area>
+
+  <!-- Contenido principal -->
+  <as-split-area [size]="isExpanded ? (100 - maxSizeSidenav) : (100 - minSizeSidenav)">
+    <div class="main-content">
+      <p>Main Content</p>
+    </div>
+  </as-split-area>
+</as-split>

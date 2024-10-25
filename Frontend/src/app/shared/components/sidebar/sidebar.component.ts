@@ -12,14 +12,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
-  // Definir el tamaño inicial de la barra lateral
-  isExpanded = false;  // Para controlar si la sidebar está expandida o no
+  // Controlar si la sidebar está expandida o no
+  isExpanded = false;
 
-  minSizeSidenav: number = 10;
-  maxSizeSidenav: number = 30;
+  // Tamaños mínimo y máximo de la sidebar
+  minSizeSidenav: number = 10;  // Porcentaje para la sidebar colapsada
+  maxSizeSidenav: number = 30;  // Porcentaje para la sidebar expandida
 
+  // Alternar el estado de la sidebar entre colapsada y expandida
   toggleSidebar(): void {
     this.isExpanded = !this.isExpanded;
   }
-
 }
