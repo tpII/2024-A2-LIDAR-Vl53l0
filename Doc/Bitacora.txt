@@ -49,3 +49,8 @@ Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron 
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
 
+21 de Octubre
+Se creó la librería de control del sensor VL53L0X
+
+24 de Octubre
+Se actualizó la librería de control del sensor LiDAR
