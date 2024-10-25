@@ -14,7 +14,7 @@ static inline uint32_t angle_to_compare(uint16_t angle)
 
 esp_err_t servomotor_init()
 {
-
+    ESP_LOGI(TAG, "Create timer and operator");
     mcpwm_timer_handle_t timer = NULL;
 
     mcpwm_timer_config_t timer_config = {
@@ -123,7 +123,7 @@ esp_err_t servomotor_init()
 esp_err_t servomotor_set_angle(uint16_t angle){
     
     if(angle < SERVO_MIN_DEGREE || angle > SERVO_MAX_DEGREE){
-        ESP_LOGE(TAG,"Invalid angle: %d. Angle must bet between %d and %d degrees.",angle, SERVO_MAX_DEGREE, SERVO_MAX_DEGREE);
+        ESP_LOGE(TAG,"Invalid angle: %d. Angle must bet between %d and %d degrees.",angle, SERVO_MIN_DEGREE, SERVO_MAX_DEGREE);
         return ESP_ERR_INVALID_ARG;
     }
 

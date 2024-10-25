@@ -1,8 +1,6 @@
 #ifndef _LIGHTS_H_
 #define _LIGHTS_H_
 
-
-
 // Define los pines para los LEDs
 #define ERROR_LED GPIO_NUM_12
 
