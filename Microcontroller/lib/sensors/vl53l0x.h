@@ -21,22 +21,21 @@
 
 #include "driver/i2c.h"
 #include "esp_err.h"
+#include "i2c.h"
 
 // Definición de la dirección I2C del VL53L0X
-#define VL53L0X_I2C_ADDRESS 0x29
-#define VL53L0X_ADDR 0x52
-#define VL53L0X_XSHUT 0
-#define VL53L0X_INT
+//#define VL53L0X_I2C_ADDRESS 0x29    //Dirección por default
+#define VL53L0X_I2C_ADDRESS 0x52    //Dirección por default
+#define VL53L0X_I2C_HIGH_BYTE 0x1E
+#define VL53L0X_I2C_LOW_BYTE 0x1F
 
-// Definición de pines de I2C
-#define I2C_MASTER_SCL_IO 22
-#define I2C_MASTER_SDA_IO 21
-#define I2C_MASTER_NUM I2C_NUM_0
+// #define VL53L0X_ADDR 0x52
+// #define VL53L0X_XSHUT 0
+// #define VL53L0X_INT
 
 // Funciones públicas de la librería
-esp_err_t VL53L0X_init(void);
 esp_err_t VL53L0X_start_ranging(void);
 uint16_t VL53L0X_read_range(void);
 esp_err_t VL53L0X_stop_ranging(void);
 
-#endif // VL53L0X_H
+#endif
