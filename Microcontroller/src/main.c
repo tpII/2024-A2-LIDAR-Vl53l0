@@ -1,86 +1,121 @@
-#include "esp_err.h"
-#include "esp_log.h"
-#include "motors.h"
-#include "lights.h"
+/*
+ * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 
-#include "servomotor.h"
-#include "servomotor2.h"
+#include "servo.h"
 
-char *TAG = "MAIN";
+#include "driver/mcpwm_prelude.h"
 
-esp_err_t initializa_system()
+static const char *TAG = "example";
+
+// Please consult the datasheet of your servo before changing the following parameters
+#define SERVO_MIN_PULSEWIDTH_US 500  // Minimum pulse width in microsecond
+#define SERVO_MAX_PULSEWIDTH_US 2500 // Maximum pulse width in microsecond
+#define SERVO_MIN_DEGREE -90         // Minimum angle
+#define SERVO_MAX_DEGREE 90          // Maximum angle
+
+#define SERVO_PULSE_GPIO 16                  // GPIO connects to the PWM signal line
+#define SERVO_TIMEBASE_RESOLUTION_HZ 1000000 // 1MHz, 1us per tick
+#define SERVO_TIMEBASE_PERIOD 20000          // 20000 ticks, 20ms
+
+static inline uint32_t example_angle_to_compare(int angle)
 {
-  lights_init();
-  // esp_err_t err = servomotor_init();
-  esp_err_t err = initialize_servo();
-
-  if (err != ESP_OK)
-  {
-    return err;
-  }
-  return ESP_OK;
+  return (angle - SERVO_MIN_DEGREE) * (SERVO_MAX_PULSEWIDTH_US - SERVO_MIN_PULSEWIDTH_US) / (SERVO_MAX_DEGREE - SERVO_MIN_DEGREE) + SERVO_MIN_PULSEWIDTH_US;
 }
 
-void task()
+void app_main(void)
 {
+  /*
+  ESP_LOGI(TAG, "Create timer and operator");
+  mcpwm_timer_handle_t timer = NULL;
+  mcpwm_timer_config_t timer_config = {
+      .group_id = 0,
+      .clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT,
+      .resolution_hz = SERVO_TIMEBASE_RESOLUTION_HZ,
+      .period_ticks = SERVO_TIMEBASE_PERIOD,
+      .count_mode = MCPWM_TIMER_COUNT_MODE_UP,
+  };
+  ESP_ERROR_CHECK(mcpwm_new_timer(&timer_config, &timer));
 
-  // uint16_t angles[] = {0, 45, 90, 135, 180, 225, 270, 315, 360};
-  float angles[] = {0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 225.0f, 270.0f, 315.0f, 360.0f};
-  float actualAngle = 0;
-  uint8_t index = 0;
-  while (1)
-  {
-    /*if (servomotor_set_angle(angles[index]) != ESP_OK)
-    {
-      ESP_LOGE(TAG, "ERROR TO SET SERVOMOTOR TO ANGLE: %u", angles[index]);
-    }
-    else
-    {
-      ESP_LOGI(TAG, "SUCCESS TO SET SERVOMOTOR TO ANGLE: %u", angles[index]);
-    }*/
-    if (write_angle(angles[index]) != ESP_OK)
-    {
-      ESP_LOGE(TAG, "ERROR TO SET SERVOMOTOR TO ANGLE: %f", angles[index]);
-    }
-    else
-    {
-      ESP_LOGI(TAG, "SUCCESS TO SET SERVOMOTOR TO ANGLE: %f", angles[index]);
-    }
-    vTaskDelay(pdMS_TO_TICKS(4500));
-    if (read_angle(&actualAngle) != ESP_OK)
-    {
-      ESP_LOGE(TAG, "ERROR READING ANGLE");
-    }
-    else
-    {
-      if (actualAngle != angles[index])
-      {
-        ESP_LOGE(TAG, "ERROR The angle read does not match the expected one, Angle: %f - Expected %f", actualAngle, angles[index]);
-      }
-      else
-      {
-        ESP_LOGE(TAG, "ERROR The angle read match the expected one, Angle: %f", actualAngle);
-      }
-    }
+  mcpwm_oper_handle_t oper = NULL;
+  mcpwm_operator_config_t operator_config = {
+      .group_id = 0, // operator must be in the same group to the timer
+  };
+  ESP_ERROR_CHECK(mcpwm_new_operator(&operator_config, &oper));
 
-    if (++index > 8)
-    {
-      index = 0;
-    }
-  }
-}
+  ESP_LOGI(TAG, "Connect timer and operator");
+  ESP_ERROR_CHECK(mcpwm_operator_connect_timer(oper, timer));
 
-void app_main()
-{
+  ESP_LOGI(TAG, "Create comparator and generator from the operator");
+  mcpwm_cmpr_handle_t comparator = NULL;
+  mcpwm_comparator_config_t comparator_config = {
+      .flags.update_cmp_on_tez = true,
+  };
+  ESP_ERROR_CHECK(mcpwm_new_comparator(oper, &comparator_config, &comparator));
 
-  if (initializa_system() != ESP_OK)
-  {
-    ESP_LOGE(TAG, "System initialization failed. Aborting...");
+  mcpwm_gen_handle_t generator = NULL;
+  mcpwm_generator_config_t generator_config = {
+      .gen_gpio_num = SERVO_PULSE_GPIO,
+  };
+  ESP_ERROR_CHECK(mcpwm_new_generator(oper, &generator_config, &generator));
+
+  // set the initial compare value, so that the servo will spin to the center position
+  ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(0)));
+
+  ESP_LOGI(TAG, "Set generator action on timer and compare event");
+  // go high on counter empty
+  ESP_ERROR_CHECK(mcpwm_generator_set_action_on_timer_event(generator,
+                                                            MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)));
+  // go low on compare threshold
+  ESP_ERROR_CHECK(mcpwm_generator_set_action_on_compare_event(generator,
+                                                              MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, comparator, MCPWM_GEN_ACTION_LOW)));
+
+  ESP_LOGI(TAG, "Enable and start timer");
+  ESP_ERROR_CHECK(mcpwm_timer_enable(timer));
+  ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
+  */
+  if(servo_initialize() != ESP_OK){
+    ESP_LOGE(TAG,"ERROR Initialaizing servo");
     abort();
   }
 
-  vTaskDelay(pdMS_TO_TICKS(500));
-  task();
+  vTaskDelay(pdMS_TO_TICKS(3500));
+  int angle = -90; // Comienza en el ángulo mínimo
+  int step = 5;
+ /*
+  while (1)
+  {
+    ESP_LOGI(TAG, "Angle of rotation: %d", angle);
+    
+    //ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(angle)));
+    servo_write_angle(angle);
+    vTaskDelay(pdMS_TO_TICKS(2500));
+    // Si el ángulo es 0, aplica un delay adicional de 1.5 segundos
+    if (angle == 0)
+    {
+      vTaskDelay(pdMS_TO_TICKS(1500));
+    }
+    else
+    {
+      // Delay normal de 500 ms
+      vTaskDelay(pdMS_TO_TICKS(150));
+    }
+
+    // Cambia de dirección si llega a los límites de -90 o 90 grados
+    if ((angle + step) > 90 || (angle + step) < -90)
+    {
+      step *= -1;
+    }
+
+    // Actualiza el ángulo
+    angle += step;
+    
+  }
+  */
 }
