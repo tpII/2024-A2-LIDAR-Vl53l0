@@ -3,13 +3,11 @@
 
 #include "esp_err.h"
 
-// Inicializa el servo motor en un GPIO específico (predefinido)
+// Prototipos de funciones
 esp_err_t servo_initialize(void);
+esp_err_t servo_start(void);
+esp_err_t servo_stop(void);
+esp_err_t servo_set_speed(uint32_t duty);
 
-// Establece el ángulo del servomotor
-esp_err_t servo_write_angle(int angle);
-
-// Lee el ángulo actual del servomotor
-esp_err_t servo_read_angle(float *angle);
 
 #endif
