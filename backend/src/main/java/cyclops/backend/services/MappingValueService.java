@@ -3,23 +3,23 @@ package cyclops.backend.services;
 
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import cyclops.backend.interfacesDAO.SensorValueDAO;
-import cyclops.backend.models.SensorValue;
+import cyclops.backend.interfacesDAO.MappingValueDAO;
+import cyclops.backend.models.MappingValue;
 
 @Service
-public class SensorValueService {
+public class MappingValueService {
     
-    private final SensorValueDAO sensorValueDAO;
+    private final MappingValueDAO sensorValueDAO;
 
-    public SensorValueService(SensorValueDAO sensorValueDAO) {
+    public MappingValueService(MappingValueDAO sensorValueDAO) {
         this.sensorValueDAO = sensorValueDAO;
     }
 
-    public void saveSensorValue(SensorValue sensorValue) {
+    public void saveSensorValue(MappingValue sensorValue) {
         sensorValueDAO.save(sensorValue);
     }
 
-    public Optional<SensorValue> getSensorValue(String id) {
+    public Optional<MappingValue> getSensorValue(String id) {
         return sensorValueDAO.findById(id);
     }
 

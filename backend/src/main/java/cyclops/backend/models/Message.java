@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
 
 //@Document(collection = "messages")
-@TimeSeries(collection = "messages", timeField = "date")
+@TimeSeries(collection = "Messages", timeField = "date")
 public class Message {
 
     @Id
