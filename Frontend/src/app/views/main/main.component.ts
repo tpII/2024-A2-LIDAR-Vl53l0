@@ -24,4 +24,11 @@ export class MainComponent {
     this.isSideNavExpanded = !this.isSideNavExpanded;
     console.log('Sidebar expanded:', this.isSideNavExpanded);
   }
+
+  getFooterFigureStyle() {
+    return {
+      width: `${this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav}%`,
+      height: '100px', // Ajusta la altura según el diseño deseado
+    };
+  }
 }

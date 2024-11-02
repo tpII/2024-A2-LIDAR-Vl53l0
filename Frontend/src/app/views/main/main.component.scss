@@ -1,26 +1,46 @@
 //SIDENAV scss
 .sidenav {
-    background-color: #f4f4f4; /* Color de fondo de la sidebar */
-    height: 100vh; /* Alto completo */
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .toggle-button {
-    cursor: pointer;
-    padding: 10px;
-    background-color: #3f51b5; /* Color del botón de toggle */
-    color: white;
-    text-align: center;
-  }
-  
-  .sidebar-content {
-    margin-top: 20px;
-    padding: 10px;
-  }
-  
-  .main-content {
-    padding: 10px;
-    background-color: #fff; /* Color de fondo del contenido principal */
-  }
-  
+  background-color: white; /* Color de fondo de la sidebar */
+  height: 100vh; /* Alto completo */
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-shadow{
+  height: 100% !important;
+  box-shadow: 4px 0 2px rgba(0, 0, 0, 0.4) !important;
+
+}
+.toggle-button {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #3f51b5; /* Color del botón de toggle */
+  color: white;
+  text-align: center;
+}
+
+.sidebar-content {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.main-content {
+  padding: 10px;
+  background-color: #fff; /* Color de fondo del contenido principal */
+}
+.mat-sidenav-container {
+  overflow: visible; // Permitir que la sombra del sidenav sea visible
+}
+
+.footer-figure {
+  position: absolute;
+  bottom: 0;
+  width: 100%; // Esto asegura que ocupe todo el ancho disponible de la sidenav
+  height: 101px; // Altura fija; puedes ajustar esto según tus necesidades
+  background-color: #213A7D; // Color azul
+
+  // Aplicar un radio de borde para esquinas redondeadas si se requiere
+  border-top-right-radius: 20px;
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.6), 
+  0px 1px 10px rgba(0, 0, 0, 0.2); /* Sombras para dar más profundidad */
+}

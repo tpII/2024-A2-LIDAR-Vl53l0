@@ -1,22 +1,21 @@
-<as-split direction="horizontal"  unit="percent" (click)="toggleSidebar()" >
-  <!-- Sidebar -->
+<as-split direction="horizontal" unit="percent" [gutterSize]="0" >
+  <!-- Sidebar Area -->
   <as-split-area
     [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
-    [minSize]="minSizeSidenav"
-    [maxSize]="maxSizeSidenav"
     [lockSize]="true"
-    > <!--  Desactiva el arrastre -->
-    <mat-sidenav-container class="example-container">
-      <mat-sidenav mode="side" [(opened)]="isSideNavExpanded" class="sidenav">
-        <div (click)="toggleSidebar()" class="toggle-button">
-          <mat-icon>menu</mat-icon>
-        </div>
-        <div class="sidebar-content">
-          <p *ngIf="isSideNavExpanded">Expanded Content</p>
-          <p *ngIf="!isSideNavExpanded">Collapsed Content</p>
-        </div>
-      </mat-sidenav>
-    </mat-sidenav-container>
+    class="custom-shadow"
+  >
+    <div class="sidenav" (click)="toggleSidebar()">
+      <div class="toggle-button">
+        <mat-icon>menu</mat-icon>
+      </div>
+      <div class="sidebar-content">
+        <p *ngIf="isSideNavExpanded">Expanded Content</p>
+        <p *ngIf="!isSideNavExpanded">Collapsed Content</p>
+      </div>
+      <!-- Figura azul en la parte inferior del sidebar -->
+      <div class="footer-figure" [ngStyle]="getFooterFigureStyle()"></div>
+    </div>
   </as-split-area>
 
   <!-- Contenido principal -->
