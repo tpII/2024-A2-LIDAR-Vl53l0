@@ -3,8 +3,8 @@ package cyclops.backend.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import cyclops.backend.models.SensorValue;
-import cyclops.backend.services.SensorValueService;
+import cyclops.backend.models.MappingValue;
+import cyclops.backend.services.MappingValueService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,21 +16,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/sensor")
-public class SensorValueController {
+public class MappingValueController {
     
-    private final SensorValueService sensorValueService;
+    private final MappingValueService sensorValueService;
 
-    public SensorValueController(SensorValueService sensorValueService) {
+    public MappingValueController(MappingValueService sensorValueService) {
         this.sensorValueService = sensorValueService;
     }
 
     @PostMapping
-    public void saveMessage(@RequestBody SensorValue sensorValue) {
+    public void saveMessage(@RequestBody MappingValue sensorValue) {
         sensorValueService.saveSensorValue(sensorValue);
     }
     
     @GetMapping("/{id}")
-    public SensorValue getMessage(@PathVariable String id) {
+    public MappingValue getMessage(@PathVariable String id) {
         return sensorValueService.getSensorValue(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
     }
