@@ -1,2 +1,30 @@
-<app-sidebar></app-sidebar>
-<p>main works!</p>
+<as-split direction="horizontal"  unit="percent" (click)="toggleSidebar()" >
+  <!-- Sidebar -->
+  <as-split-area
+    [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
+    [minSize]="minSizeSidenav"
+    [maxSize]="maxSizeSidenav"
+    [lockSize]="true"
+    > <!--  Desactiva el arrastre -->
+    <mat-sidenav-container class="example-container">
+      <mat-sidenav mode="side" [(opened)]="isSideNavExpanded" class="sidenav">
+        <div (click)="toggleSidebar()" class="toggle-button">
+          <mat-icon>menu</mat-icon>
+        </div>
+        <div class="sidebar-content">
+          <p *ngIf="isSideNavExpanded">Expanded Content</p>
+          <p *ngIf="!isSideNavExpanded">Collapsed Content</p>
+        </div>
+      </mat-sidenav>
+    </mat-sidenav-container>
+  </as-split-area>
+
+  <!-- Contenido principal -->
+  <as-split-area
+    [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav"
+  >
+    <div class="main-content">
+      <p>Main Content</p>
+    </div>
+  </as-split-area>
+</as-split>

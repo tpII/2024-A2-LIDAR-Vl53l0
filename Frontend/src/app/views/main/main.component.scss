@@ -1,0 +1,26 @@
+//SIDENAV scss
+.sidenav {
+    background-color: #f4f4f4; /* Color de fondo de la sidebar */
+    height: 100vh; /* Alto completo */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .toggle-button {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #3f51b5; /* Color del botón de toggle */
+    color: white;
+    text-align: center;
+  }
+  
+  .sidebar-content {
+    margin-top: 20px;
+    padding: 10px;
+  }
+  
+  .main-content {
+    padding: 10px;
+    background-color: #fff; /* Color de fondo del contenido principal */
+  }
+  
