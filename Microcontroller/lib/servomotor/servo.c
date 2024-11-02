@@ -110,7 +110,7 @@ esp_err_t servo_start(void)
 
 esp_err_t servo_stop(void)
 {
-    return servo_set_speed(SERVO_STOP_PULSEWIDTH_US); // Detiene el servo con el duty en 1500us
+    return servo_set_speed(SERVO_STOP); // Detiene el servo con el duty en 1500us
 }
 
 // Función para ajustar la velocidad del servomotor
