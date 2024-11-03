@@ -49,3 +49,6 @@ Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron 
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
 
+3 de Noviembre
+Se organizo el frontend, y se crearon los componentes base vacios.
+Se implemento la base del sidenav y la estructura basica de la pagina.
