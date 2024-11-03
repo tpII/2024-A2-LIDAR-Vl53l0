@@ -49,6 +49,23 @@ Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron 
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
 
+11 de Octubre
+Se realizaron correciones al diseño 3D del pa parte princiapl, y se continuo con las partes superiores
+Se testeo la libreria HTTP del MCU al BACKEND y funcionan.
+
+14 de Octubre
+Se opto por implementar MQTT en ves de HTTP entre el MCU y el backend
+Se implmento MQTT en el BACKEND
+
+23 de Octubre
+Se implemento una libreria para el tratamiento de datos JSON
+Se implemento una libreria MQTT Server para configurar y gestionar la conexion MQTT
+Se implemento una libreria instruction buffer para intermediar en el recibimiento de informacion, de modo de no perder informacion mientras se ejecute otras tareas.
+Se implemento una libreria MQTT Handler para abstraer la funciones de envio y recepcion de informacion
+Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
+Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
+Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+
 3 de Noviembre
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
