@@ -65,3 +65,7 @@ Se implemento una libreria MQTT Handler para abstraer la funciones de envio y re
 Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
 Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
 Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+
+3 de Noviembre
+Se organizo el frontend, y se crearon los componentes base vacios.
+Se implemento la base del sidenav y la estructura basica de la pagina.
