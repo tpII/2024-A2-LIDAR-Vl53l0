@@ -6,8 +6,17 @@
     class="custom-shadow"
   >
     <div class="sidenav" (click)="toggleSidebar()">
-      <div class="toggle-button">
-        <mat-icon>menu</mat-icon>
+       <!-- Contenedor del logo -->
+       <div class="logo-container">
+        <img
+          *ngIf="isSideNavExpanded; else collapsedLogo"
+          src="/logo.svg" 
+          alt="Logo Expandido"
+        />
+        
+        <ng-template #collapsedLogo>
+          <img src="/small_logo.svg" alt="Logo Colapsado" />
+        </ng-template>
       </div>
       <div class="sidebar-content">
         <p *ngIf="isSideNavExpanded">Expanded Content</p>

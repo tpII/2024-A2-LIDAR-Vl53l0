@@ -6,11 +6,13 @@
   flex-direction: column;
 }
 
-.custom-shadow{
-  height: 100% !important;
-  box-shadow: 4px 0 2px rgba(0, 0, 0, 0.4) !important;
-
+.custom-shadow {
+  height: 100vh !important; /* Asegúrate de que la altura sea completa */
+  box-shadow: 4px 0 4px rgba(0, 0, 0, 0.6); /* Sombra a la derecha */
+  //position: relative; /* Asegúrate de que esté en el flujo del documento */
+  z-index: 1; /* Asegúrate de que tenga un índice z mayor que el contenido */
 }
+
 .toggle-button {
   cursor: pointer;
   padding: 10px;
@@ -30,6 +32,7 @@
 }
 .mat-sidenav-container {
   overflow: visible; // Permitir que la sombra del sidenav sea visible
+  //position: relative;
 }
 
 .footer-figure {
@@ -43,4 +46,17 @@
   border-top-right-radius: 20px;
   box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.6), 
   0px 1px 10px rgba(0, 0, 0, 0.2); /* Sombras para dar más profundidad */
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+  margin: 28px 0; /* Margen superior e inferior para separación */
+  max-height: 139px;
+}
+
+.logo-container img {
+  //max-width: 80%; /* Ajusta el tamaño del logo según lo necesario */
+  height: 86px;
 }
