@@ -79,7 +79,7 @@ bool i2c_read_addr16_data16(uint16_t addr, uint16_t *data) {
     return ret == ESP_OK;
 }
 
-bool i2c_read_addr8_data32(uint8_t addr, uint32_t *data) {
+bool i2c_read_addr8_data32(uint16_t addr, uint32_t *data) {
     esp_err_t ret = i2c_master_write_slave(I2C_MASTER_NUM, &addr, 1);
     if (ret != ESP_OK) return false;
     uint8_t buf[4];

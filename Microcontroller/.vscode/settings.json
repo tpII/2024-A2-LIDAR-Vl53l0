@@ -4,6 +4,7 @@
         "stdbool.h": "c",
         "i2c.h": "c",
         "esp_err.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "cstdint": "c"
     }
 }

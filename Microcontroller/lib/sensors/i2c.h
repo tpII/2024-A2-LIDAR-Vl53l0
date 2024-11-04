@@ -4,6 +4,7 @@
 #include "esp_err.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define I2C_MASTER_SCL_IO 22               /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO 21               /*!< gpio number for I2C master data  */

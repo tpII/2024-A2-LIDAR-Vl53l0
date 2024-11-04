@@ -39,6 +39,8 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "i2c.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 typedef enum
 {
