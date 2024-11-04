@@ -68,5 +68,9 @@ Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
 21 de Octubre
 Se creó la librería de control del sensor VL53L0X
 
+3 de Noviembre
+Se organizo el frontend, y se crearon los componentes base vacios.
+Se implemento la base del sidenav y la estructura basica de la pagina.
+
 24 de Octubre
 Se actualizó la librería de control del sensor LiDAR
