@@ -13,37 +13,31 @@
 
 static const char *TAG = "MAIN";
 
-    #define VL53L0X
 
-int app_main(void)
-{
-	
-  ESP_LOGI(TAG, "%s", esp_err_to_name( i2c_master_init() ));
+#define VL53L0X
+//#define VL61L0X
 
-  ESP_LOGI(TAG, "Iniciando MAIN");
 
-#if defined VL53L0X
-    bool success = vl53l0x_init();
-    uint16_t ranges[3] = { 0 };
-    ESP_LOGI(TAG, "Iniciando medición");
-    if (success) {
+int app_main(void){   
+  ESP_LOGI(TAG, "Iniciando GPIO...");
+  gpio_init();
+
+  ESP_LOGI(TAG, "Iniciando I2C...");
+	i2c_master_init();
+  #if defined VL53L0X
+      ESP_LOGI(TAG, "Iniciando Lectura inicial...");
+      bool success = vl53l0x_init();
+      uint16_t ranges[3] = { 0 };
       while (success) {
-          ESP_LOGI(TAG, "Capturando valor...");
           success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &ranges[0]);
-          #ifdef VL53L0X_SECOND
-                  success &= vl53l0x_read_range_single(VL53L0X_IDX_SECOND, &ranges[1]);
-          #endif
-
-          #ifdef VL53L0X_THIRD
-                  success &= vl53l0x_read_range_single(VL53L0X_IDX_THIRD, &ranges[2]);
-          #endif
-
           ESP_LOGI(TAG, "Distancia: %d", ranges[0]);
+  #ifdef VL53L0X_SECOND
+          success &= vl53l0x_read_range_single(VL53L0X_IDX_SECOND, &ranges[1]);
+  #endif
+  #ifdef VL53L0X_THIRD
+          success &= vl53l0x_read_range_single(VL53L0X_IDX_THIRD, &ranges[2]);
+  #endif
       }
-    }
-    else {
-      ESP_LOGW(TAG, "ERROR: Fallo al inicializar el sensor");
-    }
-#endif
+  #endif
 	return 0;
 }

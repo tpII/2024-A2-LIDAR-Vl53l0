@@ -2,6 +2,8 @@
 #define _I2C_H_
 
 #include "esp_err.h"
+#include "esp_log.h"
+#include "driver/i2c.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>

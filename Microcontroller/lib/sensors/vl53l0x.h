@@ -1,69 +1,27 @@
-#ifndef _VL53L0X_H_
-#define _VL53L0X_H_
+#ifndef VL53L0X_H
+#define VL53L0X_H
 
-// #include "esp_err.h"
-
-// #define VL53L0X_ADDR 0x52
-// #define VL53L0X_XSHUT 0
-// #define VL53L0X_INT
-
-
-// esp_err_t vl53l0x_init(void);
-
-// esp_err_t vl53l0x_read(uint16_t *);
-
-// esp_err_t vl53l0x_write(uint16_t);
-
-// #endif
-
-// Definición de la dirección I2C del VL53L0X
-// #define VL53L0X_I2C_ADDRESS 0x29    //Dirección por default
-// #define VL53L0X_I2C_HIGH_BYTE 0x1E
-// #define VL53L0X_I2C_LOW_BYTE 0x1F
-
-
-// Funciones públicas de la librería
-// esp_err_t VL53L0X_start_ranging(void);
-// uint16_t VL53L0X_read_range(void);
-// esp_err_t VL53L0X_stop_ranging(void);
-
-
-
-
-/*
-    EXTRAÍDO DE https://github.com/artfulbytes/vl6180x_vl53l0x_msp430/tree/main
-*/
-
-#include <stdint.h>
-#include <stdbool.h>
-#include "esp_err.h"
-#include "esp_log.h"
 #include "i2c.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "gpio.h"
+#include <stdbool.h>
+#include <stdint.h>
 
-typedef enum
-{
-    GPIO_XSHUT_FIRST,
-    GPIO_XSHUT_SECOND,
-    GPIO_XSHUT_THIRD,
-} gpio_t;
+#define VL53L0X_OUT_OF_RANGE (8190)
+
+/* Comment these out if not connected */
+// #define VL53L0X_SECOND
+// #define VL53L0X_THIRD
 
 typedef enum
 {
     VL53L0X_IDX_FIRST,
-
-    #ifdef VL53L0X_SECOND
-        VL53L0X_IDX_SECOND,
-    #endif
-
-    #ifdef VL53L0X_THIRD
-        VL53L0X_IDX_THIRD,
-    #endif
-
+#ifdef VL53L0X_SECOND
+    VL53L0X_IDX_SECOND,
+#endif
+#ifdef VL53L0X_THIRD
+    VL53L0X_IDX_THIRD,
+#endif
 } vl53l0x_idx_t;
-
-#define VL53L0X_OUT_OF_RANGE (8190)
 
 /**
  * Initializes the sensors in the vl53l0x_idx_t enum.
@@ -81,4 +39,4 @@ bool vl53l0x_init(void);
  */
 bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range);
 
-#endif
+#endif /* VL53L0X_H */

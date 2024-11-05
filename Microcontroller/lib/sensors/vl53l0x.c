@@ -1,59 +1,5 @@
 #include "vl53l0x.h"
 
-static const char* TAG = "VL53L0X";
-
-// // Iniciar el sensor VL53L0X para que comience a medir
-// esp_err_t VL53L0X_start_ranging(void) {
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x80, 0x01);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x80, 0x01);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0xFF, 0x01);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x00, 0x00);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x91, 0x3c);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x00, 0x01);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0xFF, 0x00);
-//     i2c_master_write_slave(VL53L0X_I2C_ADDRESS, 0x80, 0x00);
-    
-//     ESP_LOGI(TAG, "VL53L0X started ranging");
-//     return ESP_OK;
-// }
-
-// // Leer la distancia desde el sensor VL53L0X
-// uint16_t VL53L0X_ADDR_read_range(void) {
-//     uint8_t range_data[2];
-//     i2c_master_read_slave(VL53L0X_I2C_HIGH_BYTE, range_data, 2);  // Leer 2 bytes desde el registro VL53L0X_I2C_HIGH_BYTE
-
-//     uint16_t range = (range_data[0] << 8) | range_data[1];  // Combinar los bytes
-//     ESP_LOGI(TAG, "Range: %d mm", range);
-//     return range;
-// }
-
-// // Detener la medición del sensor VL53L0X
-// esp_err_t VL53L0X_stop_ranging(void) {
-//     ESP_LOGI(TAG, "VL53L0X stopped ranging");
-//     return ESP_OK;
-// }
-
-// // EJEMPLO DE main.c
-// // Aplicación principal
-// // #include "vl53l0x.h"
-
-// // void app_main(void) {
-// //     esp_err_t ret = i2c_master_init();
-// //     if (ret == ESP_OK) {
-// //         VL53L0X_start_ranging();
-// //         vTaskDelay(pdMS_TO_TICKS(100));  // Esperar un poco para que el sensor realice la medición
-// //         uint16_t distance = VL53L0X_read_range();
-// //         ESP_LOGI("APP", "Distance: %d mm", distance);
-// //         VL53L0X_stop_ranging();
-// //     } else {
-// //         ESP_LOGE("APP", "Failed to initialize VL53L0X");
-// //     }
-// // }
-
-
-//--------------------------------------- Segunda versión de la librería ---------------------------------------
-
-
 #define REG_IDENTIFICATION_MODEL_ID (0xC0)
 #define REG_VHV_CONFIG_PAD_SCL_SDA_EXTSUP_HV (0x89)
 #define REG_MSRC_CONFIG_CONTROL (0x60)
@@ -100,6 +46,8 @@ static const char* TAG = "VL53L0X";
  * offset to the aperture quadrant is (256 - 64 - 180) = 12 */
 #define SPAD_APERTURE_START_INDEX (12)
 
+static const char *TAG = "VL53L0X";
+
 typedef struct vl53l0x_info
 {
     uint8_t addr;
@@ -115,14 +63,12 @@ typedef enum
 static const vl53l0x_info_t vl53l0x_infos[] =
 {
     [VL53L0X_IDX_FIRST] = { .addr = 0x30, .xshut_gpio = GPIO_XSHUT_FIRST },
-
-    #ifdef VL53L0X_SECOND
-        [VL53L0X_IDX_SECOND] = { .addr = 0x31, .xshut_gpio = GPIO_XSHUT_SECOND },
-    #endif
-
-    #ifdef VL53L0X_THIRD
-        [VL53L0X_IDX_THIRD] = { .addr = 0x32, .xshut_gpio = GPIO_XSHUT_THIRD },
-    #endif
+#ifdef VL53L0X_SECOND
+    [VL53L0X_IDX_SECOND] = { .addr = 0x31, .xshut_gpio = GPIO_XSHUT_SECOND },
+#endif
+#ifdef VL53L0X_THIRD
+    [VL53L0X_IDX_THIRD] = { .addr = 0x32, .xshut_gpio = GPIO_XSHUT_THIRD },
+#endif
 };
 
 static uint8_t stop_variable = 0;
@@ -585,7 +531,7 @@ static bool configure_address(uint8_t addr)
  */
 static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
 {
-    // gpio_set_output(vl53l0x_infos[idx].xshut_gpio, !enable);
+    gpio_set_output(vl53l0x_infos[idx].xshut_gpio, !enable);
 }
 
 /**
@@ -595,13 +541,13 @@ static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
  *
  * NOTE: The pins are hard-coded to P1.0, P1.1, and P1.2.
  **/
-// static void configure_gpio()
-// {
-//     gpio_init();
-//     gpio_set_output(GPIO_XSHUT_FIRST, false);
-//     gpio_set_output(GPIO_XSHUT_SECOND, false);
-//     gpio_set_output(GPIO_XSHUT_THIRD, false);
-// }
+static void configure_gpio()
+{
+    gpio_init();
+    gpio_set_output(GPIO_XSHUT_FIRST, false);
+    gpio_set_output(GPIO_XSHUT_SECOND, false);
+    gpio_set_output(GPIO_XSHUT_THIRD, false);
+}
 
 /* Sets the address of a single VL53L0X sensor.
  * This functions assumes that all non-configured VL53L0X are still
@@ -609,7 +555,7 @@ static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
 static bool init_address(vl53l0x_idx_t idx)
 {
     set_hardware_standby(idx, false);
-    // i2c_set_slave_address(VL53L0X_DEFAULT_ADDRESS);
+    //i2c_set_slave_address(VL53L0X_DEFAULT_ADDRESS);
 
     /* The datasheet doesn't say how long we must wait to leave hw standby,
      * but using the same delay as vl6180x seems to work fine. */
@@ -617,12 +563,10 @@ static bool init_address(vl53l0x_idx_t idx)
     vTaskDelay(pdMS_TO_TICKS(400));
 
     if (!device_is_booted()) {
-        ESP_LOGW(TAG, "1.1.1");
         return false;
     }
 
     if (!configure_address(vl53l0x_infos[idx].addr)) {
-        ESP_LOGW(TAG, "1.1.2");
         return false;
     }
     return true;
@@ -635,11 +579,10 @@ static bool init_address(vl53l0x_idx_t idx)
 static bool init_addresses()
 {
     /* Puts all sensors in hardware standby */
-    // configure_gpio();
+    configure_gpio();
 
     /* Wake each sensor up one by one and set a unique address for each one */
     if (!init_address(VL53L0X_IDX_FIRST)) {
-        ESP_LOGW(TAG, "1.1");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -658,7 +601,7 @@ static bool init_addresses()
 
 static bool init_config(vl53l0x_idx_t idx)
 {
-    // i2c_set_slave_address(vl53l0x_infos[idx].addr);
+    //i2c_set_slave_address(vl53l0x_infos[idx].addr);
     if (!data_init()) {
         return false;
     }
@@ -674,11 +617,9 @@ static bool init_config(vl53l0x_idx_t idx)
 bool vl53l0x_init()
 {
     if (!init_addresses()) {
-         ESP_LOGW(TAG, "1");
         return false;
     }
     if (!init_config(VL53L0X_IDX_FIRST)) {
-        ESP_LOGW(TAG, "2");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -696,7 +637,7 @@ bool vl53l0x_init()
 
 bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
 {
-    // i2c_set_slave_address(vl53l0x_infos[idx].addr);
+    //i2c_set_slave_address(vl53l0x_infos[idx].addr);
     bool success = i2c_write_addr8_data8(0x80, 0x01);
     success &= i2c_write_addr8_data8(0xFF, 0x01);
     success &= i2c_write_addr8_data8(0x00, 0x00);
@@ -743,31 +684,3 @@ bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
 
     return true;
 }
-
-
-
-// Ejemplo de main.c
-/*
-    #define VL53L0X
-
-int main(void)
-{
-	i2c_init();
-
-#if defined VL53L0X
-    bool success = vl53l0x_init();
-    uint16_t ranges[3] = { 0 };
-    while (success) {
-        success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &ranges[0]);
-#ifdef VL53L0X_SECOND
-        success &= vl53l0x_read_range_single(VL53L0X_IDX_SECOND, &ranges[1]);
-#endif
-#ifdef VL53L0X_THIRD
-        success &= vl53l0x_read_range_single(VL53L0X_IDX_THIRD, &ranges[2]);
-#endif
-    }
-#endif
-	return 0;
-}
-
-*/
