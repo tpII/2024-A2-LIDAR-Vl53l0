@@ -19,6 +19,7 @@ export class MainComponent {
   minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
   maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
 
+  
   // Alternar el estado de la sidebar entre colapsada y expandida
   toggleSidebar(): void {
     this.isSideNavExpanded = !this.isSideNavExpanded;
@@ -27,7 +28,9 @@ export class MainComponent {
 
   getFooterFigureStyle() {
     return {
-      width: `${this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav}%`,
+      width: `${
+        this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
+      }%`,
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
