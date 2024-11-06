@@ -19,25 +19,42 @@ static const char *TAG = "MAIN";
 
 
 int app_main(void){   
-  ESP_LOGI(TAG, "Iniciando GPIO...");
-  gpio_init();
+        esp_err_t err;
 
-  ESP_LOGI(TAG, "Iniciando I2C...");
-	i2c_master_init();
-  #if defined VL53L0X
-      ESP_LOGI(TAG, "Iniciando Lectura inicial...");
-      bool success = vl53l0x_init();
-      uint16_t ranges[3] = { 0 };
-      while (success) {
-          success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &ranges[0]);
-          ESP_LOGI(TAG, "Distancia: %d", ranges[0]);
-  #ifdef VL53L0X_SECOND
-          success &= vl53l0x_read_range_single(VL53L0X_IDX_SECOND, &ranges[1]);
-  #endif
-  #ifdef VL53L0X_THIRD
-          success &= vl53l0x_read_range_single(VL53L0X_IDX_THIRD, &ranges[2]);
-  #endif
-      }
-  #endif
-	return 0;
+        ESP_LOGI(TAG, "Iniciando GPIO...");
+        err = gpio_init();
+        if(err != ESP_OK){
+                ESP_LOGE(TAG, "Error en el gpio_init: %s", esp_err_to_name(err));
+                return 1;
+        }
+
+        ESP_LOGI(TAG, "Iniciando I2C...");
+        err = i2c_master_init();
+        if(err != ESP_OK){
+                ESP_LOGE(TAG, "Error en el i2c_master_init: %s", esp_err_to_name(err));
+                return 2;
+        }
+
+        #if defined VL53L0X
+                ESP_LOGI(TAG, "Iniciando Lectura inicial...");
+                bool success = vl53l0x_init();
+                uint16_t ranges[3] = { 0 };
+                while (success) {
+                        success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &ranges[0]);
+                        if (ranges[0] == VL53L0X_OUT_OF_RANGE){
+                                ESP_LOGI(TAG, "Distancia: Out Of Range");
+                        }
+                        else{
+                                ESP_LOGI(TAG, "Distancia: %d", ranges[0]);
+                        }
+                        vTaskDelay(pdMS_TO_TICKS(100));
+                #ifdef VL53L0X_SECOND
+                        success &= vl53l0x_read_range_single(VL53L0X_IDX_SECOND, &ranges[1]);
+                #endif
+                #ifdef VL53L0X_THIRD
+                        success &= vl53l0x_read_range_single(VL53L0X_IDX_THIRD, &ranges[2]);
+                #endif
+                }
+        #endif
+        return 0;
 }

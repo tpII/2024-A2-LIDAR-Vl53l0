@@ -1,8 +1,8 @@
 #include "gpio.h"
 
 #define GPIO_XSHUT_FIRST GPIO_NUM_23 // Cambia esto al número de pin que desees
-#define GPIO_XSHUT_SECOND GPIO_NUM_NC // Cambia esto al número de pin que desees
-#define GPIO_XSHUT_THIRD GPIO_NUM_NC // Cambia esto al número de pin que desees
+// #define GPIO_XSHUT_SECOND GPIO_NUM_NC // Cambia esto al número de pin que desees
+// #define GPIO_XSHUT_THIRD GPIO_NUM_NC // Cambia esto al número de pin que desees
 
 static const char *TAG = "GPIO";
 
@@ -47,7 +47,7 @@ esp_err_t gpio_init(void)
 
 esp_err_t gpio_set_output(gpio_num_t gpio, bool enable)
 {
-    esp_err_t res = false;
+    esp_err_t res = ESP_FAIL;
     if (enable) {
         res = gpio_set_level(gpio, 1); // Establecer el nivel alto
     } else {

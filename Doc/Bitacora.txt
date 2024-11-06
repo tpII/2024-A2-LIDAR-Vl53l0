@@ -40,7 +40,7 @@ Creacion de entidad Instruction junto con su Interface, Service y Controller.
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
 
-2 de Octubre
+02 de Octubre
 Agrego servidor http para empezar a testear
 
 04 de Octubre
@@ -68,9 +68,13 @@ Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
 21 de Octubre
 Se creó la librería de control del sensor VL53L0X
 
+24 de Octubre
+Se actualizó la librería de control del sensor LiDAR
+
 3 de Noviembre
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
 
-24 de Octubre
-Se actualizó la librería de control del sensor LiDAR
+06 de Noviembre
+Se actualizó la librería de control del sensor VL53L0X.
+La misma ahora es funcional y provee la distancia a objetos.

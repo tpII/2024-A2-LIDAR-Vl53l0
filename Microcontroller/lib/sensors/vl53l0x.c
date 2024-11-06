@@ -62,7 +62,7 @@ typedef enum
 
 static const vl53l0x_info_t vl53l0x_infos[] =
 {
-    [VL53L0X_IDX_FIRST] = { .addr = 0x30, .xshut_gpio = GPIO_XSHUT_FIRST },
+    [VL53L0X_IDX_FIRST] = { .addr = 0x29, .xshut_gpio = GPIO_XSHUT_FIRST },
 #ifdef VL53L0X_SECOND
     [VL53L0X_IDX_SECOND] = { .addr = 0x31, .xshut_gpio = GPIO_XSHUT_SECOND },
 #endif
@@ -81,8 +81,10 @@ static bool device_is_booted()
 {
     uint8_t device_id = 0;
     if (!i2c_read_addr8_data8(REG_IDENTIFICATION_MODEL_ID, &device_id)) {
+        ESP_LOGE(TAG, "Error reading the MODEL ID");
         return false;
     }
+    ESP_LOGI(TAG, "REG_IDENTIFICATION_MODEL_ID read: %x", device_id);
     return device_id == VL53L0X_EXPECTED_DEVICE_ID;
 }
 
@@ -531,7 +533,10 @@ static bool configure_address(uint8_t addr)
  */
 static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
 {
-    gpio_set_output(vl53l0x_infos[idx].xshut_gpio, !enable);
+    esp_err_t err = gpio_set_output(vl53l0x_infos[idx].xshut_gpio, !enable);
+    if (err != ESP_OK){
+        ESP_LOGE(TAG, "Error en el set_hardware_standby: %s", esp_err_to_name(err));
+    }
 }
 
 /**
@@ -543,10 +548,25 @@ static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
  **/
 static void configure_gpio()
 {
-    gpio_init();
-    gpio_set_output(GPIO_XSHUT_FIRST, false);
-    gpio_set_output(GPIO_XSHUT_SECOND, false);
-    gpio_set_output(GPIO_XSHUT_THIRD, false);
+    esp_err_t err = gpio_init();
+    if (err != ESP_OK){
+        ESP_LOGI(TAG, "Fallo en gpio_init(): %s", esp_err_to_name(err));
+    }
+
+    err = gpio_set_output(GPIO_XSHUT_FIRST, false);
+    if (err != ESP_OK){
+        ESP_LOGI(TAG, "Fallo en gpio_set_output(): %s", esp_err_to_name(err));
+    }
+
+    // err = gpio_set_output(GPIO_XSHUT_SECOND, false);
+    // if (err != ESP_OK){
+    //     ESP_LOGI(TAG, "Fallo en configure_gpio(): %s", esp_err_to_name(err));
+    // }
+
+    // err = gpio_set_output(GPIO_XSHUT_THIRD, false);
+    // if (err != ESP_OK){
+    //     ESP_LOGI(TAG, "Fallo en configure_gpio(): %s", esp_err_to_name(err));
+    // }
 }
 
 /* Sets the address of a single VL53L0X sensor.
@@ -554,19 +574,21 @@ static void configure_gpio()
  * in hardware standby. */
 static bool init_address(vl53l0x_idx_t idx)
 {
-    set_hardware_standby(idx, false);
+    //set_hardware_standby(idx, false);
     //i2c_set_slave_address(VL53L0X_DEFAULT_ADDRESS);
 
     /* The datasheet doesn't say how long we must wait to leave hw standby,
      * but using the same delay as vl6180x seems to work fine. */
     //__delay_cycles(400);
-    vTaskDelay(pdMS_TO_TICKS(400));
+    vTaskDelay(pdMS_TO_TICKS(800));
 
     if (!device_is_booted()) {
+        ESP_LOGE(TAG, "El dispisitivo NO está conectado");
         return false;
     }
 
     if (!configure_address(vl53l0x_infos[idx].addr)) {
+        ESP_LOGE(TAG, "No se ha podido asignar la dirección correctamente: %d", vl53l0x_infos[idx].addr);
         return false;
     }
     return true;
@@ -579,10 +601,11 @@ static bool init_address(vl53l0x_idx_t idx)
 static bool init_addresses()
 {
     /* Puts all sensors in hardware standby */
-    configure_gpio();
+    //configure_gpio();
 
     /* Wake each sensor up one by one and set a unique address for each one */
     if (!init_address(VL53L0X_IDX_FIRST)) {
+        ESP_LOGE(TAG, "Fallo en init_address");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -603,12 +626,15 @@ static bool init_config(vl53l0x_idx_t idx)
 {
     //i2c_set_slave_address(vl53l0x_infos[idx].addr);
     if (!data_init()) {
+        ESP_LOGE(TAG, "Fallo en data_init");
         return false;
     }
     if (!static_init()) {
+        ESP_LOGE(TAG, "Fallo en static_init");
         return false;
     }
     if (!perform_ref_calibration()) {
+        ESP_LOGE(TAG, "Fallo en perform_ref_calibration");
         return false;
     }
     return true;
@@ -617,9 +643,11 @@ static bool init_config(vl53l0x_idx_t idx)
 bool vl53l0x_init()
 {
     if (!init_addresses()) {
+        ESP_LOGE(TAG, "Fallo en init_addresses");
         return false;
     }
     if (!init_config(VL53L0X_IDX_FIRST)) {
+        ESP_LOGE(TAG, "Fallo en init_config");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -676,7 +704,7 @@ bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
     if (!i2c_write_addr8_data8(REG_SYSTEM_INTERRUPT_CLEAR, 0x01)) {
         return false;
     }
-
+    
     /* 8190 or 8191 may be returned when obstacle is out of range. */
     if (*range == 8190 || *range == 8191) {
         *range = VL53L0X_OUT_OF_RANGE;
