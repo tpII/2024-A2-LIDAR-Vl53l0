@@ -41,3 +41,6 @@ Se creó la librería de control de los motores DC
 
 01 de Noviembre
 Se logro testear la 1ra version de la libreria Servomotor.
+
+06 de Noviembre
+Agrego libreria para interrupciones por hardware para utilizar con el servomotor.
