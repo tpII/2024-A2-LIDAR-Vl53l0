@@ -23,13 +23,14 @@ esp_err_t getInstruccionMessage(char *msg)
     return getInstruction(msg);
 }
 
-esp_err_t sendControlMessage(const char *msg, const size_t length)
+// tag, warning (warning, info, error)
+esp_err_t sendControlMessage(const char* ESP_TAG, const char *msg, const char* msg_type, const size_t length)
 {
-    const char *key[1] = {"message"};
-    const char *values[1] = {msg};
+    const char *key[3] = {"tag", "type", "message"};
+    const char *values[3] = {ESP_TAG, msg_type, msg};
     cJSON *json = NULL;
    
-    esp_err_t err = create_json_data(&json, key, values, 1);
+    esp_err_t err = create_json_data(&json, key, values, 3); 
     print_json_data(json);
 
     if (err != ESP_OK)

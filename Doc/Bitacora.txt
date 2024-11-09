@@ -73,3 +73,6 @@ Agrego libreria para comunicacion con Backend
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
 Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y backend_comm para agregar tags en los mensajes al backend.
+
+9 de Noviembre
+Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
