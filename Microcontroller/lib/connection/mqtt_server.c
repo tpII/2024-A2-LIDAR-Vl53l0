@@ -98,17 +98,11 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 
 // Función para publicar un mensaje en un tópico
-esp_err_t mqtt_publish(const char *topic, cJSON *json)
+esp_err_t mqtt_publish(const char *topic, const char *payload)
 {
     if (mqtt_client == NULL)
     {
         ESP_LOGE(TAG, "MQTT client not initialized");
-        return ESP_FAIL;
-    }
-
-    char *payload = cJSON_PrintUnformatted(json);
-    if (payload == NULL) {
-        ESP_LOGE(TAG, "Failed to convert JSON to string");
         return ESP_FAIL;
     }
 
