@@ -5,7 +5,7 @@
 
 esp_err_t getInstruccionMessage(char *msg);
 
-esp_err_t sendControlMessage(const char *msg, const size_t length);
+esp_err_t sendControlMessage(const char* ESP_TAG, const char *msg, const char *msg_type);
 
 esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle);
 

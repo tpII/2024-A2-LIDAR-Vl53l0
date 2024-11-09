@@ -24,7 +24,7 @@ esp_err_t getInstruccionMessage(char *msg)
 }
 
 // tag, warning (warning, info, error)
-esp_err_t sendControlMessage(const char* ESP_TAG, const char *msg, const char* msg_type, const size_t length)
+esp_err_t sendControlMessage(const char* ESP_TAG, const char *msg, const char *msg_type)
 {
     const char *key[3] = {"tag", "type", "message"};
     const char *values[3] = {ESP_TAG, msg_type, msg};
