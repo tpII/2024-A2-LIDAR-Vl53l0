@@ -8,4 +8,6 @@
 
 esp_err_t interrupt_init(void);
 
+void check_limit_switch(void);
+
 #endif 

@@ -18,6 +18,7 @@ esp_err_t servo_initialize(void);
 esp_err_t servo_start(void);
 esp_err_t servo_stop(void);
 esp_err_t servo_set_speed(uint32_t duty);
+void servo_invert(void);
 
 
 #endif

@@ -1,15 +1,25 @@
 #include "servo_interruptions.h"
+#include "esp_log.h"
+#include "servo.h"
+#include "esp_timer.h"  // Para obtener el tiempo actual en microsegundos
 
-static void limit_switch_isr_handler(void* arg);
 
 const char *TAG = "Servo Interruptions";
+static volatile bool limit_switch_triggered = false;  // Variable para el estado de la interrupción
+static int64_t last_trigger_time = 0;  // Tiempo de la última activación en microsegundos
+const int64_t debounce_delay = 500000;  // Retardo de debounce en microsegundos (50 ms)
+
 
 static void limit_switch_isr_handler(void* arg) {
-    // modificar (no se puede usar printf o ESP_LOGE)
-    printf("Limit switch triggered! Servo has reached the target position.\n");
+    int64_t current_time = esp_timer_get_time();
+    // Comprobar si ha pasado el tiempo de debounce
+    if ((current_time - last_trigger_time) > debounce_delay) {
+        limit_switch_triggered = true;
+        last_trigger_time = current_time;  // Actualiza el tiempo de la última activación
+    }
 }
 
-esp_err_t interrupt_init(void) {
+esp_err_t interrupt_init() {
     esp_err_t err = gpio_set_direction(LIMIT_SWITCH_PIN, GPIO_MODE_INPUT);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "GPIO error. Failed to set direction.");
@@ -40,5 +50,15 @@ esp_err_t interrupt_init(void) {
         ESP_LOGE(TAG, "Failed to add ISR handler for the corresponding GPIO pin.");
         return err;
     }
+
+    
     return ESP_OK;
+}
+
+void check_limit_switch() {
+    if (limit_switch_triggered) {
+        ESP_LOGW(TAG, "Limit switch triggered! Servo has reached the target position.");
+        servo_invert();
+        limit_switch_triggered = false;  // Restablece el estado de la interrupción
+    }
 }

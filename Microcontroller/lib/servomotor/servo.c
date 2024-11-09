@@ -1,19 +1,21 @@
 #include "servo.h"
 #include "driver/mcpwm_prelude.h"
 #include "esp_log.h"
+#include "servo_interruptions.h"
 
 // Parámetros específicos para el servomotor de giro continuo
 #define SERVO_MIN_PULSEWIDTH_US 900   // Ancho de pulso mínimo (giro rápido en un sentido)
 #define SERVO_MAX_PULSEWIDTH_US 2100  // Ancho de pulso máximo (giro rápido en el sentido opuesto)
 #define SERVO_STOP_PULSEWIDTH_US 1500 // Ancho de pulso para detener el servo
 
-#define SERVO_PULSE_GPIO 4                  // GPIO connects to the PWM signal line
+#define SERVO_PULSE_GPIO 4                   // GPIO connects to the PWM signal line
 #define SERVO_TIMEBASE_RESOLUTION_HZ 1000000 // 1MHz, 1us per tick
 #define SERVO_TIMEBASE_PERIOD 20000          // 20000 ticks, 20ms
 
 static const char *TAG = "SERVOMOTOR";
 static mcpwm_cmpr_handle_t comparator = NULL;
 static mcpwm_timer_handle_t timer = NULL;
+static uint32_t current_duty = SERVO_STOP_PULSEWIDTH_US;
 
 esp_err_t servo_initialize(void)
 {
@@ -93,9 +95,16 @@ esp_err_t servo_initialize(void)
         return ESP_FAIL;
     }
 
-    if (mcpwm_timer_start_stop(timer,MCPWM_TIMER_START_NO_STOP) != ESP_OK)
+    if (mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Starting Timer");
+        return ESP_FAIL;
+    }
+
+    ESP_LOGI(TAG,"Initializing Servo Interruption");
+    if (interrupt_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR Initializing Servo Interruption");
         return ESP_FAIL;
     }
 
@@ -129,5 +138,55 @@ esp_err_t servo_set_speed(uint32_t duty)
         return ESP_FAIL;
     }
 
+    current_duty = duty;
+
     return ESP_OK;
+}
+
+void servo_invert()
+{
+    if (current_duty == SERVO_STOP)
+    {
+        ESP_LOGW(TAG, "Error: Trying to invert orientation while servo is stopped");
+    }
+    esp_err_t err = ESP_OK;
+    if (current_duty > SERVO_STOP)
+    {
+        switch (current_duty)
+        {
+        case SERVO_LOW_SPEED_CCW:
+            err =  servo_set_speed(SERVO_LOW_SPEED_CW);
+            break;
+        case SERVO_MEDIUM_SPEED_CCW:
+            err =  servo_set_speed(SERVO_MEDIUM_SPEED_CW);
+            break;
+        case SERVO_MAX_SPEED_CCW:
+            err = servo_set_speed(SERVO_MAX_SPEED_CW);
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        switch (current_duty)
+        {
+        case SERVO_LOW_SPEED_CW:
+            err =  servo_set_speed(SERVO_LOW_SPEED_CCW);
+            break;
+        case SERVO_MEDIUM_SPEED_CW:
+            err = servo_set_speed(SERVO_MEDIUM_SPEED_CCW);
+            break;
+        case SERVO_MAX_SPEED_CW:
+            err = servo_set_speed(SERVO_MAX_SPEED_CCW);
+            break;
+        default:
+            break;
+        }
+    }
+
+    if(err != ESP_OK){
+        ESP_LOGE(TAG,"Error: Tryin to inver orientation of servo");
+    }
+
 }
