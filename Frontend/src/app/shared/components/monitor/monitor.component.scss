@@ -1,0 +1,39 @@
+.console-output {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .console-line {
+    margin-bottom: 5px;
+  }
+  
+  .tag {
+    color: #00ff00; /* Green for tag */
+  }
+  
+  .type {
+    font-weight: bold;
+  }
+  
+  .message {
+    color: #ffffff; /* White for message */
+  }
+  
+  /* Color by type */
+  .info {
+    color: #00ff00; /* Green for info */
+  }
+  
+  .warning {
+    color: #ffcc00; /* Yellow for warning */
+  }
+  
+  .error {
+    color: #ff0000; /* Red for error */
+  }
+  

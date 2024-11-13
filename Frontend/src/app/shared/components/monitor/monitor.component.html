@@ -1,1 +1,8 @@
-<p>monitor works!</p>
+<div class="console-output">
+    <div *ngFor="let msg of messages" class="console-line" [ngClass]="{'info': msg.type === 'INFO', 'warning': msg.type === 'WARNING', 'error': msg.type === 'ERROR'}">
+      <span class="tag">[{{ msg.tag }}]</span>
+      <span class="type">[{{ msg.type }}]</span>
+      <span class="message">{{ msg.message }}</span>
+    </div>
+  </div>
+  
