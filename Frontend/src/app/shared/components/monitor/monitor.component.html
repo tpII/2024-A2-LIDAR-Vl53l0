@@ -1,4 +1,4 @@
-<div class="console-output">
+<div class="messages-container">
     <div *ngFor="let msg of messages" class="console-line" [ngClass]="{'info': msg.type === 'INFO', 'warning': msg.type === 'WARNING', 'error': msg.type === 'ERROR'}">
       <span class="tag">[{{ msg.tag }}]</span>
       <span class="type">[{{ msg.type }}]</span>

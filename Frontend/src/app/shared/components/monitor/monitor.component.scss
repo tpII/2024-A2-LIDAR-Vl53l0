@@ -1,19 +1,25 @@
-.console-output {
+.messages-container {
     font-family: 'Courier New', Courier, monospace;
     background-color:  #fff;
     color: #213A7D;
     padding: 10px;
     border-radius: 5px;
     max-height: 400px;
-    overflow-y: auto;
+    overflow-y: scroll; /* Habilita el desplazamiento vertical */
+    //padding-right: 10px; /* Para dar espacio entre los mensajes y la barra */
+    border: 2px; // solid #ccc; /* Borde rectangular */
+    /* Personalización de la barra de desplazamiento */
+    scrollbar-width: thin;
+    scrollbar-color: #213A7D #f1f1f1;
   }
   
+  // Mensajes
   .console-line {
     margin-bottom: 5px;
   }
   
   .tag {
-    color: #00ff00; /* Green for tag */
+    color: #213A7D; /* Green for tag */
   }
   
   .type {
@@ -36,4 +42,5 @@
   .error {
     color: #ff0000; /* Red for error */
   }
+  
   
