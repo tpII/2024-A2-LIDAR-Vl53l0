@@ -69,3 +69,6 @@ Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
 3 de Noviembre
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
+
+13 de Noviembre 
+Se agrega libreria para testeo del monitor en la pagina web.
