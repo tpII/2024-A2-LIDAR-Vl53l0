@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
+export interface Message {
+  tag: string;
+  type: string;
+  message: string;
+}
+
 @Component({
   selector: 'app-monitor',
   standalone: true,
@@ -73,11 +79,9 @@ export class MonitorComponent {
       { "tag": "Security", "type": "ERROR", "message": "Access violation detected. Alert sent." }
     
     ];
-    
-
-  /*
-  addMessage(message: string) {
+  
+  addMessage(message: Message) {
     this.messages.push(message);
   }
-  */
+
 }
