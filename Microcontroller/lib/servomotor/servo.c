@@ -265,45 +265,6 @@ void servo_invert()
     }
     ESP_LOGW(TAG, "INVERT END");
 }
-/*
-int16_t readAngle()
-{
-    static uint16_t duty = 0;
-    static uint64_t time_now = 0;
-    static uint64_t time_reference = 0;
-    static int16_t angle_offset = 0;
-    static double speed = 0;
-    static double first_term = 0;
-    static int64_t second_term = 0;
-    // Getting varibles needed
-    // Get time Base
-    if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
-    {
-        angle_offset = last_angle_offset;
-        time_reference = time_base; // TIME BASE
-        xSemaphoreGive(limit_semaphore);
-    }
-    ESP_LOGW(TAG, "Angle offset: %d" " - Time reference: %" PRIu64, angle_offset, time_reference);
-
-    if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
-    {
-        duty = current_duty;
-        xSemaphoreGive(current_duty_semaphore);
-    }
-
-    time_now = esp_timer_get_time(); // ACTUAL TIME
-    ESP_LOGW(TAG, "DUTY: %" PRIu16 " - CF: %" PRIu32, (uint16_t)duty, (uint32_t)CONVERSION_FACTOR);
-    speed = BASE_SPEED * ((duty - SERVO_STOP)/DIFFERENTIAL);
-    first_term = (speed / CONVERSION_FACTOR);
-    second_term = (int64_t)(time_now - time_reference);
-    ESP_LOGW(TAG, "First term: %f", speed);
-    ESP_LOGW(TAG, "First term: %f", first_term);
-    ESP_LOGW(TAG, "Second term: %" PRIu64, second_term);
-
-    return (int16_t)((first_term * second_term) + angle_offset) % 360;
-}
-
-*/
 
 int16_t readAngle()
 {
@@ -331,7 +292,7 @@ int16_t readAngle()
     }
 
     time_now = esp_timer_get_time();
-    
+
     // Calcular velocidad escalada en grados/segundo, en enteros para evitar uso de punto flotante
     scaled_speed = BASE_SPEED * (duty - SERVO_STOP) / DIFFERENTIAL;
     first_term = scaled_speed / CONVERSION_FACTOR;

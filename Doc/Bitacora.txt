@@ -44,3 +44,6 @@ Se logro testear la 1ra version de la libreria Servomotor.
 
 06 de Noviembre
 Agrego libreria para interrupciones por hardware para utilizar con el servomotor.
+
+13 de Noviembre
+Tengo la version final de la libreria del Servo previo testeo fisico
