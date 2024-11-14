@@ -4,5 +4,6 @@
 #include "esp_err.h"
 
 esp_err_t createTasks(void);
+void abort_tasks(void);
 
 #endif

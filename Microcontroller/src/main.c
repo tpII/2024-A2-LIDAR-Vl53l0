@@ -25,15 +25,8 @@ void app_main(void)
   servo_start();
 
   while(1){
-    /*servo_start();
-    vTaskDelay(pdMS_TO_TICKS(1500));
-    servo_stop();
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    servo_set_speed(2100);
-    vTaskDelay(pdMS_TO_TICKS(1500));
-    servo_stop();*/
-    //check_limit_switch();
-    //vTaskDelay(pdMS_TO_TICKS(500));
+    ESP_LOGW(TAG,"ANGLE READED: %d",readAngle());
+    vTaskDelay(500 / portTICK_PERIOD_MS);
 
   }
   
