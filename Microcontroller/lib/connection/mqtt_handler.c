@@ -17,19 +17,22 @@ const char *instructionbuffer[INSTRUCTIONS_BUFFER_SIZE];
 
 static const char *TAG = "MQTT_HANDLER";
 
+static esp_err_t sendControlMessage(const char*, const char *, const char *);
+
 esp_err_t getInstruccionMessage(char *msg)
 {
 
     return getInstruction(msg);
 }
 
-esp_err_t sendControlMessage(const char *msg, const size_t length)
+// tag, warning (warning, info, error)
+static esp_err_t sendControlMessage(const char* ESP_TAG, const char *msg_type, const char *msg)
 {
-    const char *key[1] = {"message"};
-    const char *values[1] = {msg};
+    const char *key[3] = {"tag", "type", "message"};
+    const char *values[3] = {ESP_TAG, msg_type, msg};
     cJSON *json = NULL;
    
-    esp_err_t err = create_json_data(&json, key, values, 1);
+    esp_err_t err = create_json_data(&json, key, values, 3); 
     print_json_data(json);
 
     if (err != ESP_OK)
@@ -46,6 +49,17 @@ esp_err_t sendControlMessage(const char *msg, const size_t length)
     }
 
     return ESP_OK;
+}
+
+esp_err_t sendInfoMesage (const char *TAG, const char *msg){
+    return sendControlMessage(TAG,"INFO",msg);
+}
+
+esp_err_t sendWarningMesage (const char *TAG, const char *msg){
+    return sendControlMessage(TAG,"WARNING",msg);
+}
+esp_err_t sendErrorMesage (const char *TAG, const char *msg){
+    return sendControlMessage(TAG,"ERROR",msg);
 }
 
 esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
