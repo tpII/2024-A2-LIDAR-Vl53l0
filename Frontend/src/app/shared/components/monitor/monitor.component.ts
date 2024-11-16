@@ -3,8 +3,9 @@ import { Component } from '@angular/core';
 
 export interface Message {
   tag: string;
-  type: string;
+  type:  'INFO' | 'WARNING' | 'ERROR';
   message: string;
+  timestamp: string;
 }
 
 @Component({
@@ -17,71 +18,23 @@ export interface Message {
 export class MonitorComponent {
   messages = 
     [
-      { "tag": "System", "type": "INFO", "message": "System initialized successfully." },
-      { "tag": "User", "type": "WARNING", "message": "Low battery warning." },
-      { "tag": "Network", "type": "ERROR", "message": "Failed to connect to the server." },
-      { "tag": "Security", "type": "INFO", "message": "New login detected." },
-      { "tag": "Database", "type": "ERROR", "message": "Database connection lost." },
-      {"tag": "System", "type": "INFO", "message": "Initialization complete. All systems are running smoothly."},
-      {"tag": "Network", "type": "WARNING", "message": "Network latency detected. Performance may be affected."},
-      {"tag": "User", "type": "ERROR", "message": "User authentication failed. Please check your credentials."},
-      {"tag": "Database", "type": "INFO", "message": "Database backup completed successfully."},
-      {"tag": "Security", "type": "ERROR", "message": "Unauthorized access attempt detected. Action required."},
-      {"tag": "System", "type": "WARNING", "message": "Memory usage is nearing maximum capacity"},
-      { "tag": "System", "type": "INFO", "message": "System check complete. All modules active." },
-      { "tag": "User", "type": "WARNING", "message": "Password change required." },
-      { "tag": "Security", "type": "INFO", "message": "Two-factor authentication enabled." },
-      { "tag": "Database", "type": "ERROR", "message": "SQL query failed due to timeout." },
-      { "tag": "System", "type": "INFO", "message": "System update applied successfully." },
-      { "tag": "Network", "type": "WARNING", "message": "Network congestion detected, retry later." },
-      { "tag": "User", "type": "ERROR", "message": "Account locked due to multiple failed login attempts." },
-      { "tag": "Database", "type": "INFO", "message": "Data migration process started." },
-      { "tag": "Security", "type": "ERROR", "message": "Suspicious login location detected." },
-      { "tag": "System", "type": "WARNING", "message": "Service restart scheduled for tonight." },
-      { "tag": "User", "type": "INFO", "message": "Profile updated successfully." },
-      { "tag": "Network", "type": "ERROR", "message": "Connection timeout while accessing the server." },
-      { "tag": "Database", "type": "WARNING", "message": "Slow query detected, optimizing performance." },
-      { "tag": "Security", "type": "INFO", "message": "New device authenticated in your account." },
-      { "tag": "System", "type": "ERROR", "message": "System crash detected. Rebooting..." },
-      { "tag": "User", "type": "INFO", "message": "You have new messages in your inbox." },
-      { "tag": "Network", "type": "WARNING", "message": "High packet loss observed on the network." },
-      { "tag": "Database", "type": "INFO", "message": "Database maintenance scheduled for tomorrow." },
-      { "tag": "Security", "type": "ERROR", "message": "Intrusion detected. Locking down access." },
-      { "tag": "System", "type": "WARNING", "message": "Disk space running low. Cleanup required." },
-      { "tag": "User", "type": "INFO", "message": "Your subscription has been successfully renewed." },
-      { "tag": "Network", "type": "ERROR", "message": "Unable to establish a connection to the proxy." },
-      { "tag": "Database", "type": "WARNING", "message": "Potential deadlock detected in the database." },
-      { "tag": "Security", "type": "INFO", "message": "Security patch applied successfully." },
-      { "tag": "System", "type": "ERROR", "message": "Critical system failure, backup required." },
-      { "tag": "User", "type": "INFO", "message": "New update available for your profile." },
-      { "tag": "Network", "type": "WARNING", "message": "Network speed below expected levels." },
-      { "tag": "Database", "type": "ERROR", "message": "Failed to commit transaction to database." },
-      { "tag": "Security", "type": "INFO", "message": "Encryption keys updated successfully." },
-      { "tag": "System", "type": "WARNING", "message": "High CPU usage detected." },
-      { "tag": "User", "type": "ERROR", "message": "Failed to reset password. Please try again." },
-      { "tag": "Network", "type": "INFO", "message": "Network interface reset completed." },
-      { "tag": "Database", "type": "WARNING", "message": "Unexpected query delay. Investigating." },
-      { "tag": "Security", "type": "ERROR", "message": "Brute force attack detected. Blocking IP." },
-      { "tag": "System", "type": "INFO", "message": "Service running optimally after restart." },
-      { "tag": "User", "type": "INFO", "message": "You have successfully logged in." },
-      { "tag": "Network", "type": "ERROR", "message": "Unable to access the DNS server." },
-      { "tag": "Database", "type": "INFO", "message": "Database cluster scaled successfully." },
-      { "tag": "Security", "type": "ERROR", "message": "Failed login attempt. Account locked." },
-      { "tag": "System", "type": "WARNING", "message": "Scheduled downtime for server maintenance." },
-      { "tag": "User", "type": "INFO", "message": "Your account settings have been updated." },
-      { "tag": "Network", "type": "WARNING", "message": "Slow internet connection detected." },
-      { "tag": "Database", "type": "ERROR", "message": "Database query returned unexpected result." },
-      { "tag": "Security", "type": "INFO", "message": "Security audit completed successfully." },
-      { "tag": "System", "type": "ERROR", "message": "Unexpected error encountered during system operation." },
-      { "tag": "User", "type": "INFO", "message": "You have a new friend request." },
-      { "tag": "Network", "type": "ERROR", "message": "Lost connection to the network." },
-      { "tag": "Database", "type": "INFO", "message": "Database replication completed successfully." },
-      { "tag": "Security", "type": "ERROR", "message": "Access violation detected. Alert sent." }
-    
+        { "tag": "System", "type": "INFO", "message": "System initialized successfully.", "timestamp": "10:00:00" },
+        { "tag": "User", "type": "WARNING", "message": "Low battery warning.", "timestamp": "10:02:00" },
+        { "tag": "Network", "type": "ERROR", "message": "Failed to connect to the server.", "timestamp": "10:03:30" },
+        { "tag": "Security", "type": "INFO", "message": "New login detected.", "timestamp": "10:05:00" },
+        { "tag": "Database", "type": "ERROR", "message": "Database connection lost.", "timestamp": "10:06:15" },
+        { "tag": "System", "type": "INFO", "message": "Initialization complete. All systems are running smoothly.", "timestamp": "10:08:00" },
+        { "tag": "Network", "type": "WARNING", "message": "Network latency detected. Performance may be affected.", "timestamp": "10:09:45" },
+        { "tag": "User", "type": "ERROR", "message": "User authentication failed. Please check your credentials.", "timestamp": "10:11:00" },
+        { "tag": "Database", "type": "INFO", "message": "Database backup completed successfully.", "timestamp": "10:12:30" },
+        { "tag": "Security", "type": "ERROR", "message": "Unauthorized access attempt detected. Action required.", "timestamp": "10:14:00" }
+      
     ];
   
   addMessage(message: Message) {
-    this.messages.push(message);
+    const timestamp = new Date().toLocaleTimeString(); 
+    this.messages.push({ ...message, timestamp });
   }
+    
 
 }

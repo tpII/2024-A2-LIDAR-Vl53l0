@@ -7,9 +7,9 @@
     max-height: 600px;
     height: 600px;
     width: 40%;
-    overflow-y: scroll; /* Habilita el desplazamiento vertical */
-    //padding-right: 10px; /* Para dar espacio entre los mensajes y la barra */
-    border: 2px; // solid #ccc; /* Borde rectangular */
+    overflow-y: scroll; 
+    white-space: pre-wrap; 
+    border: 2px; 
     /* Personalización de la barra de desplazamiento */
     scrollbar-width: thin;
     scrollbar-color: #213A7D #f1f1f1;
@@ -17,11 +17,11 @@
   
   // Mensajes
   .console-line {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
   
   .tag {
-    color: #213A7D; /* Green for tag */
+    color: #213A7D; 
   }
   
   .type {
@@ -45,4 +45,17 @@
     color: #ff0000; /* Red for error */
   }
   
+  .timestamp {
+    color: gray; 
+    margin-right: 10px;
+    font-style: italic;
+  }
   
+  .type {
+    display: inline-block;
+    width: 80px;
+  }
+
+  .message {
+    margin-left: 10px; 
+  }
