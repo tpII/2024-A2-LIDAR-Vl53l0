@@ -72,3 +72,6 @@ Se implemento la base del sidenav y la estructura basica de la pagina.
 
 13 de Noviembre 
 Se agrega libreria para testeo del monitor en la pagina web.
+
+15 de Noviembre
+Agrego para ver hora e identacion en los mensajes del monitor.
