@@ -77,5 +77,13 @@ Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y b
 9 de Noviembre
 Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
 
+13 de Noviembre 
+Se agrega libreria para testeo del monitor en la pagina web.
+
+15 de Noviembre
+Agrego para ver hora e identacion en los mensajes del monitor.
+
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
+
+

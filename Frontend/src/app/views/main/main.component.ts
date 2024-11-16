@@ -3,11 +3,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
 import { CommonModule } from '@angular/common';
+import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule],
+  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, MonitorComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
