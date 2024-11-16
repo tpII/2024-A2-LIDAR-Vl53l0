@@ -76,3 +76,6 @@ Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y b
 
 9 de Noviembre
 Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
+
+16 de Noviembre
+Libreria de mensages terminado, todo funcionando y testeado con el backend.

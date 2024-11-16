@@ -15,6 +15,8 @@ public class Message {
     private String message;
     private String type;
     private String tag;
+    
+    private boolean read = false;
 
     @CreatedDate
     private Date date;
@@ -69,6 +71,14 @@ public class Message {
 
     public String getTag() {
         return tag;
+    }
+
+    public void setRead(boolean read){
+        this.read = read;
+    }
+
+    public boolean getRead(){
+        return read;
     }
 
     @Override

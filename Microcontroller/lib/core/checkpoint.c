@@ -1,5 +1,6 @@
 #include "checkpoint.h"
 #include <setjmp.h>
+#include "esp_log.h"
 
 static char *TAG = "CHECKPOINT";
 static jmp_buf checkpoint;

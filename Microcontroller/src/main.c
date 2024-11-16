@@ -47,15 +47,15 @@ void task()
     esp_err_t err = ESP_OK;
     if (id % 2 != 0 && id % 3 != 0)
     {
-      err = sendControlMessage(TAG, "INFO", final_msg);
+      err = sendInfoMesage(TAG, final_msg);
     }
     else if (id % 2 == 0 && id % 3 != 0)
     {
-      err = sendControlMessage(TAG, "WARNING", final_msg);
+      err = sendWarningMesage(TAG, final_msg);
     }
     else
     {
-      err = sendControlMessage(TAG, "ERROR", final_msg);
+      err = sendErrorMesage(TAG,final_msg);
     }
     if (err != ESP_OK)
       ESP_LOGE(TAG, "POST FAIL => %s", esp_err_to_name(err));
