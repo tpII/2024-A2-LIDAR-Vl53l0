@@ -12,7 +12,11 @@
     border: 2px; 
     /* Personalización de la barra de desplazamiento */
     scrollbar-width: thin;
-    scrollbar-color: #213A7D #f1f1f1;
+    scrollbar-color: #213A7D white;
+  }
+
+  .messages-container::-webkit-scrollbar-button{
+    background-color: #00ff00;
   }
   
   // Mensajes
