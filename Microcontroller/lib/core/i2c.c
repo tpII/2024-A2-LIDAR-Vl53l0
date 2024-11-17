@@ -1,6 +1,9 @@
 #include "i2c.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
+#include "driver/i2c.h"
+#include <stdint.h>
 
 static SemaphoreHandle_t bus_semaphore;
 

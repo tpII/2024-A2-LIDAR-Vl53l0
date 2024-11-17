@@ -7,7 +7,7 @@
 //#include "mqtt_handler.h"
 
 #include "vl53l0x.h"
-
+#include "i2c.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -29,7 +29,7 @@ int app_main(void){
         }
 
         ESP_LOGI(TAG, "Iniciando I2C...");
-        err = i2c_master_init();
+        err = i2c_init();
         if(err != ESP_OK){
                 ESP_LOGE(TAG, "Error en el i2c_master_init: %s", esp_err_to_name(err));
                 return 2;
