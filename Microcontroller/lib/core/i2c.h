@@ -18,10 +18,10 @@
 
 
 
-esp_err_t i2c_master_init(void);
+esp_err_t i2c_init(void);
 
-bool get_i2c_bus();
+bool i2c_get_bus();
 
-bool give_i2c_bus();
+bool i2c_give_bus();
 
 #endif

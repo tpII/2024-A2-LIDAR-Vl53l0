@@ -7,7 +7,7 @@ static SemaphoreHandle_t bus_semaphore;
 static const char *TAG = "I2C";
 
 
-esp_err_t i2c_master_init()
+esp_err_t i2c_init()
 {
 
     bus_semaphore = xSemaphoreCreateBinary();
@@ -51,13 +51,13 @@ esp_err_t i2c_master_init()
 }
 
 
-bool get_i2c_bus(){
+bool i2c_get_bus(){
     if(xSemaphoreTake(bus_semaphore,portMAX_DELAY) == pdTRUE){
         return true;
     }
     return false;
 }
 
-bool give_i2c_bus(){
+bool i2c_give_bus(){
     return xSemaphoreGive(bus_semaphore);
 }
