@@ -3,9 +3,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define BLINK_FREQ  500 
+#define TIME 500
 
-void lights_init(void){
+static volatile bool active = false;
+
+esp_err_t lights_init(void)
+{
     gpio_config_t io_conf;
     // Configurar los pines de los LEDs como salidas
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -13,28 +16,49 @@ void lights_init(void){
     io_conf.pin_bit_mask = (1ULL << ERROR_LED);
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
-    gpio_config(&io_conf);
+    if (gpio_config(&io_conf) != ESP_OK)
+    {
+        return ESP_FAIL;
+    }
 
     // Asegurar que el LED esté apagado al inicio (nivel bajo)
-    gpio_set_level(ERROR_LED, 0);
-}
-
-void error_led_on(){
-    gpio_set_level(ERROR_LED, 1);
-}
-
-void error_led_off(){
-    gpio_set_level(ERROR_LED, 0);
-}
-
-void led_blink_task(void *pvParameter) {
-
-    while (1) {
-        // Cambiar el estado del LED
-        gpio_set_level(ERROR_LED, 1);  // Encender
-        vTaskDelay(pdMS_TO_TICKS(BLINK_FREQ));  // Esperar la mitad del periodo
-
-        gpio_set_level(ERROR_LED, 0);  // Apagar
-        vTaskDelay(pdMS_TO_TICKS(BLINK_FREQ));  // Esperar la mitad del periodo
+    if (gpio_set_level(ERROR_LED, 0) != ESP_OK)
+    {
+        return ESP_FAIL;
     }
+
+    return ESP_OK;
+}
+
+esp_err_t error_led_on()
+{
+    return gpio_set_level(ERROR_LED, 1);
+}
+
+esp_err_t error_led_off()
+{
+    return gpio_set_level(ERROR_LED, 0);
+}
+
+void led_blink_task()
+{
+    if (!active)
+    {
+        while (1)
+        {
+
+            if (gpio_set_level(ERROR_LED, 1) != ESP_OK)
+            {
+                break;
+            }
+            vTaskDelay(pdMS_TO_TICKS(TIME));
+            if (gpio_set_level(ERROR_LED, 0) != ESP_OK)
+            {
+                break;
+            }
+            vTaskDelay(pdMS_TO_TICKS(TIME));
+        }
+    }
+    active = !active;
+    gpio_set_level(ERROR_LED, 0); // Apagar
 }
