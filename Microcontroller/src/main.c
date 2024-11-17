@@ -5,7 +5,7 @@
 #include "mqtt_server.h"
 
 #include "mqtt_handler.h"
-
+#include "lights.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -13,7 +13,10 @@ static const char *TAG = "MAIN";
 
 esp_err_t initialize()
 {
-  esp_err_t err2 = initialize_server();
+  if(lights_init() != ESP_OK){
+    return ESP_FAIL;
+  }
+  /*esp_err_t err2 = initialize_server();
   if (err2)
   {
     ESP_LOGE(TAG, "Error ocurred trying to initialize server: err %d", err2);
@@ -24,46 +27,11 @@ esp_err_t initialize()
     ;
   vTaskDelay(pdMS_TO_TICKS(200)); // ESPERO 200ms por seguridad
   mqtt_start();
+  */
 
   return ESP_OK;
 }
 
-void task()
-{
-  int id = 0;
-  char base_msg[] = "MCU - BACK => Test Message Nro: ";
-  char final_msg[100];
-  char id_str[10];
-  char inst[40];
-  while (id < 100)
-  {
-
-    // Testing SendControl Message
-    strcpy(final_msg, base_msg);
-    sprintf(id_str, "%d", id);
-    strcat(final_msg, id_str);
-    ESP_LOGI(TAG, "Message to Send: %s", final_msg);
-    ESP_LOGI(TAG, "Size of message to send: %u", strlen(final_msg));
-    esp_err_t err = ESP_OK;
-    if (id % 2 != 0 && id % 3 != 0)
-    {
-      err = sendInfoMesage(TAG, final_msg);
-    }
-    else if (id % 2 == 0 && id % 3 != 0)
-    {
-      err = sendWarningMesage(TAG, final_msg);
-    }
-    else
-    {
-      err = sendErrorMesage(TAG,final_msg);
-    }
-    if (err != ESP_OK)
-      ESP_LOGE(TAG, "POST FAIL => %s", esp_err_to_name(err));
-    vTaskDelay(pdMS_TO_TICKS(5000));
-
-    id++;
-  }
-}
 
 void app_main(void)
 {
@@ -76,6 +44,17 @@ void app_main(void)
       ;
   }
   ESP_LOGI(TAG, "INITIALIZE SUCCESS");
-  vTaskDelay(pdMS_TO_TICKS(5000));
-  task();
+  vTaskDelay(pdMS_TO_TICKS(2000));
+  led_blink_task();
+  /*while(1){
+
+    if(error_led_on() != ESP_OK){
+      ESP_LOGE(TAG,"ERROR TURNING ON LED");
+    }
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    if(error_led_off() != ESP_OK){
+      ESP_LOGE(TAG,"ERROR TURNING OFF LED");
+    }
+    vTaskDelay(pdMS_TO_TICKS(2000));
+  }*/
 }
