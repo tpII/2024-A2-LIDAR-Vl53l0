@@ -95,3 +95,6 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
 Se testeo y mejoro la libreria lights
+
+18 de Noviembre
+Libreria INA219 I2C

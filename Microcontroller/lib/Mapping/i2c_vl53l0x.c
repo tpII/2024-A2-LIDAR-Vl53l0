@@ -1,5 +1,6 @@
 #include "i2c_vl53l0x.h"
 #include "i2c.h"
+#include "esp_log.h"
 
 #define DEFAULT_SLAVE_ADDRESS (0x29)
 

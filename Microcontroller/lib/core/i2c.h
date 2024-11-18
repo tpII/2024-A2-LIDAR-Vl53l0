@@ -2,6 +2,7 @@
 #define _I2C_H_
 
 #include "esp_err.h"
+#include "driver/i2c.h"
 #include <stdbool.h>
 
 #define I2C_MASTER_SCL_IO GPIO_NUM_22               /*!< gpio number for I2C master clock */
