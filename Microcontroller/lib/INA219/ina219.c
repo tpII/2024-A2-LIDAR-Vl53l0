@@ -269,6 +269,7 @@ static esp_err_t read_conf_bits(ina219_t *dev, uint16_t mask, uint8_t bit, uint1
 
 ///////////////////////////////////////////////////////////////////////////////
 
+
 esp_err_t ina219_init(ina219_t *dev)
 {
 

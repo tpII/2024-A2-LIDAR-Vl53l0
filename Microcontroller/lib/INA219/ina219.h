@@ -136,26 +136,14 @@ extern "C"
     } ina219_t;
 
     /*
-    *
-     * @brief Initialize device descriptor
-     *
-     * @param dev Device descriptor
-     * @param addr Device I2C address
-     * @param port I2C port
-     * @param sda_gpio SDA GPIO
-     * @param scl_gpio SCL GPIO
-     * @return `ESP_OK` on success
+        *
+         * @brief Free device descriptor
+         *
+         * @param dev Device descriptor
+         * @return `ESP_OK` on success
 
-    esp_err_t ina219_init_desc(ina219_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio);
-
-    *
-     * @brief Free device descriptor
-     *
-     * @param dev Device descriptor
-     * @return `ESP_OK` on success
-
-    esp_err_t ina219_free_desc(ina219_t *dev);
-    */
+        esp_err_t ina219_free_desc(ina219_t *dev);
+        */
     /**
      * @brief Init device
      *
@@ -246,7 +234,7 @@ extern "C"
      * @param r_shunt Shunt resistance, Ohm
      * @return `ESP_OK` on success
      */
-   esp_err_t ina219_calibrate(ina219_t *dev, float r_shunt);
+    esp_err_t ina219_calibrate(ina219_t *dev, float r_shunt);
 
     /**
      * @brief Trigger single conversion
