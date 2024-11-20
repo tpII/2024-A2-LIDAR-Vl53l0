@@ -24,7 +24,12 @@ export class MapComponent implements OnInit{
     { x: 45, y: 10, obstacle: false },
     { x: 43, y: 35, obstacle: true },
     { x: 8, y: 45, obstacle: false },
-    { x: 12, y: 32, obstacle: true }
+    { x: 12, y: 32, obstacle: true },
+    { x: 15, y: 37, obstacle: true },
+    { x: 10, y: 32, obstacle: false },
+    { x: 45, y: 48, obstacle: true },
+    { x: 20, y: 48, obstacle: false },
+    { x: 47, y: 30, obstacle: true },
   ];
 
   ngOnInit() {
@@ -40,7 +45,7 @@ export class MapComponent implements OnInit{
       .append('svg')
       .attr('width', width)
       .attr('height', height)
-      .style('background', '#f0f0f0');
+      .style('background', '#213A7D');
 
     // Filtrar solo los obstáculos
     const obstacles = this.data.filter((d) => d.obstacle);
@@ -52,8 +57,8 @@ export class MapComponent implements OnInit{
       .append('circle')
       .attr('cx', (d) => d.x * 10) // Escalar si es necesario
       .attr('cy', (d) => d.y * 10)
-      .attr('r', 5) // Tamaño del punto
-      .attr('fill', 'red');
+      .attr('r', 4) // Tamaño del punto
+      .attr('fill', '#d3d3d3');
   }
 }
 
