@@ -87,4 +87,5 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
 Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
-
+20 de Noviembre 
+Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js con datos de prueba)

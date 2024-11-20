@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
 import { CommonModule } from '@angular/common';
 import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
+import { MapComponent } from "../../shared/components/map/map.component";
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, MonitorComponent],
+  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, MonitorComponent, MapComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
