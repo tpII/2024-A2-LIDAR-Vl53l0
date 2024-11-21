@@ -1,4 +1,4 @@
-<as-split direction="horizontal" unit="percent" [gutterSize]="0" >
+<as-split direction="horizontal" unit="percent" [gutterSize]="0">
   <!-- Sidebar Area -->
   <as-split-area
     [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
@@ -6,20 +6,30 @@
     class="custom-shadow"
   >
     <div class="sidenav" (click)="toggleSidebar()">
-       <!-- Contenedor del logo -->
-       <div class="logo-container">
+      <!-- Contenedor del logo -->
+      <div class="logo-container">
         <img
           *ngIf="isSideNavExpanded; else collapsedLogo"
-          src="/logo.svg" 
+          src="/logo.svg"
           alt="Logo Expandido"
         />
-        
+
         <ng-template #collapsedLogo>
           <img src="/small_logo.svg" alt="Logo Colapsado" />
         </ng-template>
       </div>
-      <div class="sidebar-content">
-       
+      <div class="sidebar-content"></div>
+      <!-- Botones en el sidenav -->
+      <div class="sidenav-buttons">
+        <button
+        *ngFor="let button of buttons"
+        class="sidenav-button"
+        [ngClass]="{ expanded: isSideNavExpanded }"
+        mat-button
+      >
+        <mat-icon class="button-icon">{{ button.icon }}</mat-icon>
+        <span *ngIf="isSideNavExpanded" class="button-label">{{ button.label }}</span>
+      </button>
       </div>
       <!-- Figura azul en la parte inferior del sidebar -->
       <div class="footer-figure" [ngStyle]="getFooterFigureStyle()"></div>

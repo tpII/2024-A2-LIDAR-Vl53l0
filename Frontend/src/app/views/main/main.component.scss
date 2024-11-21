@@ -62,3 +62,50 @@
 }
 
 //Buttons Scss
+.sidenav-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+}
+.sidenav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px; // Botón redondo en estado contraído
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 8px 0;
+  overflow: hidden;
+  transition: all 0.3s;
+
+  .button-icon {
+    font-size: 24px;
+    color: #0033a0; // Color del icono
+  }
+
+  .button-label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 16px;
+    color: #0033a0; // Color del texto
+  }
+
+  // Estado expandido
+  &.expanded {
+    width: 200px;
+    border-radius: 25px; // Botón alargado con extremos redondeados
+    justify-content: flex-start;
+    padding-left: 16px;
+
+    .button-icon {
+      margin-right: 8px;
+    }
+  }
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}

@@ -19,6 +19,13 @@ export class MainComponent {
   minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
   maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
 
+  buttons = [
+    { icon: 'speed', label: '20m x hora' },
+    { icon: 'thermostat', label: 'Máximo 30°' },
+    { icon: 'pause', label: 'Pausar' },
+    { icon: 'restart_alt', label: 'Reiniciar' },
+    { icon: 'cancel', label: 'Restablecer' },
+  ];
   
   // Alternar el estado de la sidebar entre colapsada y expandida
   toggleSidebar(): void {
