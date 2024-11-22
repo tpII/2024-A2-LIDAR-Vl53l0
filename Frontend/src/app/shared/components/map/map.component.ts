@@ -6,60 +6,108 @@ import * as d3 from 'd3';
   standalone: true,
   imports: [],
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss'
+  styleUrl: './map.component.scss',
 })
-export class MapComponent implements OnInit{
-  // 40 x 40
-  data = [
-    { x: 5, y: 7, obstacle: true },
-    { x: 10, y: 12, obstacle: false },
-    { x: 15, y: 18, obstacle: true },
-    { x: 20, y: 25, obstacle: false },
-    { x: 25, y: 30, obstacle: true },
-    { x: 30, y: 35, obstacle: false },
-    { x: 35, y: 5, obstacle: true },
-    { x: 40, y: 20, obstacle: false },
-    { x: 8, y: 15, obstacle: true },
-    { x: 18, y: 15, obstacle: true },
-    { x: 45, y: 10, obstacle: false },
-    { x: 43, y: 35, obstacle: true },
-    { x: 8, y: 45, obstacle: false },
-    { x: 12, y: 32, obstacle: true },
-    { x: 15, y: 37, obstacle: true },
-    { x: 10, y: 32, obstacle: false },
-    { x: 45, y: 48, obstacle: true },
-    { x: 20, y: 48, obstacle: false },
-    { x: 47, y: 30, obstacle: true },
-  ];
+export class MapComponent implements OnInit {
+  private width = 500;
+  private height = 500;
+  private svg: any;
+  private maxDistance = 2; // Distancia máxima en metros
+  private scaleFactor = this.width / (this.maxDistance * 2); // Escala para convertir metros a pixeles
+  private pointsMap: Map<number, any> = new Map();
 
   ngOnInit() {
     this.createChart();
+    this.simulateData(); //FOR TEST ONLY
   }
 
   createChart() {
-    const width = 500;
-    const height = 500;
-
-    const svg = d3
+    this.svg = d3
       .select('#chart')
       .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .style('background', '#213A7D');
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .style('background', '#ffffff') // Fondo blanco
+      .style('border', '8px solid #213A7D'); // Borde azul oscuro
 
     // Filtrar solo los obstáculos
-    const obstacles = this.data.filter((d) => d.obstacle);
 
-    svg
-      .selectAll('circle')
-      .data(obstacles)
-      .enter()
-      .append('circle')
-      .attr('cx', (d) => d.x * 10) // Escalar si es necesario
-      .attr('cy', (d) => d.y * 10)
-      .attr('r', 4) // Tamaño del punto
-      .attr('fill', '#d3d3d3');
+    // Dibujar el robot en el centro
+    this.svg
+      .append('rect')
+      .attr('x', this.width / 2 - 10)
+      .attr('y', this.height / 2 - 10)
+      .attr('width', 20)
+      .attr('height', 20)
+      .attr('fill', '#213A7D');
+
   }
+
+  // Simular recepción de datos
+  simulateData() {
+    setInterval(() => {
+      const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
+      const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
+
+      const { x, y } = this.polarToCartesian(distance, angle);
+      this.plotPoint(x, y, angle);
+    }, 1000); // Recibir datos cada segundo
+  }
+  // Convertir distancia y ángulo a coordenadas cartesianas
+  polarToCartesian(distance: number, angle: number) {
+    const radians = (angle * Math.PI) / 180; // Convertir grados a radianes
+    const x = this.width / 2 + distance * this.scaleFactor * Math.cos(radians);
+    const y = this.height / 2 - distance * this.scaleFactor * Math.sin(radians); // Invertir eje Y para D3
+    return { x, y };
+  }
+  plotPoint(x: number, y: number, angle: number) {
+    // Verificar si ya existe un punto para el ángulo dado
+    if (this.pointsMap.has(angle)) {
+      // Actualizar posición del punto existente
+      const existingPoint = this.pointsMap.get(angle);
+      existingPoint
+        .attr('cx', x)
+        .attr('cy', y)
+        .attr('fill','black'); 
+    } else {
+      // Crear un nuevo punto y agregarlo al mapa
+      const newPoint = this.svg
+        .append('circle')
+        .attr('cx', x)
+        .attr('cy', y)
+        .attr('r', 4)
+        .attr('fill', 'black');
+      this.pointsMap.set(angle, newPoint);
+    }
+  }
+
+  // Función para capturar el mapa como imagen
+  captureMap() {
+    const svgElement = d3.select('svg').node() as SVGSVGElement;
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgElement);
+  
+    // Crear un canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = this.width + 10; // Añadir margen extra para incluir bordes
+    canvas.height = this.height + 10; // Añadir margen extra para incluir bordes
+    const context = canvas.getContext('2d');
+  
+    // Crear una imagen a partir del SVG
+    const image = new Image();
+    image.onload = () => {
+      // Dibujar la imagen SVG en el canvas
+      context?.drawImage(image, 0, 0, this.width + 10, this.height + 10);
+      const dataURL = canvas.toDataURL('image/png');
+  
+      // Descargar la imagen
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'map-capture.png';
+      link.click();
+    };
+    image.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
+  }
+  
+
 }
-
-
