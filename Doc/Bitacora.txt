@@ -89,3 +89,8 @@ Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
 20 de Noviembre 
 Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js con datos de prueba)
+
+22 de Noviembre
+Se realizaron mejoras con respecto a la visualizacion del mapa (cambios en el diseño).
+Se agrego funcion para generar puntos de forma aleatoria para testeo.
+Funcion para capturar el mapa en un momento determinado (falta mejorar).
