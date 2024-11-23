@@ -3,11 +3,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
 import { CommonModule } from '@angular/common';
+import { GamepadComponent } from '../../shared/components/gamepad/gamepad.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule],
+  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
@@ -31,4 +32,13 @@ export class MainComponent {
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
+
+  onGamepadStatusChange(isConnected: boolean): void {
+    if (isConnected) {
+      console.log('Gamepad connected!');
+    } else {
+      console.log('Gamepad disconnected!');
+    }
+  }
+  
 }

@@ -79,3 +79,7 @@ Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensaje
 
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
+
+23 de Noviembre
+Implementado el componente para leer un joystick y poder controlar el robot. 
+Pendiente crear el servicio y apartado visual.
