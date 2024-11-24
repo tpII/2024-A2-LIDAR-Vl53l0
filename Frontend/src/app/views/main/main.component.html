@@ -19,17 +19,43 @@
         </ng-template>
       </div>
       <div class="sidebar-content"></div>
+      <div class="sidenav-status">
+        <!-- Estado contraído (círculos) -->
+        <div *ngIf="!isSideNavExpanded">
+          <div class="status-item collapsed">
+            <mat-icon class="status-icon">gamepad</mat-icon>
+          </div>
+          <div class="status-item collapsed alert">
+            <mat-icon class="status-icon">battery_alert</mat-icon>
+          </div>
+        </div>
+
+        <!-- Estado expandido (línea horizontal) -->
+        <div *ngIf="isSideNavExpanded" class="status-container expanded">
+          <div class="status-item">
+            <mat-icon class="status-icon">gamepad</mat-icon>
+            <span class="status-label">Conectado</span>
+          </div>
+          <div class="status-item alert">
+            <mat-icon class="status-icon">battery_alert</mat-icon>
+            <span class="status-label">Agotada</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Botones en el sidenav -->
       <div class="sidenav-buttons">
         <button
-        *ngFor="let button of buttons"
-        class="sidenav-button"
-        [ngClass]="{ expanded: isSideNavExpanded }"
-        mat-button
-      >
-        <mat-icon class="button-icon">{{ button.icon }}</mat-icon>
-        <span *ngIf="isSideNavExpanded" class="button-label">{{ button.label }}</span>
-      </button>
+          *ngFor="let button of buttons"
+          class="sidenav-button"
+          [ngClass]="{ expanded: isSideNavExpanded }"
+          mat-button
+        >
+          <mat-icon class="button-icon">{{ button.icon }}</mat-icon>
+          <span *ngIf="isSideNavExpanded" class="button-label">{{
+            button.label
+          }}</span>
+        </button>
       </div>
       <!-- Figura azul en la parte inferior del sidebar -->
       <div class="footer-figure" [ngStyle]="getFooterFigureStyle()"></div>
