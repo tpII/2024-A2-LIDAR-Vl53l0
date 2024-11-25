@@ -3,13 +3,18 @@
 
 #include "esp_err.h"
 
-#define SERVO_STOP              1500
+
 #define SERVO_MAX_SPEED_CW      900
 #define SERVO_MEDIUM_SPEED_CW   1100       
-#define SERVO_LOW_SPEED_CW      1300
-#define SERVO_MAX_SPEED_CCW     2100
+#define SERVO_LOW_SPEED_CW      1200
+
+#define SERVO_STOP              1500
+
+#define SERVO_LOW_SPEED_CCW     1800
 #define SERVO_MEDIUM_SPEED_CCW  1900
-#define SERVO_LOW_SPEED_CCW     1700
+#define SERVO_MAX_SPEED_CCW     2100
+
+
 
 
 

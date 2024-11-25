@@ -46,7 +46,7 @@ static void servoInterruptionTask(void *parameter)
     while (1)
     {
         check_limit_switch();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 

@@ -26,7 +26,7 @@ void app_main(void)
 
   while(1){
     ESP_LOGW(TAG,"ANGLE READED: %d",readAngle());
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
 
   }
   

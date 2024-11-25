@@ -17,10 +17,10 @@
 #define SERVO_TIMEBASE_RESOLUTION_HZ    1000000             // 1MHz, 1us per tick
 #define SERVO_TIMEBASE_PERIOD           20000               // 20000 ticks, 20ms
 
-
 #define CONVERSION_FACTOR   1000000
 #define BASE_SPEED          545.45
 #define DIFFERENTIAL        600
+
 // TIMER VARIABLES
 static const char *TAG = "SERVOMOTOR";
 static mcpwm_cmpr_handle_t comparator = NULL;
@@ -153,7 +153,7 @@ esp_err_t servo_initialize(void)
 esp_err_t servo_start(void)
 {
 
-    return servo_set_speed_ISR(SERVO_MIN_PULSEWIDTH_US); // Inicia con el duty en 900us
+    return servo_set_speed_ISR(SERVO_LOW_SPEED_CCW); // Inicia con el duty en 900us
 }
 
 esp_err_t servo_stop(void)
