@@ -4,7 +4,7 @@
 #include "freeRtosTasks.h"
 #include "servo.h"
 #include "servo_interruptions.h"
-
+#include <rom/ets_sys.h>
 static const char *TAG = "example";
 
 
@@ -27,6 +27,8 @@ void app_main(void)
   while(1){
     ESP_LOGW(TAG,"ANGLE READED: %d",readAngle());
     vTaskDelay(5 / portTICK_PERIOD_MS);
+    //ets_delay_us(100);
+
 
   }
   

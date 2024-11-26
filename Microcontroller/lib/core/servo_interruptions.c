@@ -12,6 +12,8 @@ const int64_t debounce_delay = 500000;               // Retardo de debounce en m
 
 static SemaphoreHandle_t flag_semaphore;
 
+static void limit_switch_isr_handler(void *);
+
 static void limit_switch_isr_handler(void *arg)
 {
     int64_t current_time = esp_timer_get_time();

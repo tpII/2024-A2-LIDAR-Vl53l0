@@ -266,7 +266,7 @@ void servo_invert()
     ESP_LOGW(TAG, "INVERT END");
 }
 
-int16_t readAngle()
+/*int16_t readAngle()
 {
     static uint16_t duty = 0;
     static uint64_t time_now = 0;
@@ -306,6 +306,32 @@ int16_t readAngle()
 
     // Calcular y devolver el ángulo en grados
     return (int16_t)(((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
+}*/
+int16_t readAngle()
+{
+    uint16_t duty=0;
+    uint64_t time_now = esp_timer_get_time();
+    int16_t angle_offset=0 ;
+    uint64_t time_reference=0;
+
+    // Obtener variables necesarias con semáforo
+    if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
+    {
+        angle_offset = last_angle_offset;
+        time_reference = time_base;
+        xSemaphoreGive(limit_semaphore);
+    }
+
+    if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
+    {
+        duty = current_duty;
+        xSemaphoreGive(current_duty_semaphore);
+    }
+
+    // Calcular velocidad escalada y ángulo
+    int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
+    int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
+    return (angle + 360) % 360; // Garantiza valores positivos
 }
 
 void servo_set_speed(char *inst)
