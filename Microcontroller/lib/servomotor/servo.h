@@ -5,14 +5,14 @@
 
 
 #define SERVO_MAX_SPEED_CW      900
-#define SERVO_MEDIUM_SPEED_CW   1100       
-#define SERVO_LOW_SPEED_CW      1200
+#define SERVO_MEDIUM_SPEED_CW   1050       
+#define SERVO_LOW_SPEED_CW      1200    //TESTED
 
 #define SERVO_STOP              1500
 
-#define SERVO_LOW_SPEED_CCW     1800
-#define SERVO_MEDIUM_SPEED_CCW  1900
-#define SERVO_MAX_SPEED_CCW     2100
+#define SERVO_LOW_SPEED_CCW     1800    //TESTED
+#define SERVO_MEDIUM_SPEED_CCW  1950    
+#define SERVO_MAX_SPEED_CCW     2100    
 
 
 

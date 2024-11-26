@@ -13,13 +13,13 @@
 #define SERVO_MAX_PULSEWIDTH_US 2100  // Ancho de pulso máximo (giro rápido en el sentido opuesto)
 #define SERVO_STOP_PULSEWIDTH_US 1500 // Ancho de pulso para detener el servo
 
-#define SERVO_PULSE_GPIO                4                   // GPIO connects to the PWM signal line
-#define SERVO_TIMEBASE_RESOLUTION_HZ    1000000             // 1MHz, 1us per tick
-#define SERVO_TIMEBASE_PERIOD           20000               // 20000 ticks, 20ms
+#define SERVO_PULSE_GPIO 4                   // GPIO connects to the PWM signal line
+#define SERVO_TIMEBASE_RESOLUTION_HZ 1000000 // 1MHz, 1us per tick
+#define SERVO_TIMEBASE_PERIOD 20000          // 20000 ticks, 20ms
 
-#define CONVERSION_FACTOR   1000000
-#define BASE_SPEED          545.45
-#define DIFFERENTIAL        600
+#define CONVERSION_FACTOR 1000000
+#define BASE_SPEED 545.45
+#define DIFFERENTIAL 600
 
 // TIMER VARIABLES
 static const char *TAG = "SERVOMOTOR";
@@ -153,7 +153,7 @@ esp_err_t servo_initialize(void)
 esp_err_t servo_start(void)
 {
 
-    return servo_set_speed_ISR(SERVO_LOW_SPEED_CCW); // Inicia con el duty en 900us
+    return servo_set_speed_ISR(SERVO_MAX_SPEED_CCW); // Inicia con el duty en 900us
 }
 
 esp_err_t servo_stop(void)
@@ -292,16 +292,21 @@ int16_t readAngle()
     }
 
     time_now = esp_timer_get_time();
-
+    ESP_LOGW(TAG, "Time now: %" PRIu64, time_now);
     // Calcular velocidad escalada en grados/segundo, en enteros para evitar uso de punto flotante
-    scaled_speed = BASE_SPEED * (duty - SERVO_STOP) / DIFFERENTIAL;
-    first_term = scaled_speed / CONVERSION_FACTOR;
-    second_term = (int64_t)(time_now - time_reference);
+    scaled_speed = (int64_t)BASE_SPEED * (duty - SERVO_STOP) / DIFFERENTIAL;
+    if (scaled_speed < 0)
+    {
+        scaled_speed = -scaled_speed;
+    }
+    ESP_LOGW(TAG, "Scalated Speed: %" PRId64, scaled_speed);
+    first_term = scaled_speed * ((int64_t)(time_now - time_reference));
+    ESP_LOGW(TAG, "First Term: %" PRIu64, first_term);
+    ESP_LOGW(TAG, "Full: %" PRId64, ((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
 
     // Calcular y devolver el ángulo en grados
-    return (int16_t)((first_term * second_term + angle_offset) % 360);
+    return (int16_t)(((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
 }
-
 
 void servo_set_speed(char *inst)
 {
