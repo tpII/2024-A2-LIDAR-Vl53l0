@@ -87,4 +87,6 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
 Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
+27 de Noviembre
+Modifico libreria del monitor para que al hacer click se expanda o vuelva a su tamaño original.
 

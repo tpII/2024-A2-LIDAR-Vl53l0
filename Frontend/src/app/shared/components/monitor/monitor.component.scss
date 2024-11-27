@@ -13,12 +13,19 @@
     /* Personalización de la barra de desplazamiento */
     scrollbar-width: thin;
     scrollbar-color: #213A7D white;
+    
+      align-items: center;
+      transition: all 0.3s ease;
+
+    
+      &.expanded {
+        width: 800px;
+        height: 600px;
+      }
+    
   }
 
-  .messages-container::-webkit-scrollbar-button{
-    background-color: #00ff00;
-  }
-  
+
   // Mensajes
   .console-line {
     margin-bottom: 10px;
@@ -63,3 +70,4 @@
   .message {
     margin-left: 10px; 
   }
+
