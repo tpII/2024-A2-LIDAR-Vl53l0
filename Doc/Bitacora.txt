@@ -94,3 +94,6 @@ Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js 
 Se realizaron mejoras con respecto a la visualizacion del mapa (cambios en el diseño).
 Se agrego funcion para generar puntos de forma aleatoria para testeo.
 Funcion para capturar el mapa en un momento determinado (falta mejorar).
+
+27 de Noviembre
+Modifico libreria para visualizar mapa para que al hacer click sobre este se expanda o vuelva a su tamaño normal.
