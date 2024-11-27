@@ -108,6 +108,13 @@ export class MapComponent implements OnInit {
     };
     image.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
   }
+
+  toggleExpand() {
+    const chart = document.getElementById('chart');
+    if (chart) {
+      chart.classList.toggle('expanded');
+    }
+  }
   
 
 }
