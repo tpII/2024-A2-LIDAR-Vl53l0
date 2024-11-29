@@ -1,0 +1,38 @@
+<as-split direction="horizontal" unit="percent" [gutterSize]="0" >
+  <!-- Sidebar Area -->
+  <as-split-area
+    [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
+    [lockSize]="true"
+    class="custom-shadow"
+  >
+    <div class="sidenav" (click)="toggleSidebar()">
+       <!-- Contenedor del logo -->
+       <div class="logo-container">
+        <img
+          *ngIf="isSideNavExpanded; else collapsedLogo"
+          src="/logo.svg" 
+          alt="Logo Expandido"
+        />
+        
+        <ng-template #collapsedLogo>
+          <img src="/small_logo.svg" alt="Logo Colapsado" />
+        </ng-template>
+      </div>
+      <div class="sidebar-content">
+        <p *ngIf="isSideNavExpanded">Expanded Content</p>
+        <p *ngIf="!isSideNavExpanded">Collapsed Content</p>
+      </div>
+      <!-- Figura azul en la parte inferior del sidebar -->
+      <div class="footer-figure" [ngStyle]="getFooterFigureStyle()"></div>
+    </div>
+  </as-split-area>
+
+  <!-- Contenido principal -->
+  <as-split-area
+    [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav"
+  >
+    <div class="main-content">
+      <app-monitor></app-monitor>
+    </div>
+  </as-split-area>
+</as-split>

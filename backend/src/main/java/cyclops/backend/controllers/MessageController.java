@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
+
 @RestController
 @RequestMapping("/message")
 public class MessageController {
@@ -36,7 +37,14 @@ public class MessageController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @GetMapping("/last")
+    public Message getLasMessage() {
+        return messageService.getLastMesage()
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"NO NEW MESSAGE"));
+    }
+    
+
+    @DeleteMapping("/{id}")
     public void deleteMessage(@PathVariable String id) {
         messageService.deleteMessage(id);
     }

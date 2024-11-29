@@ -27,17 +27,54 @@ Implementacion inicial de libreria para sensor lidar
 Inicio de impresion de la pate principal del vehiculo
 Inicio del diseño del PCB
 
-
 28 de Septiembre
+Se creo la libreria ap_server para configurar al ESP32 como un Access Point
 Impresion completada - Fallas de diseño encontradas y pendentientes de arreglo
+29 de Septiembre
+Agrego servidor TCP en la libreria ap_server
 
+30 de Septiembre
+Creacion de Interface, Service y Controller de la entidad SensorValue
+Creacion de entidad Instruction junto con su Interface, Service y Controller.
 
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
 
+02 de Octubre
+Agrego servidor http para empezar a testear
 
 04 de Octubre
 Se creó la librería de control de los motores DC
+
+Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron como se esperaba
+Esto implico testear los otores, el driver, y la fuente.
+El diseño 3D tiene defectos a corregir
+
+11 de Octubre
+Se realizaron correciones al diseño 3D del pa parte princiapl, y se continuo con las partes superiores
+Se testeo la libreria HTTP del MCU al BACKEND y funcionan.
+
+14 de Octubre
+Se opto por implementar MQTT en ves de HTTP entre el MCU y el backend
+Se implmento MQTT en el BACKEND
+
+21 de Octubre
+Se creó la librería de control del sensor VL53L0X
+
+23 de Octubre
+Se implemento una libreria para el tratamiento de datos JSON
+Se implemento una libreria MQTT Server para configurar y gestionar la conexion MQTT
+Se implemento una libreria instruction buffer para intermediar en el recibimiento de informacion, de modo de no perder informacion mientras se ejecute otras tareas.
+Se implemento una libreria MQTT Handler para abstraer la funciones de envio y recepcion de informacion
+Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
+Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
+Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+
+24 de Octubre
+Se actualizó la librería de control del sensor LiDAR
+
+31 de Octubre
+Agrego libreria para comunicacion con Backend
 
 01 de Noviembre
 Se logro testear la 1ra version de la libreria Servomotor.
@@ -45,5 +82,25 @@ Se logro testear la 1ra version de la libreria Servomotor.
 06 de Noviembre
 Agrego libreria para interrupciones por hardware para utilizar con el servomotor.
 
-13 de Noviembre
+3 de Noviembre
+Se organizo el frontend, y se crearon los componentes base vacios.
+Se implemento la base del sidenav y la estructura basica de la pagina.
+Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y backend_comm para agregar tags en los mensajes al backend.
+
+06 de Noviembre
+Se actualizó la librería de control del sensor VL53L0X.
+La misma ahora es funcional y provee la distancia a objetos.
+
+9 de Noviembre
+Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
+
+13 de Noviembre 
+Se agrega libreria para testeo del monitor en la pagina web.
 Tengo la version final de la libreria del Servo previo testeo fisico
+
+15 de Noviembre
+Agrego para ver hora e identacion en los mensajes del monitor.
+
+16 de Noviembre
+Libreria de mensages terminado, todo funcionando y testeado con el backend.
+Se testeo y mejoro la libreria lights

@@ -5,28 +5,30 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
 //@Document(collection = "sensorvalues")
-@TimeSeries(collection = "sensorvalues", timeField = "date")
-public class SensorValue {
+@TimeSeries(collection = "MappingValues", timeField = "date")
+public class MappingValue {
 
     @Id
     private String id;
-    private String distance;
-    private String angle;
+    private long distance;
+    private int angle;
     
     @CreatedDate
     private String date;
 
-    public SensorValue(String distance, String angle, String date) {
+    public MappingValue(){}
+
+    public MappingValue(long distance, int angle, String date) {
         this.distance = distance;
         this.angle = angle;
         this.date = date;
     }
 
-    public String getDistance() {
+    public long getDistance() {
         return distance;
     }
 
-    public String getAngle() {
+    public int getAngle() {
         return angle;
     }
 
@@ -34,11 +36,11 @@ public class SensorValue {
         return date;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(long distance) {
         this.distance = distance;
     }
 
-    public void setAngle(String angle) {
+    public void setAngle(int angle) {
         this.angle = angle;
     }
 
