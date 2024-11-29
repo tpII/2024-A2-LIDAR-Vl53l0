@@ -40,7 +40,7 @@ Creacion de entidad Instruction junto con su Interface, Service y Controller.
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
 
-2 de Octubre
+02 de Octubre
 Agrego servidor http para empezar a testear
 
 04 de Octubre
@@ -57,6 +57,9 @@ Se testeo la libreria HTTP del MCU al BACKEND y funcionan.
 Se opto por implementar MQTT en ves de HTTP entre el MCU y el backend
 Se implmento MQTT en el BACKEND
 
+21 de Octubre
+Se creó la librería de control del sensor VL53L0X
+
 23 de Octubre
 Se implemento una libreria para el tratamiento de datos JSON
 Se implemento una libreria MQTT Server para configurar y gestionar la conexion MQTT
@@ -65,6 +68,8 @@ Se implemento una libreria MQTT Handler para abstraer la funciones de envio y re
 Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
 Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
 Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+24 de Octubre
+Se actualizó la librería de control del sensor LiDAR
 
 31 de Octubre
 Agrego libreria para comunicacion con Backend
@@ -74,8 +79,19 @@ Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
 Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y backend_comm para agregar tags en los mensajes al backend.
 
+06 de Noviembre
+Se actualizó la librería de control del sensor VL53L0X.
+La misma ahora es funcional y provee la distancia a objetos.
+
 9 de Noviembre
 Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
 
+13 de Noviembre 
+Se agrega libreria para testeo del monitor en la pagina web.
+
+15 de Noviembre
+Agrego para ver hora e identacion en los mensajes del monitor.
+
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
+Se testeo y mejoro la libreria lights
