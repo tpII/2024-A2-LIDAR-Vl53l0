@@ -45,6 +45,7 @@ Agrego servidor http para empezar a testear
 
 04 de Octubre
 Se creó la librería de control de los motores DC
+
 Nos reunimos y testeamos las librerias de motores y wifi AP y ambas funcionaron como se esperaba
 Esto implico testear los otores, el driver, y la fuente.
 El diseño 3D tiene defectos a corregir
@@ -68,11 +69,18 @@ Se implemento una libreria MQTT Handler para abstraer la funciones de envio y re
 Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
 Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
 Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+
 24 de Octubre
 Se actualizó la librería de control del sensor LiDAR
 
 31 de Octubre
 Agrego libreria para comunicacion con Backend
+
+01 de Noviembre
+Se logro testear la 1ra version de la libreria Servomotor.
+
+06 de Noviembre
+Agrego libreria para interrupciones por hardware para utilizar con el servomotor.
 
 3 de Noviembre
 Se organizo el frontend, y se crearon los componentes base vacios.
@@ -88,6 +96,7 @@ Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensaje
 
 13 de Noviembre 
 Se agrega libreria para testeo del monitor en la pagina web.
+Tengo la version final de la libreria del Servo previo testeo fisico
 
 15 de Noviembre
 Agrego para ver hora e identacion en los mensajes del monitor.
