@@ -29,6 +29,7 @@ esp_err_t i2c_init()
     {
         ESP_LOGE(TAG, "Error in i2c_param_config: %s", esp_err_to_name(err));
         // Seng Msg to User and Turn ON error led
+
         return err;
     }
 
