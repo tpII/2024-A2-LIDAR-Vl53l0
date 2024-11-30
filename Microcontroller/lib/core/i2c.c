@@ -12,7 +12,14 @@ static const char *TAG = "I2C";
 esp_err_t i2c_init()
 {
 
+    static bool is_initialized = false; // Estado de inicialización
+
     bus_semaphore = xSemaphoreCreateBinary();
+
+    if(is_initialized){
+        ESP_LOGI(TAG, "I2C already initialized, skipping initialization.");
+        return ESP_OK;
+    }
 
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
@@ -50,6 +57,8 @@ esp_err_t i2c_init()
         ESP_LOGE(TAG, "Error Initializing I2C Bus Semaphore");
         return ESP_FAIL;
     }
+    
+    is_initialized = true;
     return err;
 }
 

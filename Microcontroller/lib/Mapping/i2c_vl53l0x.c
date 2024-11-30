@@ -1,5 +1,4 @@
 #include "i2c_vl53l0x.h"
-#include "i2c.h"
 #include "esp_log.h"
 
 #define DEFAULT_SLAVE_ADDRESS (0x29)
@@ -23,6 +22,8 @@ typedef enum
 /* Read a register of size reg_size at address addr.
  * NOTE: The bytes are read from MSB to LSB. */
 static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uint8_t *data) {
+
+
     bool success = false;
 
     if(!i2c_get_bus()){
