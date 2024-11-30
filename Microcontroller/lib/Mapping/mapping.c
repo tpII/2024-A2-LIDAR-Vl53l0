@@ -59,7 +59,7 @@ esp_err_t getMappingValue(uint16_t *angle, uint16_t *distance)
     bool success = false;
     uint16_t value = 0;
     *angle = readAngle();
-#ifdef VL53L0X
+#ifndef VL53L0X
     success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &value);
     if (success && value != VL53L0X_OUT_OF_RANGE || value >= MIN_DISTANCE)
     {
