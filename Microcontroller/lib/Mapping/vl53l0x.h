@@ -1,10 +1,11 @@
 #ifndef VL53L0X_H
 #define VL53L0X_H
 
-#include "i2c.h"
+#include "i2c_vl53l0x.h"
 #include "gpio.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <ina219.h>
 
 #define VL53L0X_OUT_OF_RANGE (8190)
 

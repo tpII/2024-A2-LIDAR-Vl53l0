@@ -1,9 +1,9 @@
 #include "instruction_buffer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "json_helper.h"
 #include <string.h>
 #include "esp_log.h"
+
 
 #define INSTRUCTIONS_BUFFER_SIZE 10
 #define INSTRUCTION_MAX_LENGTH 40
@@ -15,19 +15,22 @@ static uint8_t get_index = 0;
 static SemaphoreHandle_t buffer_access;
 static const char *TAG = "INSTRUCTION_BUFFER";
 
-static void initBuffer(void);
 
-static void initBuffer()
+esp_err_t initBuffer()
 {
     if (buffer_access == NULL) {
         buffer_access = xSemaphoreCreateMutex();
+        if (buffer_access == NULL) {
+            ESP_LOGE(TAG,"Error creating Semaphore");
+            return ESP_FAIL;
+        }
     }
+    return ESP_OK;
 }
 
 
 esp_err_t getInstruction(char *inst)
 {   
-    initBuffer();
     // Toma el semáforo antes de acceder al buffer
     if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)
     {
@@ -54,7 +57,6 @@ esp_err_t getInstruction(char *inst)
 
 esp_err_t saveInstruction(char *inst)
 {
-    initBuffer();
 
     // Toma el semáforo antes de acceder al buffer
     if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)

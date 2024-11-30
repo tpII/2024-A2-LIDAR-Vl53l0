@@ -3,6 +3,8 @@
 
 #include "esp_err.h"
 
+esp_err_t initBuffer(void);
+
 esp_err_t getInstruction(char *);
 
 esp_err_t saveInstruction(char *);

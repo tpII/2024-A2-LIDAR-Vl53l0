@@ -1,4 +1,6 @@
 #include "vl53l0x.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #define REG_IDENTIFICATION_MODEL_ID (0xC0)
 #define REG_VHV_CONFIG_PAD_SCL_SDA_EXTSUP_HV (0x89)
