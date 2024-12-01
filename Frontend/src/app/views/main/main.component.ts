@@ -33,4 +33,21 @@ export class MainComponent {
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
+
+  toggleExpand(component: 'map' | 'monitor') {
+    const map = document.getElementById('map');
+    const monitor = document.getElementById('monitor');
+  
+    if (map && monitor) {
+      if (component === 'map') {
+        map.classList.toggle('expanded');
+        monitor.classList.remove('expanded');
+      } else if (component === 'monitor') {
+        monitor.classList.toggle('expanded');
+        map.classList.remove('expanded');
+      }
+    }
+  }
+  
+    
 }

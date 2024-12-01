@@ -29,6 +29,10 @@
 .main-content {
   padding: 10px;
   background-color: #fff; /* Color de fondo del contenido principal */
+  flex-direction: row;
+  display: flex;
+  gap: 10px;
+  height: 100vh;
 }
 .mat-sidenav-container {
   overflow: visible; // Permitir que la sombra del sidenav sea visible
@@ -59,4 +63,26 @@
 .logo-container img {
   //max-width: 80%; /* Ajusta el tamaño del logo según lo necesario */
   height: 86px;
+}
+
+
+// Para el componente "Map"
+#map {
+  width: 50%; /* tamaño normal */
+  transition: width 0.3s;
+}
+
+#map.expanded {
+  width: 90%; /* tamaño expandido */
+}
+
+// Para el componente "Monitor"
+#monitor {
+  width: 50%; /* tamaño normal */
+  transition: width 0.3s height 0.3s;;
+}
+
+#monitor.expanded {
+  width: 90% !important; /* tamaño expandido */
+  height: 90% !important; /* tamaño expandido */
 }
