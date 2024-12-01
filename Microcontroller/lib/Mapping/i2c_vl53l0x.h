@@ -3,6 +3,9 @@
 
 #include "esp_err.h"
 #include <stdbool.h>
+#include "i2c.h"
+
+
 /**
  * Wrapper functions for reading from registers with different address
  * and data sizes.

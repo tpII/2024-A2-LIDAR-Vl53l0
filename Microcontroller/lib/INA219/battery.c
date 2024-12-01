@@ -1,7 +1,7 @@
 #include "battery.h"
 #include "esp_log.h"
 #include "ina219.h"
-
+#include "string.h"
 #define CONFIG_SHUNT_RESISTOR_MILLI_OHM 100 // SHOULD BE ADDED DIRECT IN sdkconfig
 
 #define FULL_CHARGE 8.4 //FULL CHARGE 8.4V
