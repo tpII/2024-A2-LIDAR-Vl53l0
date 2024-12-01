@@ -87,6 +87,14 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
 Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
-27 de Noviembre
-Modifico libreria del monitor para que al hacer click se expanda o vuelva a su tamaño original.
+20 de Noviembre 
+Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js con datos de prueba)
 
+22 de Noviembre
+Se realizaron mejoras con respecto a la visualizacion del mapa (cambios en el diseño).
+Se agrego funcion para generar puntos de forma aleatoria para testeo.
+Funcion para capturar el mapa en un momento determinado (falta mejorar).
+
+27 de Noviembre
+Modifico libreria para visualizar mapa para que al hacer click sobre este se expanda o vuelva a su tamaño normal.
+Modifico libreria del monitor para que al hacer click se expanda o vuelva a su tamaño original.
