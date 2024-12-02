@@ -66,9 +66,26 @@ Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera sati
 Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
 Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
 
+31 de Octubre
+Agrego libreria para comunicacion con Backend
+
 3 de Noviembre
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
+Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y backend_comm para agregar tags en los mensajes al backend.
+
+9 de Noviembre
+Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
+
+16 de Noviembre
+Libreria de mensages terminado, todo funcionando y testeado con el backend.
 
 19 de Noviembre
 Se crearon los prototipos de los botones del sidebar.
+
+23 de Noviembre
+Implementado el componente para leer un joystick y poder controlar el robot. 
+Pendiente crear el servicio y apartado visual.
+
+
+
