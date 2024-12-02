@@ -1,6 +1,6 @@
 #include "battery.h"
 #include "esp_log.h"
-#include "ina219.h"
+#include "ina219v2.h"
 #include "string.h"
 #define CONFIG_SHUNT_RESISTOR_MILLI_OHM 100 // SHOULD BE ADDED DIRECT IN sdkconfig
 
@@ -29,15 +29,10 @@ esp_err_t battery_sensor_init()
     ESP_LOGI(TAG, "Initalizing INA219");
     ESP_ERROR_CHECK(ina219_init(&dev));
 
-    ESP_LOGI(TAG, "Configuring INA219");
-    ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
-                                     INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
-                                     INA219_MODE_CONT_SHUNT_BUS));
-
     ESP_LOGI(TAG, "Calibrating INA219");
 
     ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));
-
+    
     bus_voltage = 0.0f;
     shunt_voltage = 0.0f;
     current = 0.0f;

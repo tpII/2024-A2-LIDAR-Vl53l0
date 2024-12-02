@@ -90,12 +90,14 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
 {
     CHECK_ARG(val);
 
+    ESP_LOGW(TAG, "INTO READ REG 16");
+
     if (!i2c_get_bus())
     {
         ESP_LOGE(TAG, "Error obteniendo el bus I2C");
         return ESP_FAIL;
     }
-
+    ESP_LOGW(TAG, "Break 1");
     // Crear un comando I2C
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL)
@@ -104,9 +106,11 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 2");
 
     // Iniciar la transferencia en modo escritura
     i2c_master_start(cmd);
+    ESP_LOGW(TAG, "Break 3");
 
     // Escribir la dirección del dispositivo en el bus (modo escritura)
     if (i2c_master_write_byte(cmd, (dev->addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK)
@@ -116,6 +120,7 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 4");
 
     // Escribir el registro que queremos leer
     if (i2c_master_write_byte(cmd, reg_addr, true) != ESP_OK)
@@ -125,6 +130,7 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 5");
 
     // Iniciar la transferencia para cambiar a modo lectura
     i2c_master_start(cmd);
@@ -137,6 +143,7 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 6");
 
     // Leer los 2 bytes (16 bits) en el buffer
     if (i2c_master_read_byte(cmd, (uint8_t *)(val + 1), I2C_MASTER_ACK) != ESP_OK ||
@@ -147,6 +154,7 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 7");
 
     // Finalizar la transferencia I2C
     if (i2c_master_stop(cmd) != ESP_OK)
@@ -155,6 +163,7 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 8");
 
     // Ejecutar el comando
     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(1000));
@@ -165,15 +174,18 @@ static esp_err_t read_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t *val)
         i2c_give_bus();
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 9");
 
     // Liberar el comando I2C
     i2c_cmd_link_delete(cmd);
+    ESP_LOGW(TAG, "Break 10");
 
     // Liberar el bus I2C
     if (!i2c_give_bus())
     {
         return ESP_FAIL;
     }
+    ESP_LOGW(TAG, "Break 11");
 
     // Intercambiar los bytes para obtener el valor correcto (Big Endian a Little Endian)
     *val = (*val >> 8) | (*val << 8);
@@ -269,11 +281,12 @@ static esp_err_t read_conf_bits(ina219_t *dev, uint16_t mask, uint8_t bit, uint1
 
 ///////////////////////////////////////////////////////////////////////////////
 
-
 esp_err_t ina219_init(ina219_t *dev)
 {
 
     CHECK_ARG(dev);
+
+    CHECK(i2c_init());
 
     // Leer el valor del registro de configuración
     CHECK(read_reg_16(dev->addr, REG_CONFIG, &dev->config));
@@ -309,9 +322,9 @@ esp_err_t ina219_configure(ina219_t *dev, ina219_bus_voltage_range_t u_range,
     CHECK_ARG(mode <= INA219_MODE_CONT_SHUNT_BUS);
 
     dev->config = (u_range << BIT_BRNG) |
-                  (gain << BIT_PG0)     |
-                  (u_res << BIT_BADC0)  |
-                  (i_res << BIT_SADC0)  |
+                  (gain << BIT_PG0) |
+                  (u_res << BIT_BADC0) |
+                  (i_res << BIT_SADC0) |
                   (mode << BIT_MODE);
 
     ESP_LOGD(TAG, "Config: 0x%04x", dev->config);
@@ -363,7 +376,7 @@ esp_err_t ina219_calibrate(ina219_t *dev, float r_shunt)
 
     ina219_gain_t gain;
     CHECK(ina219_get_gain(dev->addr, &gain));
-  
+
     dev->i_lsb = (uint16_t)(u_shunt_max[gain] / r_shunt / 32767 * 100000000);
     dev->i_lsb /= 100000000;
     dev->i_lsb /= 0.0001;
