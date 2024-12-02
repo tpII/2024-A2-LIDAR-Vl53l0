@@ -21,5 +21,12 @@ int app_main(void){
                 return 1;
         }
 
+        uint8_t level;
+        while(1){
+                err = battery_sensor_read(&level);
+                ESP_LOGI(TAG,"Baterry Level: %u",level);
+                vTaskDelay(1000);
+        }
+
        return 0;
 }

@@ -16,7 +16,7 @@
 #define INA219_REG_CALIBRATION 0x05
 
 // Configuración predeterminada del INA219
-#define INA219_CONFIG_DEFAULT 0x399F // Modo normal, rango de 32V, ADC 12 bits
+#define INA219_CONFIG_DEFAULT 0x299F // Modo normal, rango de 16V, ADC 12 bits
 
 // Estructura para manejar el INA219
 typedef struct {
