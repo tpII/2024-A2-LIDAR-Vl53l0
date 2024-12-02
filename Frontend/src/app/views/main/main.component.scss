@@ -1,4 +1,4 @@
-//SIDENAV scss
+//SIDENAV structure scss
 .sidenav {
   background-color: white; /* Color de fondo de la sidebar */
   height: 100vh; /* Alto completo */
@@ -40,12 +40,11 @@
   bottom: 0;
   width: 100%; // Esto asegura que ocupe todo el ancho disponible de la sidenav
   height: 101px; // Altura fija; puedes ajustar esto según tus necesidades
-  background-color: #213A7D; // Color azul
+  background-color: #213a7d; // Color azul
 
   // Aplicar un radio de borde para esquinas redondeadas si se requiere
   border-top-right-radius: 20px;
-  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.6), 
-  0px 1px 10px rgba(0, 0, 0, 0.2); /* Sombras para dar más profundidad */
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.6), 0px 1px 10px rgba(0, 0, 0, 0.2); /* Sombras para dar más profundidad */
 }
 
 .logo-container {
@@ -59,4 +58,122 @@
 .logo-container img {
   //max-width: 80%; /* Ajusta el tamaño del logo según lo necesario */
   height: 86px;
+}
+
+//Buttons Scss
+.sidenav-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+}
+.sidenav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px; // Botón redondo en estado contraído
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 8px 0;
+  overflow: hidden;
+  transition: all 0.3s;
+
+  .button-icon {
+    font-size: 24px;
+    color: #0033a0; // Color del icono
+  }
+
+  .button-label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 16px;
+    color: #0033a0; // Color del texto
+  }
+
+  // Estado expandido
+  &.expanded {
+    width: 200px;
+    border-radius: 25px; // Botón alargado con extremos redondeados
+    justify-content: flex-center;
+    padding-left: 16px;
+
+    .button-icon {
+      margin-right: 8px;
+    }
+  }
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.sidenav-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+
+  // Indicadores contraídos (círculos)
+  .status-item.collapsed {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ffffff; // Fondo blanco
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #0033a0; // Borde azul
+    margin-bottom: 12px;
+
+    .status-icon {
+      color: #0033a0; // Íconos en azul
+      font-size: 24px;
+    }
+
+    &.alert {
+      border-color: #d32f2f; // Borde rojo
+      .status-icon {
+        color: #d32f2f; // Íconos en rojo
+      }
+    }
+  }
+
+  // Indicadores expandidos (línea horizontal con texto)
+  .status-container.expanded {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 16px;
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      border: none; // Sin borde en expandido
+      background: none; // Sin fondo en expandido
+      padding: 6px 28px;
+      border-radius: 25px;
+      border: 2px solid #0033a0; // Borde azul
+      flex-direction: column;
+
+      .status-icon {
+        color: #0033a0; // Íconos en azul
+        font-size: 24px;
+        margin-right: 8px; // Espaciado entre ícono y texto
+      }
+
+      .status-label {
+        color: #0033a0; // Texto en azul
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      &.alert .status-icon,
+      &.alert .status-label {
+        color: #d32f2f; // Cambiar color en estado de alerta
+      }
+    }
+  }
 }

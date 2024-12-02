@@ -15,10 +15,23 @@ import { GamepadComponent } from '../../shared/components/gamepad/gamepad.compon
 export class MainComponent {
   // Controlar si la sidebar está expandida o no
   isSideNavExpanded = false;
+ // Tamaños mínimo y máximo de la sidebar
+ minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
+ maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
 
-  // Tamaños mínimo y máximo de la sidebar
-  minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
-  maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
+  // Agregar propiedades para el mando y la batería
+  isControllerConnected = true; // Cambiar dinámicamente según el estado real
+  batteryLevel = 75; // Cambiar dinámicamente según el nivel de batería
+
+ 
+
+  buttons = [
+    { icon: 'speed', label: '20m x hora' },
+    { icon: 'thermostat', label: 'Máximo 30°' },
+    { icon: 'pause', label: 'Pausar' },
+    { icon: 'restart_alt', label: 'Reiniciar' },
+    { icon: 'cancel', label: 'Restablecer' },
+  ];
 
   // Alternar el estado de la sidebar entre colapsada y expandida
   toggleSidebar(): void {
@@ -28,7 +41,9 @@ export class MainComponent {
 
   getFooterFigureStyle() {
     return {
-      width: `${this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav}%`,
+      width: `${
+        this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
+      }%`,
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
