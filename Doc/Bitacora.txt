@@ -87,5 +87,7 @@ Se crearon los prototipos de los botones del sidebar.
 Implementado el componente para leer un joystick y poder controlar el robot. 
 Pendiente crear el servicio y apartado visual.
 
-
+02 de Diciembre
+El sidneav mustra el status de conexion del Gamepad.
+El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
 

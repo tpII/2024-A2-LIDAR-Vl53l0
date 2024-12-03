@@ -22,8 +22,8 @@
       <div class="sidenav-status">
         <!-- Estado contraído (círculos) -->
         <div *ngIf="!isSideNavExpanded">
-          <div class="status-item collapsed">
-            <mat-icon class="status-icon">gamepad</mat-icon>
+          <div class="status-item collapsed" [ngClass]="{alert: isControllerConnected}">
+            <mat-icon class="status-icon" [ngClass]="{alert: isControllerConnected}">gamepad</mat-icon>
           </div>
           <div class="status-item collapsed alert">
             <mat-icon class="status-icon">battery_alert</mat-icon>
@@ -32,9 +32,10 @@
 
         <!-- Estado expandido (línea horizontal) -->
         <div *ngIf="isSideNavExpanded" class="status-container expanded">
-          <div class="status-item">
-            <mat-icon class="status-icon">gamepad</mat-icon>
-            <span class="status-label">Conectado</span>
+          <div class="status-item" [ngClass]="{alert: isControllerConnected}">
+            <mat-icon class="status-icon" [ngClass]="{alert: isControllerConnected}">gamepad</mat-icon>
+            <span class="status-label" *ngIf="!isControllerConnected">Conectado</span>
+            <span class="status-label alert" *ngIf="isControllerConnected">Desconectado</span>
           </div>
           <div class="status-item alert">
             <mat-icon class="status-icon">battery_alert</mat-icon>

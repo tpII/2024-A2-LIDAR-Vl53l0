@@ -51,8 +51,10 @@ export class MainComponent {
   onGamepadStatusChange(isConnected: boolean): void {
     if (isConnected) {
       console.log('Gamepad connected!');
+      this.isControllerConnected = false;
     } else {
       console.log('Gamepad disconnected!');
+      this.isControllerConnected = true;
     }
   }
   

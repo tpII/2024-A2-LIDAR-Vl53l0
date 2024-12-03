@@ -133,7 +133,8 @@
     }
 
     &.alert {
-      border-color: #d32f2f; // Borde rojo
+      border-color: #d32f2f; // Borde rojo en alerta
+      background-color: #ffe6e6; // Fondo de alerta (opcional)
       .status-icon {
         color: #d32f2f; // Íconos en rojo
       }
@@ -170,9 +171,16 @@
         font-weight: bold;
       }
 
-      &.alert .status-icon,
-      &.alert .status-label {
-        color: #d32f2f; // Cambiar color en estado de alerta
+       // Cambiar a estado de alerta
+       &.alert {
+        border-color: #d32f2f; // Borde rojo en alerta
+        background-color: #ffe6e6; // Fondo de alerta (opcional)
+        .status-icon {
+          color: #d32f2f; // Íconos en rojo
+        }
+        .status-label {
+          color: #d32f2f; // Texto en rojo
+        }
       }
     }
   }
