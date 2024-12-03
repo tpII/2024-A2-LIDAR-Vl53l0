@@ -33,7 +33,7 @@ export class MainComponent {
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
-
+/*
   toggleExpand(component: 'map' | 'monitor') {
     const map = document.getElementById('map');
     const monitor = document.getElementById('monitor');
@@ -48,6 +48,35 @@ export class MainComponent {
       }
     }
   }
+*/
+
+  isMapExpanded: boolean = false;
+  isMonitorExpanded: boolean = false;
+
+  toggleExpand(component: 'map' | 'monitor') {
+    if (component === 'map') {
+      if (this.isMapExpanded) {
+        // Volver a tamaño normal
+        this.isMapExpanded = false;
+        this.isMonitorExpanded = false;
+      } else {
+        // Expandir mapa y ocultar monitor
+        this.isMapExpanded = true;
+        this.isMonitorExpanded = false;
+      }
+    } else if (component === 'monitor') {
+      if (this.isMonitorExpanded) {
+        // Volver a tamaño normal
+        this.isMonitorExpanded = false;
+        this.isMapExpanded = false;
+      } else {
+        // Expandir monitor y reducir mapa
+        this.isMonitorExpanded = true;
+        this.isMapExpanded = false;
+      }
+    }
+
+  }
+ 
   
-    
 }

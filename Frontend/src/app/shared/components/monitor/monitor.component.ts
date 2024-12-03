@@ -97,6 +97,7 @@ export class MonitorComponent {
   }
       */
 
+  
   toggleExpand() {
     const monitor = document.getElementById('monitor');
     if (monitor) {

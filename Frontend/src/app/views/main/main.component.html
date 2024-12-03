@@ -32,12 +32,25 @@
     [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav"
   >
     <div class="main-content">
+        <div id="monitor" 
+          [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" 
+          (click)="toggleExpand('monitor')">
+            <app-monitor></app-monitor>
+        </div>
+        <div id="map" 
+          [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" 
+          (click)="toggleExpand('map')">
+            <app-map></app-map>
+        </div>
+  
+      <!--
       <div id="monitor" class="component" (click)="toggleExpand('monitor')">
         <app-monitor></app-monitor>
       </div>
       <div id="map" class="component" (click)="toggleExpand('map')">
         <app-map></app-map>
       </div>
+    -->
     </div>
   </as-split-area>
 </as-split>

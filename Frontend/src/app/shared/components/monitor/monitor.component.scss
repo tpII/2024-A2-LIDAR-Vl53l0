@@ -4,9 +4,8 @@
     color: #213A7D;
     padding: 10px;
     border-radius: 5px;
-    max-height: 600px;
-    height: 600px;
-    width: 40%;
+    height: 80%;
+    width: 50%;
     overflow-y: scroll; 
     white-space: pre-wrap; 
     border: 2px; 
@@ -19,8 +18,8 @@
 
     
       &.expanded {
-        width: 800px;
-        height: 600px;
+        width: 90%; /* tamaño expandido */
+        height: 90%; /* ajusta la altura si es necesario */
       }
     
   }

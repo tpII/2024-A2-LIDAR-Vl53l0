@@ -67,22 +67,51 @@
 
 
 // Para el componente "Map"
+//#map {
+//  width: 50%; /* tamaño normal */
+//  transition: width 0.3s;
+//}
+
+//#map.expanded {
+//  width: 90%; /* tamaño expandido */
+//}
+
+// Para el componente "Monitor"
+//#monitor {
+//  width: 50%; /* tamaño normal */
+//  transition: width 0.3s height 0.3s;;
+//}
+
+//#monitor.expanded {
+//  width: 90% !important; /* tamaño expandido */
+//  height: 90% !important; /* tamaño expandido */
+//}
+
 #map {
-  width: 50%; /* tamaño normal */
-  transition: width 0.3s;
+  width: 60%;
+}
+#monitor {
+  width: 50%;
+}
+#map, #monitor{
+  height: 100%;
+  transition: all 0.3s ease-in-out; 
+  overflow: hidden; /* Prevenir contenido desbordante */
 }
 
 #map.expanded {
-  width: 90%; /* tamaño expandido */
+  width: 100%;
 }
 
-// Para el componente "Monitor"
-#monitor {
-  width: 50%; /* tamaño normal */
-  transition: width 0.3s height 0.3s;;
+#map.shrunk {
+  width: 30%;
 }
 
 #monitor.expanded {
-  width: 90% !important; /* tamaño expandido */
-  height: 90% !important; /* tamaño expandido */
+  width: 70%;
+}
+
+#monitor.hidden {
+  width: 0; /* Contrae completamente */
+  visibility: hidden; /* Evita que sea visible */
 }

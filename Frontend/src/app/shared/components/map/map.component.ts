@@ -9,7 +9,7 @@ import * as d3 from 'd3';
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit {
-  private width = 500;
+  private width = 700;
   private height = 500;
   private svg: any;
   private maxDistance = 2; // Distancia máxima en metros
@@ -115,6 +115,32 @@ export class MapComponent implements OnInit {
       chart.classList.toggle('expanded');
     }
   }
+
+  updateSvgSize() {
+    const mapElement = document.getElementById('map');
+    const svgElement = d3.select('#chart svg');
+  
+    if (mapElement && svgElement) {
+      const isExpanded = mapElement.classList.contains('expanded');
+      const isShrunk = mapElement.classList.contains('shrunk');
+  
+      // Ajustar dimensiones del SVG
+      if (isExpanded) {
+        svgElement
+          .attr('width', 900) // Tamaño cuando el mapa está expandido
+          .attr('height', 800);
+      } else if (isShrunk) {
+        svgElement
+          .attr('width', 300) // Tamaño cuando el mapa está reducido
+          .attr('height', 200);
+      } else {
+        svgElement
+          .attr('width', 700) // Tamaño normal
+          .attr('height', 500);
+      }
+    }
+  }
+  
   
 
 }
