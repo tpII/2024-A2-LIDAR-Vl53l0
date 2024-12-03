@@ -57,5 +57,11 @@ export class MainComponent {
       this.isControllerConnected = true;
     }
   }
+
+  onButtonClick(event: Event, button: any): void {
+    // Detiene la propagación del evento para evitar que afecte al sidenav
+    event.stopPropagation();
+    console.log('Botón presionado:', button.label);
+  }
   
 }
