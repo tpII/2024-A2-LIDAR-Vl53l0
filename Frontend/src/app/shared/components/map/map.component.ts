@@ -116,27 +116,17 @@ export class MapComponent implements OnInit {
     }
   }
 
-  updateSvgSize() {
-    const mapElement = document.getElementById('map');
+  
+
+  updateSvgSize(state: 'normal' | 'expanded' | 'shrunk') {
     const svgElement = d3.select('#chart svg');
-  
-    if (mapElement && svgElement) {
-      const isExpanded = mapElement.classList.contains('expanded');
-      const isShrunk = mapElement.classList.contains('shrunk');
-  
-      // Ajustar dimensiones del SVG
-      if (isExpanded) {
-        svgElement
-          .attr('width', 900) // Tamaño cuando el mapa está expandido
-          .attr('height', 800);
-      } else if (isShrunk) {
-        svgElement
-          .attr('width', 300) // Tamaño cuando el mapa está reducido
-          .attr('height', 200);
+    if (svgElement) {
+      if (state === 'expanded') {
+        svgElement.attr('width', 800).attr('height', 600);
+      } else if (state === 'shrunk') {
+        svgElement.attr('width', 400).attr('height', 300);
       } else {
-        svgElement
-          .attr('width', 700) // Tamaño normal
-          .attr('height', 500);
+        svgElement.attr('width', 700).attr('height', 500);
       }
     }
   }

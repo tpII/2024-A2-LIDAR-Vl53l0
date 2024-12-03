@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
@@ -52,31 +52,20 @@ export class MainComponent {
 
   isMapExpanded: boolean = false;
   isMonitorExpanded: boolean = false;
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
 
   toggleExpand(component: 'map' | 'monitor') {
     if (component === 'map') {
-      if (this.isMapExpanded) {
-        // Volver a tamaño normal
-        this.isMapExpanded = false;
-        this.isMonitorExpanded = false;
-      } else {
-        // Expandir mapa y ocultar monitor
-        this.isMapExpanded = true;
-        this.isMonitorExpanded = false;
-      }
+      this.isMapExpanded = !this.isMapExpanded;
+      this.isMonitorExpanded = false;
+      const state = this.isMapExpanded ? 'expanded' : 'normal';
+      this.mapComponent.updateSvgSize(state);
     } else if (component === 'monitor') {
-      if (this.isMonitorExpanded) {
-        // Volver a tamaño normal
-        this.isMonitorExpanded = false;
-        this.isMapExpanded = false;
-      } else {
-        // Expandir monitor y reducir mapa
-        this.isMonitorExpanded = true;
-        this.isMapExpanded = false;
-      }
+      this.isMonitorExpanded = !this.isMonitorExpanded;
+      this.isMapExpanded = false;
+      const state = this.isMonitorExpanded ? 'shrunk' : 'normal';
+      this.mapComponent.updateSvgSize(state);
     }
-
-  }
- 
+  } 
   
 }
