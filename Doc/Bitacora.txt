@@ -103,3 +103,7 @@ Modifico libreria del monitor para que al hacer click se expanda o vuelva a su t
 Merge de librerias de monitor y map.
 Modifico libreria monitor (merge ya realizado) para visualizar mapa y monitor al mismo tiempo. 
 Ademas de agregar cambios necesarios para que cuando un componente se expanda el otro se contraiga.
+
+03 de Diciembre
+Modifico libreria del monitor para que cuando el mapa se expanda, se oculte el monitor.
+Ademas, se realizaron mejoras en la visualizacion al expandir/contraer.

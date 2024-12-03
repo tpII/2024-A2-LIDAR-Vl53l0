@@ -5,22 +5,13 @@
     padding: 10px;
     border-radius: 5px;
     height: 80%;
-    width: 50%;
+    max-width: 65%;
     overflow-y: scroll; 
     white-space: pre-wrap; 
     border: 2px; 
     /* Personalización de la barra de desplazamiento */
     scrollbar-width: thin;
     scrollbar-color: #213A7D white;
-    
-      align-items: center;
-      transition: all 0.3s ease;
-
-    
-      &.expanded {
-        width: 90%; /* tamaño expandido */
-        height: 90%; /* ajusta la altura si es necesario */
-      }
     
   }
 
