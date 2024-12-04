@@ -28,9 +28,9 @@ export class MainComponent {
   buttons = [
     { icon: 'speed', label: '20m x hora' },
     { icon: 'thermostat', label: 'Máximo 30°' },
-    { icon: 'pause', label: 'Pausar' },
-    { icon: 'restart_alt', label: 'Reiniciar' },
-    { icon: 'cancel', label: 'Restablecer' },
+    { icon: 'pause', label: 'PAUSAR' },
+    { icon: 'restart_alt', label: 'REINICIAR' },
+    { icon: 'cancel', label: 'RESTABLECER' },
   ];
 
   // Alternar el estado de la sidebar entre colapsada y expandida

@@ -50,6 +50,7 @@
           class="sidenav-button"
           [ngClass]="{ expanded: isSideNavExpanded }"
           mat-button
+          [attr.data-label]="button.label"
           (click)="onButtonClick($event, button)"
         >
           <mat-icon class="button-icon">{{ button.icon }}</mat-icon>

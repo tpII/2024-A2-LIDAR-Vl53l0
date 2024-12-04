@@ -67,6 +67,8 @@
   align-items: center;
   margin-top: 16px;
 }
+
+
 .sidenav-button {
   display: flex;
   align-items: center;
@@ -91,13 +93,18 @@
     margin-left: 16px;
     color: #0033a0; // Color del texto
   }
+ 
 
   // Estado expandido
   &.expanded {
-    width: 200px;
+    width: 350px;
     border-radius: 25px; // Botón alargado con extremos redondeados
-    justify-content: flex-center;
+    justify-content: flex-start;
     padding-left: 16px;
+
+    .button-label {
+      font-weight: bold; /* Remarca el texto */
+    }
 
     .button-icon {
       margin-right: 8px;
@@ -106,8 +113,28 @@
 
   &:hover {
     background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra alrededor del botón */
+
+    //Boton Pausa
+    &[data-label="PAUSAR"] {
+      background-color: #b4e1f4;
+      border: #b4e1f4; // Borde azul
+    }
+
+    //Boton Reiniciar
+    &[data-label="REINICIAR"] {
+      background-color: #d32f2f;
+      border: #d32f2f; 
+    }
+
+     //Boton Restablecer
+    &[data-label="RESTABLECER"] {
+      background-color: #ffe8a1;
+      border: #ffe8a1; 
+    }
   }
 }
+
 
 .sidenav-status {
   display: flex;
