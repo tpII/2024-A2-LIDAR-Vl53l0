@@ -73,5 +73,5 @@
   </as-split-area>
 </as-split>
 
-<app-gamepad (gamepadConnectionStatus)="onGamepadStatusChange($event)" style="display: none;"></app-gamepad>
+<app-gamepad (gamepadConnectionStatus)="onGamepadStatusChange($event)" (changeValue)="changeSpeedByGamepad($event)" style="display: none;"></app-gamepad>
 

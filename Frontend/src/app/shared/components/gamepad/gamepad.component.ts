@@ -11,6 +11,7 @@ import { InstructionsService } from '../../../core/services/instructions.service
 })
 export class GamepadComponent implements OnInit {
   @Output() gamepadConnectionStatus = new EventEmitter<boolean>(); // Emite conexión/desconexión
+  @Output() changeValue = new EventEmitter<String>();
 
   connectedGamepad: Gamepad | null = null;
   private previousLeftJoystickState: string = 'Neutral'; // Estado previo para el joystick izquierdo
@@ -105,9 +106,13 @@ export class GamepadComponent implements OnInit {
         switch (index) {
           case 0:
             console.log(`Button ${index}: SpeedUp`);
+            this.sendInstruction("SpeedUp");
+            this.changeValue.emit("SpeedUp");
             break;
           case 2:
             console.log(`Button ${index}: SpeedDown`);
+            this.sendInstruction("SpeedDow");
+            this.changeValue.emit("SpeedDown");
             break;
           default:
             break;

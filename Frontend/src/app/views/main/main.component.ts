@@ -64,4 +64,11 @@ export class MainComponent {
     console.log('Botón presionado:', button.label);
   }
   
+  changeSpeedByGamepad(str: String){
+    if(str === "SpeedUp"){
+      //Change speed to next up
+    } else {
+      //Change speed to next down
+    }
+  }
 }
