@@ -68,6 +68,9 @@
   margin-top: 16px;
 }
 
+.sidenav-buttons > .sidenav-button:nth-child(2) {
+  margin-bottom: 40px;  /* Espacio extra entre las dos primeras filas */
+}
 
 .sidenav-button {
   display: flex;
