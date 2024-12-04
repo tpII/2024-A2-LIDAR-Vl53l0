@@ -124,7 +124,7 @@ export class MapComponent implements OnInit {
       if (state === 'expanded') {
         svgElement.attr('width', 800).attr('height', 600);
       } else if (state === 'shrunk') {
-        svgElement.attr('width', 400).attr('height', 300);
+        svgElement.attr('width', 600).attr('height', 400);
       } else {
         svgElement.attr('width', 700).attr('height', 500);
       }
