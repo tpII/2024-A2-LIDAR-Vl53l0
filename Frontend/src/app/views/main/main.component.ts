@@ -29,7 +29,7 @@ export class MainComponent {
 
   buttons = [
     { icon: 'speed', label: 'Normal' },
-    { icon: 'thermostat', label: 'Máximo 30°' },
+    { icon: 'save', label: 'Guardar Mapeo' },
     { icon: 'pause', label: 'PAUSAR' },
     { icon: 'restart_alt', label: 'REINICIAR' },
     { icon: 'cancel', label: 'RESTABLECER' },
@@ -94,7 +94,10 @@ export class MainComponent {
       case 'Rápido':
         button.label = 'Lento';
         break;
-      // Añadir más casos para otros botones si es necesario
+        case 'Guardar Mapeo':
+          // Funcion para sacar captura al mapa
+          console.log("Guardar mapeo")
+          break;
     }
   
   }
