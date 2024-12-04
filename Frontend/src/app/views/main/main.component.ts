@@ -62,6 +62,18 @@ export class MainComponent {
     // Detiene la propagación del evento para evitar que afecte al sidenav
     event.stopPropagation();
     console.log('Botón presionado:', button.label);
+  
+    if (button.label === 'PAUSAR') {
+        button.icon = 'play_arrow';
+        button.label = 'REANUDAR';  // Cambiar el texto
+      }
+    else {
+        if (button.label === 'REANUDAR') {
+          button.icon = 'pause';
+          button.label = 'PAUSAR';  // Cambiar el texto
+        }
+    }
+  
   }
   
   changeSpeedByGamepad(str: String){
