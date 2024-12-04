@@ -91,3 +91,7 @@ Pendiente crear el servicio y apartado visual.
 El sidneav mustra el status de conexion del Gamepad.
 El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
 
+04 de Diciembre
+Send instructions working, botones pendiente de asignar acciones
+Mejora del componenete gamepad
+Testeo de la comunicacion de instruction Working.

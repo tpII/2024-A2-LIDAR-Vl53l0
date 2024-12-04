@@ -11,8 +11,6 @@ public class Instruction {
     @Id
     private String id;
     private String instruction;
-    private String parameter1;
-    private String parameter2;
 
     @CreatedDate
     private Date date;
@@ -21,27 +19,16 @@ public class Instruction {
     
     public Instruction(String instruction, String parameter1, String parameter2) {
         this.instruction = instruction;
-        this.parameter1 = parameter1;
-        this.parameter2 = parameter2;
+
     }
 
     public Instruction(String instruction, String parameter1, String parameter2, Date date) {
         this.instruction = instruction;
-        this.parameter1 = parameter1;
-        this.parameter2 = parameter2;
         this.date = date;
     }
 
     public String getInstruction() {
         return instruction;
-    }
-
-    public String getParameter1() {
-        return parameter1;
-    }
-
-    public String getParameter2() {
-        return parameter2;
     }
 
     public Date getDate() {
@@ -52,13 +39,6 @@ public class Instruction {
         this.instruction = instruction;
     }
 
-    public void setParameter1(String parameter1) {
-        this.parameter1 = parameter1;
-    }
-
-    public void setParameter2(String parameter2) {
-        this.parameter2 = parameter2;
-    }
 
     public void setDate(Date date) {
         this.date = date;
@@ -77,8 +57,6 @@ public class Instruction {
         return "Instruction{" +
                 "id='" + id + '\'' +
                 ", instruction='" + instruction + '\'' +
-                ", parameter1='" + parameter1 + '\'' +
-                ", parameter2='" + parameter2 + '\'' +
                 ", date=" + date +
                 '}';
     }
