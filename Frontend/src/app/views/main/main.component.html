@@ -45,6 +45,27 @@
 
       <!-- Botones en el sidenav -->
       <div class="sidenav-buttons">
+
+        <!-- Menú desplegable cuando el sidebar está expandido 
+        <button *ngIf="isSideNavExpanded" mat-button [matMenuTriggerFor]="menu"
+        class="sidenav-button-menu"
+        (click)="$event.stopPropagation()">
+          <mat-icon>{{ speedButton.icon }}</mat-icon>
+          <span class="button-label">{{ speedButton.label }}</span>
+        </button>-->
+
+        <!-- Menú de opciones 
+        <mat-menu #menu="matMenu" class="speed-opt">
+          <button mat-menu-item *ngFor="let speed of speeds" (click)="onSpeedClick(speed)">
+            {{ speed }}
+          </button>
+        </mat-menu>-->
+
+        <!-- Botón normal cuando el sidebar está contraído 
+        <button *ngIf="!isSideNavExpanded" class="sidenav-button" mat-button (click)="toggleSpeedMenu($event)">
+          <mat-icon class="button-icon">{{ speedButton.icon }}</mat-icon>
+        </button>-->
+
         <button
           *ngFor="let button of buttons"
           class="sidenav-button"

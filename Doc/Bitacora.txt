@@ -95,3 +95,4 @@ El gamepad es correctamente leido, y que pendiente codear la comunicacion con el
 Send instructions working, botones pendiente de asignar acciones
 Mejora del componenete gamepad
 Testeo de la comunicacion de instruction Working.
+Realizo modificaciones en el diseño de los botones del sidebar
