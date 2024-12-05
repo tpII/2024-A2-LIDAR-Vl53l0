@@ -1,85 +1,109 @@
 /**
  * @file mqtt_handler.h
- * @author Guerrico Leonel (lguerrico@outlook.com)
- * @brief Main functions for interacting with the MQTT service
+ * @author 
+ *      Guerrico Leonel (lguerrico@outlook.com)
+ * @brief Interface for MQTT message handling
  * 
- * This file contains the functions for sending data, and obtaining incoming instructions.
+ * This header defines the functions used to interact with the MQTT service. 
+ * It includes functionality for sending structured data, such as control messages, 
+ * mapping values, and battery levels, as well as for receiving instructions via MQTT.
  * 
  * @version 1.0
  * @date 2024-12-04
  * 
- * @copyright Copyright (c) 2024
+ * @dependencies
+ * - esp_err.h: Provides error codes for ESP-IDF.
+ * - MQTT broker connection must be established before using these functions.
  * 
+ * @copyright
+ * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
+
 #ifndef _MQTT_HANDLER_H_
 #define _MQTT_HANDLER_H_
 
 #include "esp_err.h"
 
-/** 
-  * @brief Retur by reference a instruction to execute
-  * 
-  * This function return a instruction to execute, by reference.
-  * 
-  * @param inst Instruction to be execute
-  * @return
-  *     - ESP_OK on success
-  *     - ESP_FAIL on fail
-*/
+/**
+ * @brief Retrieve an instruction message via MQTT
+ * 
+ * This function retrieves an instruction to execute and stores it in the 
+ * provided `inst` parameter by reference.
+ * 
+ * @param inst Pointer to a buffer where the instruction will be stored
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_FAIL on failure
+ */
 esp_err_t getInstruccionMessage(char *inst);
 
 /**
- * @brief Send Mapping Value tuple
+ * @brief Send a mapping value (distance and angle) via MQTT
  * 
- * @param distance Distance
- * @param angle Angle
+ * This function sends a tuple containing a distance and an angle as a 
+ * JSON-encoded MQTT message.
+ * 
+ * @param distance Distance value in centimeters
+ * @param angle Angle value in degrees
  * @return 
  *      - ESP_OK on success
- *      - ESP_FAIL on fail
+ *      - ESP_FAIL on failure
  */
 esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle);
 
 /**
- * @brief Sends the battery charge percentage
+ * @brief Send the battery charge percentage via MQTT
  * 
- * @param batteryLevel Battery charge percentege f
+ * Sends the current battery charge level to the MQTT broker as a 
+ * JSON-encoded message.
+ * 
+ * @param batteryLevel Battery charge percentage (0-100)
  * @return 
  *      - ESP_OK on success
- *      - ESP_FAIL on fail
+ *      - ESP_FAIL on failure
  */
 esp_err_t sendBatteryLevel(const uint8_t batteryLevel);
 
 /**
- * @brief Send Error Message 
+ * @brief Send an error message via MQTT
  * 
- * @param TAG Library Tag
- * @param msg Message to send
+ * Sends an error message with the specified tag and message content 
+ * to the MQTT broker.
+ * 
+ * @param TAG Label identifying the source of the message
+ * @param msg Error message content
  * @return 
- *      - ESP_OK on success 
- *      - ESP_FAIL on fail
+ *      - ESP_OK on success
+ *      - ESP_FAIL on failure
  */
 esp_err_t sendErrorMesage(const char *TAG, const char *msg);
 
 /**
- * @brief Send Info Message 
+ * @brief Send an informational message via MQTT
  * 
- * @param TAG Library Tag
- * @param msg Message to send
+ * Sends an informational message with the specified tag and content 
+ * to the MQTT broker.
+ * 
+ * @param TAG Label identifying the source of the message
+ * @param msg Informational message content
  * @return 
- *      - ESP_OK on success 
- *      - ESP_FAIL on fail
+ *      - ESP_OK on success
+ *      - ESP_FAIL on failure
  */
 esp_err_t sendInfoMesage(const char *TAG, const char *msg);
 
 /**
- * @brief Send Warning Message 
+ * @brief Send a warning message via MQTT
  * 
- * @param TAG Library Tag
- * @param msg Message to send
+ * Sends a warning message with the specified tag and content to the 
+ * MQTT broker.
+ * 
+ * @param TAG Label identifying the source of the message
+ * @param msg Warning message content
  * @return 
- *      - ESP_OK on success 
- *      - ESP_FAIL on fail
+ *      - ESP_OK on success
+ *      - ESP_FAIL on failure
  */
 esp_err_t sendWarningMesage(const char *TAG, const char *msg);
 
-#endif //HTTP_HANDLER_H_
+#endif // _MQTT_HANDLER_H_
