@@ -1,3 +1,19 @@
+/**
+ * @file instruction_buffer.c
+ * @brief Implementation of a circular buffer for storing instructions.
+ * 
+ * This file contains the implementation of a circular buffer that allows storing
+ * and retrieving instructions in a thread-safe manner. The buffer uses FreeRTOS
+ * semaphores to prevent concurrent access issues.
+ * 
+ * @version 1.0
+ * @date 2024-12-05
+ * 
+ * @note
+ * - The buffer has a fixed size of 10 instructions, with a maximum instruction
+ *   length of 40 characters.
+ * - Ensure `initBuffer` is called before `saveInstruction` or `getInstruction`.
+ */
 #include "instruction_buffer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -5,17 +21,27 @@
 #include "esp_log.h"
 
 
-#define INSTRUCTIONS_BUFFER_SIZE 10
-#define INSTRUCTION_MAX_LENGTH 40
+#define INSTRUCTIONS_BUFFER_SIZE 10 ///< Number of instructions the buffer can hold.
+#define INSTRUCTION_MAX_LENGTH 40   ///< Maximum length of each instruction.
 
-char instructions_buffer[INSTRUCTIONS_BUFFER_SIZE][INSTRUCTION_MAX_LENGTH];
+// Global Variables
+char instructions_buffer[INSTRUCTIONS_BUFFER_SIZE][INSTRUCTION_MAX_LENGTH]; ///< Circular buffer.
+static uint8_t push_index = 0;  ///< Index for the next instruction to be saved.
+static uint8_t get_index = 0;   ///< Index for the next instruction to be retrieved.
+static SemaphoreHandle_t buffer_access;         ///< Semaphore for thread-safe access.
+static const char *TAG = "INSTRUCTION_BUFFER";  ///< Tag for logging.
 
-static uint8_t push_index = 0;
-static uint8_t get_index = 0;
-static SemaphoreHandle_t buffer_access;
-static const char *TAG = "INSTRUCTION_BUFFER";
 
-
+/**
+ * @brief Initializes the instruction buffer.
+ * 
+ * Creates the semaphore required for synchronizing access to the buffer. 
+ * Logs an error if the semaphore creation fails.
+ * 
+ * @return 
+ * - `ESP_OK`: If the buffer was successfully initialized.
+ * - `ESP_FAIL`: If semaphore creation fails.
+ */
 esp_err_t initBuffer()
 {
     if (buffer_access == NULL) {
@@ -28,7 +54,18 @@ esp_err_t initBuffer()
     return ESP_OK;
 }
 
-
+/**
+ * @brief Retrieves the next instruction from the buffer.
+ * 
+ * Fetches the oldest instruction in the buffer and removes it. If the buffer is 
+ * empty, the function returns an error.
+ * 
+ * @param inst Pointer to a buffer where the instruction will be stored.
+ * 
+ * @return 
+ * - `ESP_OK`: If the instruction was successfully retrieved.
+ * - `ESP_FAIL`: If the buffer is empty or the semaphore cannot be acquired.
+ */
 esp_err_t getInstruction(char *inst)
 {   
     // Toma el semáforo antes de acceder al buffer
@@ -55,6 +92,18 @@ esp_err_t getInstruction(char *inst)
     return ESP_FAIL;
 }
 
+/**
+ * @brief Saves a new instruction into the buffer.
+ * 
+ * Stores a new instruction in the buffer. If the buffer is full, the function 
+ * returns an error.
+ * 
+ * @param inst Pointer to the instruction to be saved.
+ * 
+ * @return 
+ * - `ESP_OK`: If the instruction was successfully saved.
+ * - `ESP_FAIL`: If the buffer is full or the semaphore cannot be acquired.
+ */
 esp_err_t saveInstruction(char *inst)
 {
 
