@@ -41,6 +41,7 @@
 // Const
 static const char *TAG = "MQTT_HANDLER"; // Library Tag
 
+// Function Prototypes
 static esp_err_t sendControlMessage(const char *, const char *, const char *);
 
 /**
