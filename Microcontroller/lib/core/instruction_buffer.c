@@ -60,7 +60,7 @@ esp_err_t initBuffer()
  * Fetches the oldest instruction in the buffer and removes it. If the buffer is 
  * empty, the function returns an error.
  * 
- * @param inst Pointer to a buffer where the instruction will be stored.
+ * @param[out] inst Pointer to a buffer where the instruction will be stored.
  * 
  * @return 
  * - `ESP_OK`: If the instruction was successfully retrieved.
@@ -98,7 +98,7 @@ esp_err_t getInstruction(char *inst)
  * Stores a new instruction in the buffer. If the buffer is full, the function 
  * returns an error.
  * 
- * @param inst Pointer to the instruction to be saved.
+ * @param[in] inst Pointer to the instruction to be saved.
  * 
  * @return 
  * - `ESP_OK`: If the instruction was successfully saved.

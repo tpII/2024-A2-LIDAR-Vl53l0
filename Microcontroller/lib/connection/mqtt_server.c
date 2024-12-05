@@ -9,8 +9,7 @@
  * @version 1.0
  * @date 2024-12-04
  * 
- * @author 
- * Guerrico Leonel (lguerrico@outlook.com)
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * 
  * @note Ensure the MQTT broker is reachable and configured properly in `URL`.
  * 
@@ -117,10 +116,10 @@ static esp_err_t mqtt_connect()
  * Processes various MQTT events such as connection, disconnection, subscription,
  * message reception, and errors.
  * 
- * @param handler_args Unused
- * @param base Event base
- * @param event_id Event identifier
- * @param event_data Pointer to event-specific data
+ * @param[in] handler_args Unused
+ * @param[in] base Event base
+ * @param[in] event_id Event identifier
+ * @param[in] event_data Pointer to event-specific data
  */
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
@@ -197,8 +196,8 @@ static void mqtt_subscribing()
  * This function sends a message to the specified topic using the MQTT client.
  * The message has a default Quality of Service (QoS) of 1 and is not set as retained.
  *
- * @param topic The topic to which the message should be published.
- * @param payload The message to publish.
+ * @param[in] topic The topic to which the message should be published.
+ * @param[in] payload The message to publish.
  * 
  * @return 
  *      - ESP_OK: If the message was published successfully.
@@ -229,7 +228,7 @@ esp_err_t mqtt_publish(const char *topic, const char *payload)
  * This function sends a request to subscribe to the specified MQTT topic.
  * If the MQTT client is not initialized, the subscription fails.
  *
- * @param topic The topic to which you want to subscribe.
+ * @param[in] topic The topic to which you want to subscribe.
  * 
  * @return 
  *      - ESP_OK: If the subscription was successful.
@@ -290,8 +289,8 @@ esp_err_t mqtt_disconnect()
  * Processes messages received on the "Instruction" topic, deserializing JSON data and
  * executing actions based on the instruction content (e.g., restarting the MCU).
  * 
- * @param data Pointer to the received message
- * @param length Length of the message
+ * @param[in] data Pointer to the received message
+ * @param[in] length Length of the message
  */
 static void instruction_handler(char *str, size_t length)
 {

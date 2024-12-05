@@ -44,7 +44,7 @@ static esp_err_t sendControlMessage(const char *, const char *, const char *);
  *
  * This function get instruction from instruction buffer in instruction_buffer library.
  *
- * @param msg Instruction
+ * @param[out] msg Instruction
  * @return
  *      - ESP_OK on success
  *      - ESP_FAIL on fail
@@ -69,13 +69,13 @@ esp_err_t getInstruccionMessage(char *msg)
  *
  * }
  *
- * @param ESP_TAG A label identifying the source library or component
+ * @param[in] ESP_TAG A label identifying the source library or component
  *                generating the message (e.g., "MQTT_HANDLER").
- * @param msg_type Label that identify the severity of MessagePossible values are:
+ * @param[in] msg_type Label that identify the severity of MessagePossible values are:
  *      - "Info": Informational messages.
  *      - "Warning": Warning messages.
  *      - "Error": Error messages.
- * @param msg Message to send
+ * @param[in] msg Message to send
  * @return
  *      - ESP_OK: If the message was successfully created and sent.
  *      - ESP_FAIL: If there was an error creating the JSON or sending the message.
@@ -121,9 +121,9 @@ static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, c
  * This function sends a control message with the severity level set to "INFO". 
  * It wraps the `sendControlMessage` function for convenience.
  * 
- * @param TAG A label identifying the source library or component generating 
+ * @param[in] TAG A label identifying the source library or component generating 
  *            the message (e.g., "MQTT_HANDLER").
- * @param msg The informational message content to send.
+ * @param[in] msg The informational message content to send.
  * 
  * @return 
  *      - ESP_OK: If the message was successfully sent.
@@ -142,9 +142,9 @@ esp_err_t sendInfoMesage(const char *TAG, const char *msg)
  * This function sends a control message with the severity level set to "WARNING". 
  * It wraps the `sendControlMessage` function for convenience.
  * 
- * @param TAG A label identifying the source library or component generating 
+ * @param[in] TAG A label identifying the source library or component generating 
  *            the message (e.g., "MQTT_HANDLER").
- * @param msg The warning message content to send.
+ * @param[in] msg The warning message content to send.
  * 
  * @return 
  *      - ESP_OK: If the message was successfully sent.
@@ -164,9 +164,9 @@ esp_err_t sendWarningMesage(const char *TAG, const char *msg)
  * This function sends a control message with the severity level set to "ERROR". 
  * It wraps the `sendControlMessage` function for convenience.
  * 
- * @param TAG A label identifying the source library or component generating 
+ * @param[in] TAG A label identifying the source library or component generating 
  *            the message (e.g., "MQTT_HANDLER").
- * @param msg The error message content to send.
+ * @param[in] msg The error message content to send.
  * 
  * @return 
  *      - ESP_OK: If the message was successfully sent.
@@ -193,8 +193,8 @@ esp_err_t sendErrorMesage(const char *TAG, const char *msg)
  *   "angle": "<angle>"
  * }
  * 
- * @param distance The distance value to include in the mapping data.
- * @param angle The angle value to include in the mapping data.
+ * @param[in] distance The distance value to include in the mapping data.
+ * @param[in] angle The angle value to include in the mapping data.
  * 
  * @return 
  *      - ESP_OK: If the mapping data was successfully sent.

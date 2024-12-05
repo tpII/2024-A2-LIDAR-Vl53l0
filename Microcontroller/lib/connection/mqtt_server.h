@@ -39,8 +39,8 @@ esp_err_t mqtt_start();
  * This function sends a message (payload) to the specified topic on the MQTT broker. 
  * It requires an active MQTT connection established via `mqtt_start`.
  * 
- * @param topic The MQTT topic to which the message will be published
- * @param payload The message content to publish (must be a null-terminated string)
+ * @param[in] topic The MQTT topic to which the message will be published
+ * @param[in] payload The message content to publish (must be a null-terminated string)
  * @return 
  *      - ESP_OK on successful message publication
  *      - ESP_FAIL on failure to publish the message

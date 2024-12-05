@@ -41,7 +41,7 @@ esp_err_t initBuffer(void);
  * This function fetches the oldest instruction from the buffer and removes it.
  * If the buffer is empty, the operation fails.
  * 
- * @param inst Pointer to a buffer where the retrieved instruction will be stored.
+ * @param[out] inst Pointer to a buffer where the retrieved instruction will be stored.
  *             The buffer must be large enough to hold 40 characters.
  * 
  * @return 
@@ -56,7 +56,7 @@ esp_err_t getInstruction(char *);
  * This function stores a new instruction in the buffer. If the buffer is full,
  * the operation fails.
  * 
- * @param inst Pointer to the instruction to be saved. The instruction must be 
+ * @param[in] inst Pointer to the instruction to be saved. The instruction must be 
  *             null-terminated and no longer than 40 characters.
  * 
  * @return 
