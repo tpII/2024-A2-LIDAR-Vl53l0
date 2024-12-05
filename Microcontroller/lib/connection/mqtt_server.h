@@ -11,10 +11,6 @@
  * @version 1.0
  * @date 2024-12-04
  * 
- * @dependencies
- * - ESP-IDF's MQTT library must be configured in the project.
- * - Network connectivity is required for proper MQTT communication.
- * 
  * @copyright
  * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */

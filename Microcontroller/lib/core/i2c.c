@@ -1,14 +1,62 @@
+/**
+ * @file i2c.c
+ * @brief I2C Master Interface Library for ESP32
+ * 
+ * This library provides initialization and bus management for the I2C master 
+ * interface on ESP32 devices, including semaphore-based access control for 
+ * safe usage in multi-tasking environments.
+ * 
+ * The library handles the following:
+ * - I2C master initialization with predefined configurations.
+ * - Semaphore management for ensuring exclusive bus access.
+ * - Functions to acquire and release the bus for multi-task applications.
+ * 
+ * @version 1.0
+ * @date 2024-12-05
+ * 
+ * @author Guerrico Leonel (lguerrico@outlook.com)
+ * 
+ * @copyright Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
+ * 
+ * @note 
+ * - This library is designed for ESP32 using the ESP-IDF framework.
+ * - Ensure pull-up resistors are connected to the I2C lines as required for the 
+ *   I2C protocol to work correctly.
+ * 
+ */
 #include "i2c.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
 #include <stdint.h>
 
+/**
+ * @brief Static semaphore handle for managing I2C bus access.
+ * 
+ */
 static SemaphoreHandle_t bus_semaphore;
 
+/**
+ * @brief Tag used for ESP-IDF logging.
+ */
 static const char *TAG = "I2C";
 
-
+/**
+ * @brief Initializes the I2C master interface.
+ * 
+ * This function configures the I2C hardware with predefined parameters such as 
+ * GPIO pins, clock speed, and pull-up configuration. It creates a FreeRTOS 
+ * binary semaphore to manage access to the I2C bus and ensures that the 
+ * initialization is only performed once.
+ * 
+ * @note If initialization has already been performed, the function skips 
+ * reinitialization and logs a message.
+ * 
+ * @return 
+ * - `ESP_OK`: Initialization was successful or was already performed.
+ * - `ESP_FAIL`: Semaphore creation failed.
+ * - Other `esp_err_t`: Errors from `i2c_param_config` or `i2c_driver_install`.
+ */
 esp_err_t i2c_init()
 {
 
@@ -63,6 +111,16 @@ esp_err_t i2c_init()
 }
 
 
+/**
+ * @brief Acquires the I2C bus for exclusive access.
+ * 
+ * This function blocks until the semaphore controlling the I2C bus is available, 
+ * ensuring that only one task can use the bus at a time.
+ * 
+ * @return 
+ * - `true`: The bus was successfully acquired.
+ * - `false`: Failed to acquire the bus.
+ */
 bool i2c_get_bus(){
     if(xSemaphoreTake(bus_semaphore,portMAX_DELAY) == pdTRUE){
         return true;
@@ -70,6 +128,16 @@ bool i2c_get_bus(){
     return false;
 }
 
+/**
+ * @brief Releases the I2C bus after use.
+ * 
+ * This function releases the semaphore controlling the I2C bus, allowing other 
+ * tasks to acquire it.
+ * 
+ * @return 
+ * - `true`: The bus was successfully released.
+ * - `false`: Failed to release the bus.
+ */
 bool i2c_give_bus(){
     return xSemaphoreGive(bus_semaphore);
 }

@@ -15,12 +15,7 @@
  * 
  * @version 1.0
  * @date 2024-12-04
- * 
- * @dependencies
- * - `cJSON`: Used for creating and managing JSON payloads.
- * - `mqtt_publish`: Used for sending messages to the MQTT broker.
- * - Logging macros from ESP-IDF (e.g., `ESP_LOGE`).
- * 
+ *
  * @copyright
  * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */

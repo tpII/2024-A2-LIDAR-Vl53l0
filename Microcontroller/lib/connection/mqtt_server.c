@@ -9,17 +9,13 @@
  * @version 1.0
  * @date 2024-12-04
  * 
- * @dependencies
- * - esp_log: Logging functions
- * - esp_mqtt_client: MQTT client implementation for ESP-IDF
- * - json_helper: Helper functions for JSON serialization/deserialization
- * - instruction_buffer: Functions to handle instructions
- * - esp_system: System-level functions (e.g., restarting the MCU)
- * 
  * @author 
  * Guerrico Leonel (lguerrico@outlook.com)
  * 
  * @note Ensure the MQTT broker is reachable and configured properly in `URL`.
+ * 
+ * @copyright
+ * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
 
 #include "mqtt_server.h"

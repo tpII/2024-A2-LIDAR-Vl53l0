@@ -11,10 +11,6 @@
  * @version 1.0
  * @date 2024-12-04
  * 
- * @dependencies
- * - esp_err.h: Provides error codes for ESP-IDF.
- * - MQTT broker connection must be established before using these functions.
- * 
  * @copyright
  * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
