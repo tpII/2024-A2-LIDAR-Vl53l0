@@ -5,7 +5,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
+import lombok.Data;
+
 @TimeSeries(collection = "Instruction", timeField = "date")
+@Data
 public class Instruction {
 
     @Id
