@@ -29,18 +29,24 @@ esp_err_t mapping_init()
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Initializing LiDAR...");
-    if (!vl53l0x_init())
-    {
-        ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
-        return ESP_FAIL;
-    }
-
+     ESP_LOGI(TAG, "Initializing LiDAR...");
+     if (!vl53l0x_init())
+     {
+         ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
+         return ESP_FAIL;
+     }
+ 
     ESP_LOGI(TAG, "Initializing ServoMotor...");
     err = servo_initialize();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error initializing Servo");
+        return ESP_FAIL;
+    }
+    err = servo_start();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error Starting Servo");
         return ESP_FAIL;
     }
 

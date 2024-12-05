@@ -153,7 +153,7 @@ esp_err_t servo_initialize(void)
 esp_err_t servo_start(void)
 {
 
-    return servo_set_speed_ISR(SERVO_MAX_SPEED_CCW); // Inicia con el duty en 900us
+    return servo_set_speed_ISR(SERVO_LOW_SPEED_CCW); // Inicia con el duty en 900us
 }
 
 esp_err_t servo_stop(void)
