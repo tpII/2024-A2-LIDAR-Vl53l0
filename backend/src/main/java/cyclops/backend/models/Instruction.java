@@ -5,46 +5,37 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
-import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @TimeSeries(collection = "Instruction", timeField = "date")
-@Data
+@Schema(description = "Model representing an instruction sent to the system")
 public class Instruction {
 
     @Id
+    @Schema(description = "Unique identifier of the instruction", example = "63f7b9a6e94b1e456d2a3c9f")
     private String id;
+
+    @Schema(description = "Description of the instruction", example = "Forward")
     private String instruction;
-    private String parameter1;
-    private String parameter2;
 
     @CreatedDate
+    @Schema(description = "Date and time the instruction was created", example = "2024-12-05T14:30:00Z", format = "date-time")
     private Date date;
 
     public Instruction() {}
     
     public Instruction(String instruction, String parameter1, String parameter2) {
         this.instruction = instruction;
-        this.parameter1 = parameter1;
-        this.parameter2 = parameter2;
+
     }
 
     public Instruction(String instruction, String parameter1, String parameter2, Date date) {
         this.instruction = instruction;
-        this.parameter1 = parameter1;
-        this.parameter2 = parameter2;
         this.date = date;
     }
 
     public String getInstruction() {
         return instruction;
-    }
-
-    public String getParameter1() {
-        return parameter1;
-    }
-
-    public String getParameter2() {
-        return parameter2;
     }
 
     public Date getDate() {
@@ -53,14 +44,6 @@ public class Instruction {
 
     public void setInstruction(String instruction) {
         this.instruction = instruction;
-    }
-
-    public void setParameter1(String parameter1) {
-        this.parameter1 = parameter1;
-    }
-
-    public void setParameter2(String parameter2) {
-        this.parameter2 = parameter2;
     }
 
     public void setDate(Date date) {
@@ -80,8 +63,6 @@ public class Instruction {
         return "Instruction{" +
                 "id='" + id + '\'' +
                 ", instruction='" + instruction + '\'' +
-                ", parameter1='" + parameter1 + '\'' +
-                ", parameter2='" + parameter2 + '\'' +
                 ", date=" + date +
                 '}';
     }
