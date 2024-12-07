@@ -75,7 +75,7 @@ esp_err_t getInstruction(char *inst)
         if (get_index == push_index)
         {
             xSemaphoreGive(buffer_access); // Liberar el semáforo
-            return ESP_FAIL;               // Buffer vacío
+            return ESP_ERR_NOT_FOUND;               // Buffer vacío
         }
 
         // Copiar la instrucción en la posición de get_index
@@ -89,7 +89,7 @@ esp_err_t getInstruction(char *inst)
         return ESP_OK;
     }
 
-    return ESP_FAIL;
+    return ESP_ERR_TIMEOUT;
 }
 
 /**

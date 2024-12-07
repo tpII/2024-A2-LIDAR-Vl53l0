@@ -266,53 +266,12 @@ void servo_invert()
     ESP_LOGW(TAG, "INVERT END");
 }
 
-/*int16_t readAngle()
-{
-    static uint16_t duty = 0;
-    static uint64_t time_now = 0;
-    static uint64_t time_reference = 0;
-    static int16_t angle_offset = 0;
-    static int64_t scaled_speed = 0;
-    static int64_t first_term = 0;
-    static int64_t second_term = 0;
-
-    // Obtener variables necesarias con semáforo
-    if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
-    {
-        angle_offset = last_angle_offset;
-        time_reference = time_base;
-        xSemaphoreGive(limit_semaphore);
-    }
-    ESP_LOGW(TAG, "Angle offset: %d - Time reference: %" PRIu64, angle_offset, time_reference);
-
-    if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
-    {
-        duty = current_duty;
-        xSemaphoreGive(current_duty_semaphore);
-    }
-
-    time_now = esp_timer_get_time();
-    ESP_LOGW(TAG, "Time now: %" PRIu64, time_now);
-    // Calcular velocidad escalada en grados/segundo, en enteros para evitar uso de punto flotante
-    scaled_speed = (int64_t)BASE_SPEED * (duty - SERVO_STOP) / DIFFERENTIAL;
-    if (scaled_speed < 0)
-    {
-        scaled_speed = -scaled_speed;
-    }
-    ESP_LOGW(TAG, "Scalated Speed: %" PRId64, scaled_speed);
-    first_term = scaled_speed * ((int64_t)(time_now - time_reference));
-    ESP_LOGW(TAG, "First Term: %" PRIu64, first_term);
-    ESP_LOGW(TAG, "Full: %" PRId64, ((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
-
-    // Calcular y devolver el ángulo en grados
-    return (int16_t)(((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
-}*/
 int16_t readAngle()
 {
-    uint16_t duty=0;
+    uint16_t duty = 0;
     uint64_t time_now = esp_timer_get_time();
-    int16_t angle_offset=0 ;
-    uint64_t time_reference=0;
+    int16_t angle_offset = 0;
+    uint64_t time_reference = 0;
 
     // Obtener variables necesarias con semáforo
     if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
@@ -331,48 +290,81 @@ int16_t readAngle()
     // Calcular velocidad escalada y ángulo
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
-    ESP_LOGW(TAG,"Angle = %"PRIi16,angle);
+    ESP_LOGW(TAG, "Angle = %" PRIi16, angle);
     return (angle + 360) % 360; // Garantiza valores positivos
 }
 
-void servo_set_speed(char *inst)
+void servo_set_speed(SERVO_DIRECTION dir)
 {
     static volatile uint32_t duty = 0;
     if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        if (strcmp(inst, "SLOW") == 0)
+        if (current_duty != SERVO_STOP)
         {
-            if (current_duty > SERVO_STOP)
+            switch (dir)
             {
-                duty = SERVO_LOW_SPEED_CCW;
-            }
-            else
-            {
-                duty = SERVO_LOW_SPEED_CW;
+
+            case UP:
+                if (current_duty == SERVO_LOW_SPEED_CCW || current_duty == SERVO_LOW_SPEED_CW)
+                {
+                    if (current_duty == SERVO_LOW_SPEED_CCW)
+                    {
+                        duty = SERVO_MEDIUM_SPEED_CCW;
+                    }
+                    else
+                    {
+                        duty = SERVO_MEDIUM_SPEED_CW;
+                    }
+                }
+                else
+                {
+                    if (current_duty == SERVO_MEDIUM_SPEED_CCW || current_duty == SERVO_MEDIUM_SPEED_CW)
+                    {
+                        if (current_duty == SERVO_MEDIUM_SPEED_CCW)
+                        {
+                            duty = SERVO_MAX_SPEED_CCW;
+                        }
+                        else
+                        {
+                            duty = SERVO_MAX_SPEED_CW;
+                        }
+                    }
+                }
+                break;
+            case DOWN:
+                if (current_duty == SERVO_MAX_SPEED_CCW || current_duty == SERVO_MAX_SPEED_CW)
+                {
+                    if (current_duty == SERVO_MAX_SPEED_CCW)
+                    {
+                        duty = SERVO_MEDIUM_SPEED_CCW;
+                    }
+                    else
+                    {
+                        duty = SERVO_MEDIUM_SPEED_CW;
+                    }
+                }
+                else
+                {
+                    if (current_duty == SERVO_MEDIUM_SPEED_CCW || current_duty == SERVO_MEDIUM_SPEED_CW)
+                    {
+                        if (current_duty == SERVO_MEDIUM_SPEED_CCW)
+                        {
+                            duty = SERVO_LOW_SPEED_CCW;
+                        }
+                        else
+                        {
+                            duty = SERVO_LOW_SPEED_CW;
+                        }
+                    }
+                }
+
+                break;
+            default:
+                current_duty = SERVO_STOP;
+                break;
             }
         }
-        else if (strcmp(inst, "MEDIUM") == 0)
-        {
-            if (current_duty > SERVO_STOP)
-            {
-                duty = SERVO_MEDIUM_SPEED_CCW;
-            }
-            else
-            {
-                duty = SERVO_MEDIUM_SPEED_CW;
-            }
-        }
-        else
-        {
-            if (current_duty > SERVO_STOP)
-            {
-                duty = SERVO_MAX_SPEED_CCW;
-            }
-            else
-            {
-                duty = SERVO_MAX_SPEED_CW;
-            }
-        }
+
         xSemaphoreGive(current_duty_semaphore);
     }
     if (xSemaphoreTake(speed_change_semaphore, portMAX_DELAY) == pdTRUE)
