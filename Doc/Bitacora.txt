@@ -107,3 +107,6 @@ Ademas de agregar cambios necesarios para que cuando un componente se expanda el
 03 de Diciembre
 Modifico libreria del monitor para que cuando el mapa se expanda, se oculte el monitor.
 Ademas, se realizaron mejoras en la visualizacion al expandir/contraer.
+
+06 de Diciembre
+Arreglo error al expandir/contraer los componentes.

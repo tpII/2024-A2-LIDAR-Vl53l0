@@ -33,14 +33,12 @@
   >
     <div class="main-content">
         <div id="monitor" 
-          [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" 
-          (click)="toggleExpand('monitor')">
-            <app-monitor></app-monitor>
+          [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" >
+            <app-monitor (click)="onComponentClick($event, 'monitor')"></app-monitor>
         </div>
         <div id="map" 
-          [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" 
-          (click)="toggleExpand('map')">
-            <app-map></app-map>
+          [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" >
+            <app-map (click)="onComponentClick($event, 'map')"></app-map>
         </div>
   
       <!--
