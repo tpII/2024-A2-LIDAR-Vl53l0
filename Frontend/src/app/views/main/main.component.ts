@@ -73,8 +73,8 @@ export class MainComponent {
   onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
     // Verifica que el clic se originó directamente en el componente
     const target = event.target as HTMLElement;
-    console.log("Target: ", target.tagName)
-    if (target.tagName !== 'SPAN' && target.tagName !== 'svg') {
+
+    if (!target.closest('.console-line') && target.tagName !== 'svg') {
       return;
     }
   
