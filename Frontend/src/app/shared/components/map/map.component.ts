@@ -9,7 +9,7 @@ import * as d3 from 'd3';
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit {
-  private width = 700;
+  private width = 600;
   private height = 500;
   private svg: any;
   private maxDistance = 2; // Distancia máxima en metros
@@ -28,8 +28,17 @@ export class MapComponent implements OnInit {
       .attr('width', this.width)
       .attr('height', this.height)
       .style('background', '#ffffff') // Fondo blanco
-      .style('border', '8px solid #213A7D'); // Borde azul oscuro
 
+      // Crear borde alrededor del contenido
+      this.svg
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', this.width)
+        .attr('height', this.height)
+        .attr('fill', 'none')
+        .attr('stroke', '#213A7D')
+        .attr('stroke-width', 16);
     // Filtrar solo los obstáculos
 
     // Dibujar el robot en el centro
@@ -83,31 +92,37 @@ export class MapComponent implements OnInit {
 
   // Función para capturar el mapa como imagen
   captureMap() {
-    const svgElement = d3.select('svg').node() as SVGSVGElement;
+    const svgElement = this.svg.node() as SVGSVGElement;
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgElement);
   
-    // Crear un canvas
+    // Dimensiones con borde incluido
+    const borderSize = 8; // Tamaño del borde
     const canvas = document.createElement('canvas');
-    canvas.width = this.width + 10; // Añadir margen extra para incluir bordes
-    canvas.height = this.height + 10; // Añadir margen extra para incluir bordes
+    canvas.width = this.width + 2 * borderSize;
+    canvas.height = this.height + 2 * borderSize;
     const context = canvas.getContext('2d');
   
-    // Crear una imagen a partir del SVG
+    // Dibujar el borde uniformemente
+    context!.fillStyle = '#213A7D'; // Color del borde
+    context!.fillRect(0, 0, canvas.width, canvas.height);
+  
     const image = new Image();
     image.onload = () => {
-      // Dibujar la imagen SVG en el canvas
-      context?.drawImage(image, 0, 0, this.width + 10, this.height + 10);
+      // Dibujar la imagen SVG centrada dentro del borde
+      context?.drawImage(image, borderSize, borderSize, this.width, this.height);
       const dataURL = canvas.toDataURL('image/png');
   
       // Descargar la imagen
       const link = document.createElement('a');
       link.href = dataURL;
-      link.download = 'map-capture.png';
+      link.download = 'map-capture-with-borders.png';
       link.click();
     };
     image.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
   }
+  
+  
 
   toggleExpand() {
     const chart = document.getElementById('chart');

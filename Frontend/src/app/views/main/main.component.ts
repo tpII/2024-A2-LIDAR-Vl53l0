@@ -52,6 +52,7 @@ export class MainComponent {
 
   isMapExpanded: boolean = false;
   isMonitorExpanded: boolean = false;
+  /*
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   @ViewChild('monitorComp', { read: ElementRef }) monitorComp!: ElementRef;
   @ViewChild('mapComp', { read: ElementRef }) mapComp!: ElementRef;
@@ -68,7 +69,7 @@ export class MainComponent {
       const state = this.isMonitorExpanded ? 'shrunk' : 'normal';
       this.mapComponent.updateSvgSize(state);
     }
-  } 
+  } */
 
   onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
     // Verifica que el clic se originó directamente en el componente
