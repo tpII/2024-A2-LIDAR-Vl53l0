@@ -17,4 +17,8 @@ public class WebConfig implements WebMvcConfigurer{
         .allowCredentials(true);
     }
     
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> Sidebar-implementation

@@ -1,4 +1,4 @@
-<as-split direction="horizontal" unit="percent" [gutterSize]="0" >
+<as-split direction="horizontal" unit="percent" [gutterSize]="0">
   <!-- Sidebar Area -->
   <as-split-area
     [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
@@ -6,21 +6,58 @@
     class="custom-shadow"
   >
     <div class="sidenav" (click)="toggleSidebar()">
-       <!-- Contenedor del logo -->
-       <div class="logo-container">
+      <!-- Contenedor del logo -->
+      <div class="logo-container">
         <img
           *ngIf="isSideNavExpanded; else collapsedLogo"
-          src="/logo.svg" 
+          src="/logo.svg"
           alt="Logo Expandido"
         />
-        
+
         <ng-template #collapsedLogo>
           <img src="/small_logo.svg" alt="Logo Colapsado" />
         </ng-template>
       </div>
-      <div class="sidebar-content">
-        <p *ngIf="isSideNavExpanded">Expanded Content</p>
-        <p *ngIf="!isSideNavExpanded">Collapsed Content</p>
+      <div class="sidenav-status">
+        <!-- Estado contraído (círculos) -->
+        <div *ngIf="!isSideNavExpanded">
+          <div class="status-item collapsed" [ngClass]="{alert: isControllerConnected}">
+            <mat-icon class="status-icon" [ngClass]="{alert: isControllerConnected}">gamepad</mat-icon>
+          </div>
+          <div class="status-item collapsed alert">
+            <mat-icon class="status-icon">battery_alert</mat-icon>
+          </div>
+        </div>
+
+        <!-- Estado expandido (línea horizontal) -->
+        <div *ngIf="isSideNavExpanded" class="status-container expanded">
+          <div class="status-item" [ngClass]="{alert: isControllerConnected}">
+            <mat-icon class="status-icon" [ngClass]="{alert: isControllerConnected}">gamepad</mat-icon>
+            <span class="status-label" *ngIf="!isControllerConnected">Conectado</span>
+            <span class="status-label alert" *ngIf="isControllerConnected">Desconectado</span>
+          </div>
+          <div class="status-item alert">
+            <mat-icon class="status-icon">battery_alert</mat-icon>
+            <span class="status-label">Agotada</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones en el sidenav -->
+      <div class="sidenav-buttons">
+        <button
+          *ngFor="let button of buttons"
+          class="sidenav-button"
+          [ngClass]="{ expanded: isSideNavExpanded }"
+          mat-button
+          [attr.data-label]="button.label"
+          (click)="onButtonClick($event, button)"
+        >
+          <mat-icon class="button-icon">{{ button.icon }}</mat-icon>
+          <span *ngIf="isSideNavExpanded" class="button-label">{{
+            button.label
+          }}</span>
+        </button>
       </div>
       <!-- Figura azul en la parte inferior del sidebar -->
       <div class="footer-figure" [ngStyle]="getFooterFigureStyle()"></div>
@@ -52,3 +89,6 @@
     </div>
   </as-split-area>
 </as-split>
+
+<app-gamepad (gamepadConnectionStatus)="onGamepadStatusChange($event)" (changeValue)="changeSpeedByGamepad($event)" style="display: none;"></app-gamepad>
+

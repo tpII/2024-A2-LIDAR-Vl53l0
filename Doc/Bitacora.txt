@@ -85,6 +85,24 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
+
+19 de Noviembre
+Se crearon los prototipos de los botones del sidebar.
+
+23 de Noviembre
+Implementado el componente para leer un joystick y poder controlar el robot. 
+Pendiente crear el servicio y apartado visual.
+
+02 de Diciembre
+El sidneav mustra el status de conexion del Gamepad.
+El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
+
+04 de Diciembre
+Send instructions working, botones pendiente de asignar acciones
+Mejora del componenete gamepad
+Testeo de la comunicacion de instruction Working.
+Realizo modificaciones en el diseño de los botones del sidebar
+
 Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
 20 de Noviembre 
