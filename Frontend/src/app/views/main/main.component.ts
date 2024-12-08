@@ -73,6 +73,8 @@ export class MainComponent {
     }
   }
 
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
+
   /**
    * @description Handles button click events, triggering specific actions based on the button's label.
    * Updates the button's icon and label dynamically, and sends corresponding instructions to the backend 
@@ -110,7 +112,7 @@ export class MainComponent {
         break;
       case 'Guardar Mapeo':
         // Funcion para sacar captura al mapa
-        console.log("Guardar mapeo")
+        this.mapComponent.captureMap();
         break;
     }
   
@@ -147,7 +149,23 @@ export class MainComponent {
 
   isMapExpanded: boolean = false;
   isMonitorExpanded: boolean = false;
- 
+  /*
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
+  @ViewChild('monitorComp', { read: ElementRef }) monitorComp!: ElementRef;
+  @ViewChild('mapComp', { read: ElementRef }) mapComp!: ElementRef;
+  toggleExpand(component: 'map' | 'monitor') {
+    if (component === 'map') {
+      this.isMapExpanded = !this.isMapExpanded;
+      this.isMonitorExpanded = false;
+      const state = this.isMapExpanded ? 'expanded' : 'normal';
+      this.mapComponent.updateSvgSize(state);
+    } else if (component === 'monitor') {
+      this.isMonitorExpanded = !this.isMonitorExpanded;
+      this.isMapExpanded = false;
+      const state = this.isMonitorExpanded ? 'shrunk' : 'normal';
+      this.mapComponent.updateSvgSize(state);
+    }
+      */
   onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
     // Verifica que el clic se originó directamente en el componente
     const target = event.target as HTMLElement;
@@ -164,4 +182,6 @@ export class MainComponent {
       this.isMapExpanded = false;
     }
   }
+
+
 }

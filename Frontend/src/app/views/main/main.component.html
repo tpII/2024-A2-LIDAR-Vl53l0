@@ -77,15 +77,6 @@
           [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" >
             <app-map (click)="onComponentClick($event, 'map')"></app-map>
         </div>
-  
-      <!--
-      <div id="monitor" class="component" (click)="toggleExpand('monitor')">
-        <app-monitor></app-monitor>
-      </div>
-      <div id="map" class="component" (click)="toggleExpand('map')">
-        <app-map></app-map>
-      </div>
-    -->
     </div>
   </as-split-area>
 </as-split>
