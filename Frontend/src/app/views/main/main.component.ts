@@ -3,10 +3,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
 import { CommonModule } from '@angular/common';
-<<<<<<< HEAD
-import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
-import { MapComponent } from "../../shared/components/map/map.component";
-=======
 import { GamepadComponent } from '../../shared/components/gamepad/gamepad.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { InstructionsService } from '../../core/services/instructions.service';
@@ -18,16 +14,13 @@ import { InstructionsService } from '../../core/services/instructions.service';
  * actions and send instructions to the backend for processing.
  *
 */
->>>>>>> Sidebar-implementation
+import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
+import { MapComponent } from "../../shared/components/map/map.component";
 
 @Component({
   selector: 'app-main',
   standalone: true,
-<<<<<<< HEAD
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, MonitorComponent, MapComponent],
-=======
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent, MatMenuModule],
->>>>>>> Sidebar-implementation
+  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent, MatMenuModule, MonitorComponent, MapComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
@@ -69,60 +62,6 @@ export class MainComponent {
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
-<<<<<<< HEAD
-/*
-  toggleExpand(component: 'map' | 'monitor') {
-    const map = document.getElementById('map');
-    const monitor = document.getElementById('monitor');
-  
-    if (map && monitor) {
-      if (component === 'map') {
-        map.classList.toggle('expanded');
-        monitor.classList.remove('expanded');
-      } else if (component === 'monitor') {
-        monitor.classList.toggle('expanded');
-        map.classList.remove('expanded');
-      }
-    }
-  }
-*/
-
-  isMapExpanded: boolean = false;
-  isMonitorExpanded: boolean = false;
-  /*
-  @ViewChild(MapComponent) mapComponent!: MapComponent;
-  @ViewChild('monitorComp', { read: ElementRef }) monitorComp!: ElementRef;
-  @ViewChild('mapComp', { read: ElementRef }) mapComp!: ElementRef;
-
-  toggleExpand(component: 'map' | 'monitor') {
-    if (component === 'map') {
-      this.isMapExpanded = !this.isMapExpanded;
-      this.isMonitorExpanded = false;
-      const state = this.isMapExpanded ? 'expanded' : 'normal';
-      this.mapComponent.updateSvgSize(state);
-    } else if (component === 'monitor') {
-      this.isMonitorExpanded = !this.isMonitorExpanded;
-      this.isMapExpanded = false;
-      const state = this.isMonitorExpanded ? 'shrunk' : 'normal';
-      this.mapComponent.updateSvgSize(state);
-    }
-  } */
-
-  onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
-    // Verifica que el clic se originó directamente en el componente
-    const target = event.target as HTMLElement;
-
-    if (!target.closest('.console-line') && target.tagName !== 'svg') {
-      return;
-    }
-  
-    if (component === 'map') {
-      this.isMapExpanded = !this.isMapExpanded;
-      this.isMonitorExpanded = false;
-    } else if (component === 'monitor') {
-      this.isMonitorExpanded = !this.isMonitorExpanded;
-      this.isMapExpanded = false;
-=======
 
   onGamepadStatusChange(isConnected: boolean): void {
     if (isConnected) {
@@ -203,7 +142,26 @@ export class MainComponent {
       //Change speed to next up
     } else {
       //Change speed to next down
->>>>>>> Sidebar-implementation
+    }
+  }
+
+  isMapExpanded: boolean = false;
+  isMonitorExpanded: boolean = false;
+ 
+  onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
+    // Verifica que el clic se originó directamente en el componente
+    const target = event.target as HTMLElement;
+
+    if (!target.closest('.console-line') && target.tagName !== 'svg') {
+      return;
+    }
+  
+    if (component === 'map') {
+      this.isMapExpanded = !this.isMapExpanded;
+      this.isMonitorExpanded = false;
+    } else if (component === 'monitor') {
+      this.isMonitorExpanded = !this.isMonitorExpanded;
+      this.isMapExpanded = false;
     }
   }
 }
