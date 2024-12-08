@@ -7,6 +7,14 @@ import { GamepadComponent } from '../../shared/components/gamepad/gamepad.compon
 import { MatMenuModule } from '@angular/material/menu';
 import { InstructionsService } from '../../core/services/instructions.service';
 
+/**
+ * @component MainComponent
+ * @description Main component that integrates other components, such as Sidebar, Map and Monitor. 
+ * It also includes buttons for user interaction. When pressed, these buttons trigger specific 
+ * actions and send instructions to the backend for processing.
+ *
+*/
+
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -15,6 +23,8 @@ import { InstructionsService } from '../../core/services/instructions.service';
   styleUrl: './main.component.scss',
 })
 export class MainComponent {
+
+  
   // Controlar si la sidebar está expandida o no
   isSideNavExpanded = false;
  // Tamaños mínimo y máximo de la sidebar
@@ -24,9 +34,6 @@ export class MainComponent {
   // Agregar propiedades para el mando y la batería
   isControllerConnected = true; // Cambiar dinámicamente según el estado real
   batteryLevel = 75; // Cambiar dinámicamente según el nivel de batería
-
- //speedButton = { icon: 'speed', label: '20m x hora' }
- //speeds = ["Lento", "Normal", "Rápido"]; // Opciones de velocidad
 
   buttons = [
     { icon: 'speed', label: 'Normal' },
@@ -38,15 +45,6 @@ export class MainComponent {
 
     constructor(private InstructionsService: InstructionsService) {}
 
-    toggleSpeedMenu(event: MouseEvent) {
-      event.stopPropagation();  // Esto previene que el clic se propague al sidebar
-      // Aquí va tu lógica para mostrar el menú de velocidad
-    }
-  
-
-  onSpeedClick(speed: string) {
-    console.log('Velocidad seleccionada:', speed);
-  }
 
   // Alternar el estado de la sidebar entre colapsada y expandida
   toggleSidebar(): void {
@@ -73,6 +71,15 @@ export class MainComponent {
     }
   }
 
+  /**
+   * @description Handles button click events, triggering specific actions based on the button's label.
+   * Updates the button's icon and label dynamically, and sends corresponding instructions to the backend 
+   * for certain actions such as adjusting speed settings. Prevents event propagation to avoid interference 
+   * with other UI elements like the sidenav.
+   *
+   * @param {Event} event - The event triggered by the button click.
+   * @param {any} button - The button object containing its current label and icon.
+ */
   onButtonClick(event: Event, button: any): void {
     // Detiene la propagación del evento para evitar que afecte al sidenav
     event.stopPropagation();
@@ -107,6 +114,13 @@ export class MainComponent {
   
   }
 
+  /**
+   * @description Sends a speed instruction to the backend using the InstructionsService.
+   * Constructs an instruction object with the specified speed and makes a HTTP POST request.
+   * Handles the response or error, logging them for debugging purposes.
+   *
+   * @param {string} speed - The speed value to include in the instruction (e.g., "SLOW", "MEDIUM", "FAST").
+ */
   sendInstruction(speed: string): void {
     const instruction = { speed: speed };
 
