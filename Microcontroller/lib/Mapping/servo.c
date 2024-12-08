@@ -35,7 +35,8 @@ static volatile uint16_t last_angle_offset = 0;
 static volatile uint16_t angle = 0;
 static volatile uint32_t next_speed = 0;
 static volatile bool change_speed_flag = false;
-
+static volatile uint64_t partialTimeBase = 0;
+static volatile uint64_t pauseTimeBase = 0;
 // static portMUX_TYPE limit_mux = portMUX_INITIALIZER_UNLOCKED;
 static SemaphoreHandle_t limit_semaphore;
 
@@ -373,4 +374,35 @@ void servo_set_speed(SERVO_DIRECTION dir)
         change_speed_flag = 1;
         xSemaphoreGive(speed_change_semaphore);
     }
+}
+
+esp_err_t servo_pause(){
+
+    if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
+        if(servo_stop() != ESP_OK){
+            ESP_LOGE(TAG,"FAIL TO PAUSE SERVO");
+            xSemaphoreGive(limit_semaphore);
+            return ESP_FAIL;
+        }
+        partialTimeBase = time_base;
+        pauseTimeBase = esp_timer_get_time();
+        xSemaphoreGive(limit_semaphore);
+        return ESP_OK;
+    }
+    return ESP_ERR_TIMEOUT;
+}
+
+esp_err_t servo_restar(){
+    uint64_t auxTime=0;
+    if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
+        auxTime = esp_timer_get_time() - pauseTimeBase;
+        if(servo_start() != ESP_OK){
+            ESP_LOGE(TAG,"FAIL TO RESTART SERVO");
+            xSemaphoreGive(limit_semaphore);
+            return ESP_FAIL;
+        }
+        partialTimeBase -= auxTime;
+        xSemaphoreGive(limit_semaphore);
+    }
+    return ESP_ERR_TIMEOUT;
 }

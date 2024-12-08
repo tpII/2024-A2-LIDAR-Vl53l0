@@ -14,6 +14,7 @@ static float bus_voltage;
 static float shunt_voltage;
 static float current;
 static float power;
+static uint8_t success = 1;
 
 esp_err_t battery_sensor_init()
 {
@@ -43,11 +44,15 @@ esp_err_t battery_sensor_init()
     current = 0.0f;
     power = 0.0f;
 
+    success = 0;
     return ESP_OK;
 }
 
 esp_err_t battery_sensor_read(uint8_t *battery_level)
-{
+{   
+    if(!success){
+        return ESP_ERR_NOT_ALLOWED;
+    }
     if (battery_level == NULL)
     {
         ESP_LOGE(TAG, "Battery level pointer is NULL");

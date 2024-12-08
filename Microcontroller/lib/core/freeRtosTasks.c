@@ -6,12 +6,18 @@
 #include "esp_log.h"
 #include "motors.h"
 #include "servo.h"
+#include "battery.h"
+#include "mqtt_handler.h"
 
 const char *TAG = "TASKS";
-static void servoInterruptionTask(void *);
-
 TaskHandle_t servoInterruptionTaskHandler = NULL;
 TaskHandle_t instructionHandlerTaskHandler = NULL;
+TaskHandle_t batteryTaskHandler = NULL;
+
+static void servoInterruptionTask(void *);
+static void instructionHandler(void *);
+static void executeInstruction(char *);
+
 esp_err_t createTasks()
 {
     // BACKGROUND TASKs
@@ -27,17 +33,34 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
+        ESP_LOGE(TAG, "Error Creating Limit Switch cheking Task");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
+    // MAIN TASKs
     BaseType_t task_created = xTaskCreatePinnedToCore(
         instructionHandler,
+        "InstructionsHadlerTask",
         2048,
         NULL,
         2,
         &instructionHandlerTaskHandler,
-        tskNo_AFFINITY);
-    // MAIN TASKs
+        tskNO_AFFINITY);
+
+    if (task_created != pdPASS)
+    {
+        ESP_LOGE(TAG, "Error Creating Instruction Handler cheking Task");
+        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+    }
+
+    BaseType_t task_created = xTaskCreatePinnedToCore(
+        batteryTask,
+        "BateryTask",
+        2048,
+        NULL,
+        2,
+        &batteryTaskHandler,
+        tskNO_AFFINITY);
 
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
 }
@@ -117,8 +140,38 @@ static void executeInstruction(char *inst)
     else if (strncmp(inst, "SpeedDown") == 0)
     {
         servo_set_speed(DOWN);
-    } else if {
-        
+    }
+    else if (strncmp(inst, "Pause") == 0)
+    {
+        if (servo_pause() != ESP_OK)
+        {
+            // WHAT?
+        }
+    }
+    else if (strncmp(inst, "Play") == 0)
+    {
+        if (servo_restart() != ESP_OK)
+        {
+            // WHAT?
+        }
     }
 }
-// TASK FOR TEST
+
+void batteryTask(void *parameter)
+{
+    esp_err_t err = ESP_OK;
+    uint8_t level = 0;
+    while (1)
+    {
+        err = battery_sensor_read(&level);
+        if (err == ESP_OK)
+        {
+            sendBatteryLevel(level);
+        }
+        else
+        {
+            ESP_LOGW(TAG, "Error Reading Battery Level", esp_err_to_name(err));
+        }
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
