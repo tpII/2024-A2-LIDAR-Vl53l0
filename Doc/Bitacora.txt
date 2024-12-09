@@ -132,3 +132,6 @@ Arreglo error al expandir/contraer los componentes.
 08 de Diciembre
 Agrego todos los componentes en la pagina web y modifico el tamaño de estos.
 Modifico para que reciba los puntos a graficar desde el backend en el mapa.
+
+09 de Diciembre
+Funcionalidad de botones

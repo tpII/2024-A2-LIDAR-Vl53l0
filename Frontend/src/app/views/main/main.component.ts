@@ -98,11 +98,13 @@ export class MainComponent {
         button.icon = 'play_arrow';
         button.label = 'REANUDAR';
         this.mapComponent.setup_mapping(false);
+        this.monitorComponent.togglePause(false); 
         break;
       case 'REANUDAR':
         button.icon = 'pause';
         button.label = 'PAUSAR';
         this.mapComponent.setup_mapping(true);
+        this.monitorComponent.togglePause(true); 
         break;
       case 'Lento':
         button.label = 'Normal';
