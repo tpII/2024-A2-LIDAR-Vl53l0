@@ -64,6 +64,11 @@ export class MapComponent implements OnInit {
   // Recibir datos del back y graficarlos
   plotPointsFromBackend(): void {
     this.mappingValueService.getMappingValue().subscribe((data) => {
+
+      if (!this.mapping) { //revisar
+        return; 
+      }
+
       data.forEach((point: { distance: number; angle: number }) => {
         // Convertir de polar a cartesiano
         const { x, y } = this.polarToCartesian(point.distance, point.angle);
@@ -95,9 +100,9 @@ export class MapComponent implements OnInit {
   simulateData() {
     setInterval(() => {
       if (!this.mapping) {
-        return; // Si el mapeo está en pausa, no grafiques puntos
+        return; 
       }
-      console.log(this.mapping);
+
       const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
       const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
 
