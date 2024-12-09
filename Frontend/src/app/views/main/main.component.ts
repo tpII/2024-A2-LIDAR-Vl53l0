@@ -27,6 +27,7 @@ import { MapComponent } from "../../shared/components/map/map.component";
 export class MainComponent {
 
   @ViewChild(MapComponent) mapComponent!: MapComponent;
+  @ViewChild(MonitorComponent) monitorComponent!: MonitorComponent;
 
   constructor(private InstructionsService: InstructionsService) {}
 
@@ -105,18 +106,18 @@ export class MainComponent {
         break;
       case 'Lento':
         button.label = 'Normal';
-        this.speed = 'Medium';
-        this.sendInstruction("MEDIUM")
+        this.speed = 'Normal';
+        this.sendInstruction("MEDIUM");
         break;
       case 'Normal':
         button.label = 'Rápido';
-        this.speed = 'Fast';
-        this.sendInstruction("FAST")
+        this.speed = 'Rápido';
+        this.sendInstruction("FAST");
         break;
       case 'Rápido':
         button.label = 'Lento';
-        this.speed = 'Slow';
-        this.sendInstruction("SLOW")
+        this.speed = 'Lento';
+        this.sendInstruction("SLOW");
         break;
       case 'Guardar Mapeo':
         // Funcion para sacar captura al mapa
@@ -124,9 +125,11 @@ export class MainComponent {
         break;
       case 'REINICIAR':
         // Funcion para reinicar
+        this.resetProcess();
         break;
       case 'RESTABLECER':
         // Funcion para restablecer
+        this.defaultConfig();
         break;
       default:
         break;
@@ -175,7 +178,7 @@ export class MainComponent {
         case 'Normal':
           speedButton.label = 'Rápido';
           this.speed = 'Rápido';
-          this.sendInstruction("FAST")
+          this.sendInstruction("FAST");
           break;
         default:
           break;
@@ -191,12 +194,44 @@ export class MainComponent {
         case 'Normal':
           speedButton.label = 'Lento';
           this.speed = 'Lento';
-          this.sendInstruction("SLOW")
+          this.sendInstruction("SLOW");
           break;
         default:
           break;
       }
     }
+  }
+
+  resetProcess() {
+    this.mapComponent.restartMapping();
+    this.monitorComponent.clearMessages();
+    console.log("reset");
+  }
+
+  defaultConfig(){
+    const speedButton = this.buttons.find((btn) => btn.label === this.speed);
+    const playButton = this.buttons.find((btn) => btn.label === "REANUDAR");
+
+    if (!speedButton) {
+      console.error('Botón de velocidad no encontrado');
+      return;
+    }
+
+    // velocidad
+    console.log("restablecer normal");
+    this.speed = "Normal";
+    speedButton.label = "Normal";
+
+    // si esta en pausa -> reanudar
+    if (playButton) {
+      playButton.icon = 'pause';
+      playButton.label = 'PAUSAR';
+      this.mapComponent.setup_mapping(true);
+    }
+    
+    this.sendInstruction("MEDIUM");
+    this.resetProcess();
+    //mandar otras instrucciones para restablecer config
   }
 
   isMapExpanded: boolean = false;

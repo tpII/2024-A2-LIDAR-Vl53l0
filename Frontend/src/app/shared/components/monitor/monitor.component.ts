@@ -18,6 +18,7 @@ export interface Message {
   styleUrl: './monitor.component.scss',
 })
 export class MonitorComponent {
+
   messages = 
   [
       { "tag": "Security", "type": "ERROR", "message": "Unauthorized access attempt detected. Action required.", "timestamp": "10:14:00" },
@@ -97,6 +98,10 @@ export class MonitorComponent {
   }
       */
 
+  clearMessages(): void {
+    this.messages = []; // Vacía el array de mensajes
+  }  
+  
   
   toggleExpand() {
     const monitor = document.getElementById('monitor');

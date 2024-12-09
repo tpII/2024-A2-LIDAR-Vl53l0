@@ -94,6 +94,15 @@ export class MapComponent implements OnInit {
     });
   }
   
+  restartMapping(){
+    // Recorrer todos los puntos almacenados en el mapa
+    this.pointsMap.forEach((point) => {
+      point.remove(); // Eliminar el elemento gráfico del SVG
+    });
+
+    // Limpiar el mapa de puntos
+    this.pointsMap.clear();
+  }
   
 
   // Simular recepción de datos
