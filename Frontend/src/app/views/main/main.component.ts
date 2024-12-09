@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { GamepadComponent } from '../../shared/components/gamepad/gamepad.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { InstructionsService } from '../../core/services/instructions.service';
+import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
+import { MapComponent } from "../../shared/components/map/map.component";
 
 /**
  * @component MainComponent
@@ -14,9 +16,6 @@ import { InstructionsService } from '../../core/services/instructions.service';
  * actions and send instructions to the backend for processing.
  *
 */
-import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
-import { MapComponent } from "../../shared/components/map/map.component";
-
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -24,9 +23,13 @@ import { MapComponent } from "../../shared/components/map/map.component";
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
+
 export class MainComponent {
 
-  
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
+
+  constructor(private InstructionsService: InstructionsService) {}
+
   // Controlar si la sidebar está expandida o no
   isSideNavExpanded = false;
  // Tamaños mínimo y máximo de la sidebar
@@ -37,6 +40,9 @@ export class MainComponent {
   isControllerConnected = true; // Cambiar dinámicamente según el estado real
   batteryLevel = 75; // Cambiar dinámicamente según el nivel de batería
 
+  // Velocidad actual
+  speed = "Normal"
+
   buttons = [
     { icon: 'speed', label: 'Normal' },
     { icon: 'download', label: 'Guardar Mapeo' },
@@ -44,8 +50,6 @@ export class MainComponent {
     { icon: 'restart_alt', label: 'REINICIAR' },
     { icon: 'cancel', label: 'RESTABLECER' },
   ];
-
-    constructor(private InstructionsService: InstructionsService) {}
 
 
   // Alternar el estado de la sidebar entre colapsada y expandida
@@ -73,7 +77,6 @@ export class MainComponent {
     }
   }
 
-  @ViewChild(MapComponent) mapComponent!: MapComponent;
 
   /**
    * @description Handles button click events, triggering specific actions based on the button's label.
@@ -100,19 +103,30 @@ export class MainComponent {
         break;
       case 'Lento':
         button.label = 'Normal';
+        this.speed = 'Medium';
         this.sendInstruction("MEDIUM")
         break;
       case 'Normal':
         button.label = 'Rápido';
+        this.speed = 'Fast';
         this.sendInstruction("FAST")
         break;
       case 'Rápido':
         button.label = 'Lento';
+        this.speed = 'Slow';
         this.sendInstruction("SLOW")
         break;
       case 'Guardar Mapeo':
         // Funcion para sacar captura al mapa
         this.mapComponent.captureMap();
+        break;
+      case 'REINICIAR':
+        // Funcion para reinicar
+        break;
+      case 'RESTABLECER':
+        // Funcion para restablecer
+        break;
+      default:
         break;
     }
   
@@ -140,10 +154,46 @@ export class MainComponent {
   }
   
   changeSpeedByGamepad(str: String){
+
+    const speedButton = this.buttons.find((btn) => btn.label === this.speed);
+
+    if (!speedButton) {
+      console.error('Botón de velocidad no encontrado');
+      return;
+    }
+
     if(str === "SpeedUp"){
       //Change speed to next up
+      switch(this.speed) {
+        case 'Lento':
+          speedButton.label = 'Normal';
+          this.speed = 'Normal';
+          this.sendInstruction("MEDIUM");
+          break;
+        case 'Normal':
+          speedButton.label = 'Rápido';
+          this.speed = 'Rápido';
+          this.sendInstruction("FAST")
+          break;
+        default:
+          break;
+      }
     } else {
       //Change speed to next down
+      switch(this.speed) {
+        case 'Rápido':
+          speedButton.label = 'Normal';
+          this.speed = 'Normal';
+          this.sendInstruction("MEDIUM");
+          break;
+        case 'Normal':
+          speedButton.label = 'Lento';
+          this.speed = 'Lento';
+          this.sendInstruction("SLOW")
+          break;
+        default:
+          break;
+      }
     }
   }
 
