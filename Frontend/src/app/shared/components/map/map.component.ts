@@ -10,6 +10,7 @@ import * as d3 from 'd3';
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit {
+  private mapping: boolean = true;
   private width = 850;
   private height = 850;
   private svg: any;
@@ -23,6 +24,10 @@ export class MapComponent implements OnInit {
     this.createChart();
     //this.plotPointsFromBackend();
     this.simulateData(); //FOR TEST ONLY
+  }
+
+  setup_mapping(mapping_process: boolean){
+    this.mapping = mapping_process;
   }
 
   createChart() {
@@ -89,6 +94,10 @@ export class MapComponent implements OnInit {
   // Simular recepción de datos
   simulateData() {
     setInterval(() => {
+      if (!this.mapping) {
+        return; // Si el mapeo está en pausa, no grafiques puntos
+      }
+      console.log(this.mapping);
       const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
       const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
 

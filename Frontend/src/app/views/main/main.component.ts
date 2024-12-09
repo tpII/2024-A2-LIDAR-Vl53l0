@@ -41,7 +41,7 @@ export class MainComponent {
   batteryLevel = 75; // Cambiar dinámicamente según el nivel de batería
 
   // Velocidad actual
-  speed = "Normal"
+  speed: string = "Normal";
 
   buttons = [
     { icon: 'speed', label: 'Normal' },
@@ -96,10 +96,12 @@ export class MainComponent {
       case 'PAUSAR':
         button.icon = 'play_arrow';
         button.label = 'REANUDAR';
+        this.mapComponent.setup_mapping(false);
         break;
       case 'REANUDAR':
         button.icon = 'pause';
         button.label = 'PAUSAR';
+        this.mapComponent.setup_mapping(true);
         break;
       case 'Lento':
         button.label = 'Normal';
