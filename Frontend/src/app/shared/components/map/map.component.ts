@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
+import { MappingValueService } from '../../../core/services/mapping-value.service';
 import * as d3 from 'd3';
 
 @Component({
@@ -16,8 +17,11 @@ export class MapComponent implements OnInit {
   private scaleFactor = this.width / (this.maxDistance * 2); // Escala para convertir metros a pixeles
   private pointsMap: Map<number, any> = new Map();
 
+  constructor(private mappingValueService: MappingValueService) {}
+
   ngOnInit() {
     this.createChart();
+    //this.plotPointsFromBackend();
     this.simulateData(); //FOR TEST ONLY
   }
 
@@ -51,6 +55,36 @@ export class MapComponent implements OnInit {
       .attr('fill', '#213A7D');
 
   }
+
+  // Recibir datos del back y graficarlos
+  plotPointsFromBackend(): void {
+    this.mappingValueService.getMappingValue().subscribe((data) => {
+      data.forEach((point: { distance: number; angle: number }) => {
+        // Convertir de polar a cartesiano
+        const { x, y } = this.polarToCartesian(point.distance, point.angle);
+  
+        // Graficar el punto en el mapa
+        if (this.pointsMap.has(point.angle)) {
+          // Actualizar el punto existente
+          const existingPoint = this.pointsMap.get(point.angle);
+          existingPoint
+            .attr('cx', x)
+            .attr('cy', y);
+        } else {
+          // Crear un nuevo punto
+          const newPoint = this.svg
+            .append('circle')
+            .attr('cx', x)
+            .attr('cy', y)
+            .attr('r', 4)
+            .attr('fill', 'blue');
+          this.pointsMap.set(point.angle, newPoint);
+        }
+      });
+    });
+  }
+  
+  
 
   // Simular recepción de datos
   simulateData() {
