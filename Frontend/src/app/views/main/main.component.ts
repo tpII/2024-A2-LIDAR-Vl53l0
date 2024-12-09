@@ -53,12 +53,24 @@ export class MainComponent {
   ];
 
 
-  // Alternar el estado de la sidebar entre colapsada y expandida
+ /**
+  * Toggles the expansion state of the sidebar.
+  * If the sidebar is expanded, it collapses, and vice versa.
+  * Logs the current state of the sidebar in the console.
+  */
   toggleSidebar(): void {
     this.isSideNavExpanded = !this.isSideNavExpanded;
     console.log('Sidebar expanded:', this.isSideNavExpanded);
   }
 
+  /**
+   * Dynamically generates the style for a footer figure.
+   * Adjusts the width based on whether the sidebar is expanded or collapsed,
+   * using predefined minimum and maximum size values.
+   * The height remains fixed at 100px.
+   * 
+   * @returns An object containing the dynamic style properties.
+   */
   getFooterFigureStyle() {
     return {
       width: `${
@@ -68,6 +80,13 @@ export class MainComponent {
     };
   }
 
+  /**
+   * Handles changes in the gamepad connection status.
+   * Updates the `isControllerConnected` variable based on whether the
+   * gamepad is connected or disconnected, and logs the status to the console.
+   * 
+   * @param isConnected Indicates if the gamepad is connected (true) or disconnected (false).
+   */
   onGamepadStatusChange(isConnected: boolean): void {
     if (isConnected) {
       console.log('Gamepad connected!');
@@ -160,6 +179,15 @@ export class MainComponent {
   
   }
   
+  /**
+   * Adjusts the speed of the vehicle based on the gamepad input.
+   * The speed is changed sequentially between "Lento", "Normal", and "Rápido" 
+   * when the "SpeedUp" command is received, and the speed is decreased sequentially 
+   * when the opposite command is received. It also updates the speed button label 
+   * and sends the corresponding instruction to control the vehicle's speed.
+   *
+   * @param str The gamepad command, either "SpeedUp" or a command to slow down.
+   */
   changeSpeedByGamepad(str: String){
 
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
@@ -204,12 +232,19 @@ export class MainComponent {
     }
   }
 
+  /**
+   * Resets the process by restarting the mapping and clearing the messages from the monitor.
+   */
   resetProcess() {
     this.mapComponent.restartMapping();
     this.monitorComponent.clearMessages();
-    console.log("reset");
   }
 
+  /**
+   * Restores the default configuration settings for the vehicle, including setting the speed to "Normal",
+   * ensuring that the vehicle is resumed if it was paused, and sending the corresponding instructions.
+   * It also resets the mapping and clears the messages on the monitor.
+   */
   defaultConfig(){
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
     const playButton = this.buttons.find((btn) => btn.label === "REANUDAR");

@@ -2,6 +2,13 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { MappingValueService } from '../../../core/services/mapping-value.service';
 import * as d3 from 'd3';
 
+/**
+ * @component MapComponent
+ * @description This component is responsible for managing the map view and visualizing the data received from the backend. 
+ * It includes functionalities to display and interact with the map and process incoming data based on user inputs.
+ * The component also handles the setup and control of the mapping process.
+ *
+ */
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -9,6 +16,7 @@ import * as d3 from 'd3';
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
+
 export class MapComponent implements OnInit {
   private mapping: boolean = true;
   private width = 850;
@@ -20,16 +28,32 @@ export class MapComponent implements OnInit {
 
   constructor(private mappingValueService: MappingValueService) {}
 
+  /**
+   * Initializes the component by creating the chart and plotting points from the backend.
+   * This function is triggered when the component is first loaded, and it ensures that the 
+   * chart is created and data is fetched from the backend to be visualized.
+   */
   ngOnInit() {
     this.createChart();
-    //this.plotPointsFromBackend();
+   // this.plotPointsFromBackend();
     this.simulateData(); //FOR TEST ONLY
   }
 
+  /**
+ * Sets the mapping process state.
+  * This function updates the `mapping` variable, controlling whether the mapping process is active or paused.
+  * 
+  * @param mapping_process - A boolean indicating whether to start or stop the mapping process.
+  */
   setup_mapping(mapping_process: boolean){
     this.mapping = mapping_process;
   }
 
+  /**
+   * Creates and initializes the chart with SVG elements.
+   * It sets the dimensions of the chart, adds a white background, 
+   * draws a border around the content area, and places the robot in the center of the chart.
+   */
   createChart() {
     this.svg = d3
       .select('#chart')
@@ -61,7 +85,11 @@ export class MapComponent implements OnInit {
 
   }
 
-  // Recibir datos del back y graficarlos
+  /**
+   * Receives data from the backend and plots the points on the map.
+   * Converts polar coordinates (distance, angle) into Cartesian coordinates 
+   * and either updates existing points or creates new ones to display on the map.
+   */
   plotPointsFromBackend(): void {
     this.mappingValueService.getMappingValue().subscribe((data) => {
 
@@ -94,6 +122,10 @@ export class MapComponent implements OnInit {
     });
   }
   
+  /**
+   * Clears all stored points on the map by removing their corresponding graphical elements 
+   * from the SVG and resetting the points map.
+   */
   restartMapping(){
     // Recorrer todos los puntos almacenados en el mapa
     this.pointsMap.forEach((point) => {
@@ -119,13 +151,32 @@ export class MapComponent implements OnInit {
       this.plotPoint(x, y, angle);
     }, 1000); // Recibir datos cada segundo
   }
-  // Convertir distancia y ángulo a coordenadas cartesianas
+
+  /**
+   * Converts polar coordinates (distance and angle) to Cartesian coordinates (x, y).
+   * The angle is first converted to radians and used to calculate the x and y values based 
+   * on the distance and scale factor. The y-axis is inverted to fit the D3 coordinate system.
+   * 
+   * @param distance The distance from the origin (in some unit).
+   * @param angle The angle in degrees.
+   * @returns The Cartesian coordinates (x, y).
+   */
   polarToCartesian(distance: number, angle: number) {
     const radians = (angle * Math.PI) / 180; // Convertir grados a radianes
     const x = this.width / 2 + distance * this.scaleFactor * Math.cos(radians);
     const y = this.height / 2 - distance * this.scaleFactor * Math.sin(radians); // Invertir eje Y para D3
     return { x, y };
   }
+
+  /**
+   * Plots a point on the SVG based on the given x, y coordinates. If a point already exists 
+   * for the given angle, it updates the position of the existing point. Otherwise, it creates 
+   * a new point at the specified coordinates and adds it to the points map.
+   * 
+   * @param x The x-coordinate to place the point.
+   * @param y The y-coordinate to place the point.
+   * @param angle The angle of the point for identification in the map.
+   */
   plotPoint(x: number, y: number, angle: number) {
     // Verificar si ya existe un punto para el ángulo dado
     if (this.pointsMap.has(angle)) {
@@ -147,7 +198,10 @@ export class MapComponent implements OnInit {
     }
   }
 
-  // Función para capturar el mapa como imagen
+  /**
+   * Captures the current SVG map as an image, including a border around it. 
+   * The image is saved as a PNG file with the border added around the map for clarity.
+   */
   captureMap() {
     const svgElement = this.svg.node() as SVGSVGElement;
     const serializer = new XMLSerializer();
