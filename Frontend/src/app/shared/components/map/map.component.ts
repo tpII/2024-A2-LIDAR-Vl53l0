@@ -9,7 +9,7 @@ import * as d3 from 'd3';
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit {
-  private width = 950;
+  private width = 850;
   private height = 850;
   private svg: any;
   private maxDistance = 2; // Distancia máxima en metros
@@ -139,9 +139,9 @@ export class MapComponent implements OnInit {
       if (state === 'expanded') {
         svgElement.attr('width', 800).attr('height', 600);
       } else if (state === 'shrunk') {
-        svgElement.attr('width', 400).attr('height', 200);
+        svgElement.attr('width', 850).attr('height', 850);
       } else {
-        svgElement.attr('width', 700).attr('height', 500);
+        svgElement.attr('width', 950).attr('height', 850);
       }
     }
   }
