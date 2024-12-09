@@ -28,7 +28,7 @@
 
 .main-content {
   padding: 10px;
-  background-color: #fff; /* Color de fondo del contenido principal */
+  background-color: #b4e1f4; /* Color de fondo del contenido principal */
   flex-direction: row;
   display: flex;
   gap: 10px;
@@ -229,10 +229,10 @@
 }
 
 #map {
-  width: 50%;
+  width: 65%;
 }
 #monitor {
-  width: 50%;
+  width: 35%;
 }
 #map, #monitor{
   height: 100%;
