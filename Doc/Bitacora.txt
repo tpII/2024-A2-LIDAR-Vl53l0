@@ -99,6 +99,59 @@ Se testeo y mejoro la libreria lights
 18 de Noviembre
 Libreria INA219 I2C
 
+19 de Noviembre
+Se crearon los prototipos de los botones del sidebar.
+
+20 de Noviembre 
+Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js con datos de prueba)
+
+22 de Noviembre
+Se realizaron mejoras con respecto a la visualizacion del mapa (cambios en el diseño).
+Se agrego funcion para generar puntos de forma aleatoria para testeo.
+Funcion para capturar el mapa en un momento determinado (falta mejorar).
+
+23 de Noviembre
+Implementado el componente para leer un joystick y poder controlar el robot. 
+Pendiente crear el servicio y apartado visual.
+
+27 de Noviembre
+Modifico libreria para visualizar mapa para que al hacer click sobre este se expanda o vuelva a su tamaño normal.
+Modifico libreria del monitor para que al hacer click se expanda o vuelva a su tamaño original.
+
+01 de Diciembre
+Merge de librerias de monitor y map.
+Modifico libreria monitor (merge ya realizado) para visualizar mapa y monitor al mismo tiempo. 
+Ademas de agregar cambios necesarios para que cuando un componente se expanda el otro se contraiga.
+
+02 de Diciembre
+El sidneav mustra el status de conexion del Gamepad.
+El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
+
+03 de Diciembre
+Modifico libreria del monitor para que cuando el mapa se expanda, se oculte el monitor.
+Ademas, se realizaron mejoras en la visualizacion al expandir/contraer.
+
+04 de Diciembre
+Send instructions working, botones pendiente de asignar acciones
+Mejora del componenete gamepad
+Testeo de la comunicacion de instruction Working.
+Realizo modificaciones en el diseño de los botones del sidebar
+Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
+
 05 de Diciembre
 Se agrego documentacion de las librerias mqtt_handler, mqtt_server, lights, i2c, json_helper e instruction_buffer.
 Se agrego Swagger para documentacion del Backend
+
+
+06 de Diciembre
+Arreglo error al expandir/contraer los componentes.
+
+08 de Diciembre
+Agrego todos los componentes en la pagina web y modifico el tamaño de estos.
+Modifico para que reciba los puntos a graficar desde el backend en el mapa.
+
+09 de Diciembre
+Funcionalidad de botones
+
+
+
