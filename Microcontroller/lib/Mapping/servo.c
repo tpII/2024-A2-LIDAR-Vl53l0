@@ -392,7 +392,7 @@ esp_err_t servo_pause(){
     return ESP_ERR_TIMEOUT;
 }
 
-esp_err_t servo_restar(){
+esp_err_t servo_restart(){
     uint64_t auxTime=0;
     if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
         auxTime = esp_timer_get_time() - pauseTimeBase;

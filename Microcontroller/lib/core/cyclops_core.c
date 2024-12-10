@@ -1,4 +1,4 @@
-#include "freeRtosTasks.h"
+#include "cyclops_core.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "limit_switch.h"
@@ -8,8 +8,11 @@
 #include "servo.h"
 #include "battery.h"
 #include "mqtt_handler.h"
+#include "ap_server.h"
+#include "lights.h"
+#include "mqtt_server.h"
 
-const char *TAG = "TASKS";
+static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
 TaskHandle_t instructionHandlerTaskHandler = NULL;
 TaskHandle_t batteryTaskHandler = NULL;
@@ -18,9 +21,46 @@ static void servoInterruptionTask(void *);
 static void instructionHandler(void *);
 static void executeInstruction(char *);
 
+
+esp_err_t system_init()
+{
+    esp_err_t err = ESP_OK;
+
+    err = initialize_server();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR SETTING UP SERVER");
+        return ESP_FAIL;
+    }
+
+    err = wait_for_client_connection();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR - WAITING FOR CLIENT");
+        return ESP_FAIL;
+    }
+
+    err = mqtt_start();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR SETTING UP MQTT SERVER");
+        return ESP_FAIL;
+    }
+
+    err = lights_init();
+    if (err != ESP_OK)
+    {
+        ESP_LOGW(TAG, "Error Setting Up Lights");
+    }
+    // Deberia considerar hacerlka tipo esp_err_t
+    motors_setup();
+    return err;
+}
+
 esp_err_t createTasks()
 {
     // BACKGROUND TASKs
+    
     BaseType_t task_created = xTaskCreatePinnedToCore(
         servoInterruptionTask,         // Función de la tarea
         "ServoInterruptionTask",       // Nombre de la tarea
@@ -38,7 +78,7 @@ esp_err_t createTasks()
     }
 
     // MAIN TASKs
-    BaseType_t task_created = xTaskCreatePinnedToCore(
+    task_created = xTaskCreatePinnedToCore(
         instructionHandler,
         "InstructionsHadlerTask",
         2048,
@@ -49,19 +89,24 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating Instruction Handler cheking Task");
+        ESP_LOGE(TAG, "Error Creating Instruction HandlerTask");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
+    /*
+        task_created = xTaskCreatePinnedToCore(
+            batteryTask,
+            "BateryTask",
+            2048,
+            NULL,
+            2,
+            &batteryTaskHandler,
+            tskNO_AFFINITY);
 
-    BaseType_t task_created = xTaskCreatePinnedToCore(
-        batteryTask,
-        "BateryTask",
-        2048,
-        NULL,
-        2,
-        &batteryTaskHandler,
-        tskNO_AFFINITY);
-
+        if (task_created != pdPASS)
+        {
+            ESP_LOGE(TAG, "Error Creating Battery Task");
+            return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        }*/
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
 }
 
@@ -86,21 +131,21 @@ static void servoInterruptionTask(void *parameter)
 {
     while (1)
     {
-        check_limit_switch();
+        //check_limit_switch();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
 static void instructionHandler(void *parameter)
 {
-    char *inst;
+    char *inst = "";
     esp_err_t err = ESP_OK;
     while (1)
     {
         err = getInstruction(inst);
         if (err == ESP_OK)
         {
-            excuteInstruction(inst);
+            executeInstruction(inst);
         }
         else if (err == ESP_ERR_TIMEOUT)
         {
@@ -112,43 +157,42 @@ static void instructionHandler(void *parameter)
 
 static void executeInstruction(char *inst)
 {
-
-    if (strncmp(inst, "Brake") == 0)
+    if (strncmp(inst, "Brake", 5) == 0)
     {
         motors_command(STOP);
     }
-    else if (strncmp(inst, "Backward") == 0)
+    else if (strncmp(inst, "Backward", 8) == 0)
     {
         motors_command(BACKWARD);
     }
-    else if (strncmp(inst, "Forward") == 0)
+    else if (strncmp(inst, "Forward", 7) == 0)
     {
         motors_command(FORWARD);
     }
-    else if (strncmp(inst, "Right") == 0)
+    else if (strncmp(inst, "Right", 5) == 0)
     {
         motors_command(ROTATE_RIGHT);
     }
-    else if (strncmp(inst, "Left") == 0)
+    else if (strncmp(inst, "Left", 4) == 0)
     {
         motors_command(ROTATE_LEFT);
     }
-    else if (strncmp(inst, "SpeedUp") == 0)
+    else if (strncmp(inst, "SpeedUp", 7) == 0)
     {
         servo_set_speed(UP);
     }
-    else if (strncmp(inst, "SpeedDown") == 0)
+    else if (strncmp(inst, "SpeedDown", 9) == 0)
     {
         servo_set_speed(DOWN);
     }
-    else if (strncmp(inst, "Pause") == 0)
+    else if (strncmp(inst, "Pause", 5) == 0)
     {
         if (servo_pause() != ESP_OK)
         {
             // WHAT?
         }
     }
-    else if (strncmp(inst, "Play") == 0)
+    else if (strncmp(inst, "Play", 4) == 0)
     {
         if (servo_restart() != ESP_OK)
         {
@@ -170,7 +214,7 @@ void batteryTask(void *parameter)
         }
         else
         {
-            ESP_LOGW(TAG, "Error Reading Battery Level", esp_err_to_name(err));
+            ESP_LOGW(TAG, "Error Reading Battery Level %s", esp_err_to_name(err));
         }
         vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
