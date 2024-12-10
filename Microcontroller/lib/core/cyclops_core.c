@@ -146,6 +146,7 @@ static void instructionHandler(void *parameter)
         if (err == ESP_OK)
         {
             executeInstruction(inst);
+            ESP_LOGW(TAG,"INST RECEIVED - %s",inst);
         }
         else if (err == ESP_ERR_TIMEOUT)
         {

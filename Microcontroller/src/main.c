@@ -3,17 +3,20 @@
 
 static const char *TAG = "MAIN";
 
-int app_main(void)
+void app_main(void)
 {
         if (system_init() != ESP_OK)
         {
-                return 1;
+                ESP_LOGE(TAG, "FATAL ERROR");
         }
 
         if (createTasks() != ESP_OK)
         {
-                return 1;
+                ESP_LOGE(TAG, "FATAL ERROR");
         }
 
-        return 0;
+        ESP_LOGI(TAG, "ALL DONE");
+
+
+        
 }

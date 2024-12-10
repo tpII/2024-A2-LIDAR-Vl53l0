@@ -16,9 +16,6 @@ public class WebConfig implements WebMvcConfigurer{
         .allowedHeaders("*")
         .allowCredentials(true);
     }
-    
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> Sidebar-implementation
+

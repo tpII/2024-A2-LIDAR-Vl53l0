@@ -71,7 +71,7 @@ export class GamepadComponent implements OnInit {
     // console.log(`${joystickName} - X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`);
 
     // Determinar el estado actual del joystick
-    let currentState = 'Neutral';
+    let currentState = 'Brake';
 
     // Determinar el estado actual del joystick
     if (Math.abs(x) >= tolerance || Math.abs(y) >= tolerance) {
@@ -111,7 +111,7 @@ export class GamepadComponent implements OnInit {
             break;
           case 2:
             console.log(`Button ${index}: SpeedDown`);
-            this.sendInstruction("SpeedDow");
+            this.sendInstruction("SpeedDown");
             this.changeValue.emit("SpeedDown");
             break;
           default:

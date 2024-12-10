@@ -53,8 +53,13 @@ static void instruction_handler(char *, size_t length);
  */
 esp_err_t mqtt_start()
 {
+    
+    esp_err_t err = initBuffer();
+    if(err != ESP_OK){
+        ESP_LOGE(TAG,"Error Initializing Instruction Buffer");
+    }
 
-    esp_err_t err = mqtt_connect();
+    err = mqtt_connect();
     uint8_t retry_count = 0;
     const uint8_t max_retries = 5;
     while (err != ESP_OK && retry_count < max_retries)
