@@ -1,4 +1,4 @@
-package cyclops.backend;
+package cyclops.backend.Configuration;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;

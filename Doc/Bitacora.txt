@@ -40,7 +40,7 @@ Creacion de entidad Instruction junto con su Interface, Service y Controller.
 01 de Octubre
 Se generó la carpeta "Build" dentro de "Microcontroller"
 
-2 de Octubre
+02 de Octubre
 Agrego servidor http para empezar a testear
 
 04 de Octubre
@@ -57,6 +57,9 @@ Se testeo la libreria HTTP del MCU al BACKEND y funcionan.
 Se opto por implementar MQTT en ves de HTTP entre el MCU y el backend
 Se implmento MQTT en el BACKEND
 
+21 de Octubre
+Se creó la librería de control del sensor VL53L0X
+
 23 de Octubre
 Se implemento una libreria para el tratamiento de datos JSON
 Se implemento una libreria MQTT Server para configurar y gestionar la conexion MQTT
@@ -65,6 +68,8 @@ Se implemento una libreria MQTT Handler para abstraer la funciones de envio y re
 Se finalizo el testeo de MQTT tanto para recibir como para envio, de manera satisfactoria. Esto incluyo el testeo exito del reinicio remoto.
 Se implemento la libreria checkpoint de modo de generar un punto de retorno en el programa. De modo de implementar en un futuro una funcion que permita abortar el flujo de ejecucion del programa y volver a punto seguro.
 Se eliminaron las librerias HTTP_SERVER y HTTP_Handler, ya reemplazas por MQTT
+24 de Octubre
+Se actualizó la librería de control del sensor LiDAR
 
 31 de Octubre
 Agrego libreria para comunicacion con Backend
@@ -73,6 +78,10 @@ Agrego libreria para comunicacion con Backend
 Se organizo el frontend, y se crearon los componentes base vacios.
 Se implemento la base del sidenav y la estructura basica de la pagina.
 Se modifico la libreria de mqtt_server por compatibilidad de datos recibidos y backend_comm para agregar tags en los mensajes al backend.
+
+06 de Noviembre
+Se actualizó la librería de control del sensor VL53L0X.
+La misma ahora es funcional y provee la distancia a objetos.
 
 9 de Noviembre
 Modificacion de la libreria mqtt_handler para el envio de tags y tipo de mensajes (warning, error, info)
@@ -85,25 +94,13 @@ Agrego para ver hora e identacion en los mensajes del monitor.
 
 16 de Noviembre
 Libreria de mensages terminado, todo funcionando y testeado con el backend.
+Se testeo y mejoro la libreria lights
+
+18 de Noviembre
+Libreria INA219 I2C
 
 19 de Noviembre
 Se crearon los prototipos de los botones del sidebar.
-
-23 de Noviembre
-Implementado el componente para leer un joystick y poder controlar el robot. 
-Pendiente crear el servicio y apartado visual.
-
-02 de Diciembre
-El sidneav mustra el status de conexion del Gamepad.
-El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
-
-04 de Diciembre
-Send instructions working, botones pendiente de asignar acciones
-Mejora del componenete gamepad
-Testeo de la comunicacion de instruction Working.
-Realizo modificaciones en el diseño de los botones del sidebar
-
-Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
 
 20 de Noviembre 
 Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js con datos de prueba)
@@ -112,6 +109,10 @@ Agrego libreria para visualizar mapa con obstaculos detectados (Testeo de d3.js 
 Se realizaron mejoras con respecto a la visualizacion del mapa (cambios en el diseño).
 Se agrego funcion para generar puntos de forma aleatoria para testeo.
 Funcion para capturar el mapa en un momento determinado (falta mejorar).
+
+23 de Noviembre
+Implementado el componente para leer un joystick y poder controlar el robot. 
+Pendiente crear el servicio y apartado visual.
 
 27 de Noviembre
 Modifico libreria para visualizar mapa para que al hacer click sobre este se expanda o vuelva a su tamaño normal.
@@ -122,9 +123,25 @@ Merge de librerias de monitor y map.
 Modifico libreria monitor (merge ya realizado) para visualizar mapa y monitor al mismo tiempo. 
 Ademas de agregar cambios necesarios para que cuando un componente se expanda el otro se contraiga.
 
+02 de Diciembre
+El sidneav mustra el status de conexion del Gamepad.
+El gamepad es correctamente leido, y que pendiente codear la comunicacion con el backend.
+
 03 de Diciembre
 Modifico libreria del monitor para que cuando el mapa se expanda, se oculte el monitor.
 Ademas, se realizaron mejoras en la visualizacion al expandir/contraer.
+
+04 de Diciembre
+Send instructions working, botones pendiente de asignar acciones
+Mejora del componenete gamepad
+Testeo de la comunicacion de instruction Working.
+Realizo modificaciones en el diseño de los botones del sidebar
+Monitor frontend funcionando, queda pendiente la scrollbar y ajustes esticos
+
+05 de Diciembre
+Se agrego documentacion de las librerias mqtt_handler, mqtt_server, lights, i2c, json_helper e instruction_buffer.
+Se agrego Swagger para documentacion del Backend
+
 
 06 de Diciembre
 Arreglo error al expandir/contraer los componentes.
@@ -135,3 +152,6 @@ Modifico para que reciba los puntos a graficar desde el backend en el mapa.
 
 09 de Diciembre
 Funcionalidad de botones
+
+
+

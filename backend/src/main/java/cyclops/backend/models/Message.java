@@ -6,19 +6,31 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 //@Document(collection = "messages")
 @TimeSeries(collection = "Messages", timeField = "date")
+@Schema(description = "Represents a message from MCU")
 public class Message {
 
     @Id
+    @Schema(description = "Unique identifier for the message", example = "63f7b9a6e94b1e456d2a3c9f")
     private String id;
+
+    @Schema(description = "The content of the message", example = "System maintenance scheduled for tomorrow")
     private String message;
+
+    @Schema(description = "The type of the message", example = "Notification")
     private String type;
+
+    @Schema(description = "An optional tag associated with the message for categorization", example = "system")
     private String tag;
-    
+
+    @Schema(description = "Indicates whether the message has been read", example = "false")
     private boolean read = false;
 
     @CreatedDate
+    @Schema(description = "The date and time when the message was created", example = "2024-12-05T14:30:00Z", format = "date-time")
     private Date date;
 
     public Message() {
