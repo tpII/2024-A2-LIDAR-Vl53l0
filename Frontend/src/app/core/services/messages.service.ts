@@ -10,7 +10,7 @@ export class MessagesService {
   constructor(private http: HttpClient) {}
 
   getLastMessage(): Observable<any> {
-    return this.http.get<any>(this.apiUri).pipe(
+    return this.http.get<any>(this.apiUri+"/last").pipe(
       catchError((error) => {
         console.error('Error fetching the last message:', error);
         // Devuelve un valor por defecto o un observable vacío

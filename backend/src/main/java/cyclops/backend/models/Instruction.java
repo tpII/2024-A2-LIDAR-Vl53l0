@@ -45,7 +45,7 @@ public class Instruction {
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
-
+  
     public void setDate(Date date) {
         this.date = date;
     }
