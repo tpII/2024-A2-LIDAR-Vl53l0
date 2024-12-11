@@ -53,12 +53,28 @@ esp_err_t servo_initialize(void)
 {
 
     limit_semaphore = xSemaphoreCreateBinary();
-    current_duty_semaphore = xSemaphoreCreateBinary();
-    speed_change_semaphore = xSemaphoreCreateBinary();
-    // Inicialización del semáforo en estado libre
     xSemaphoreGive(limit_semaphore);
+    if(limit_semaphore == NULL)
+    {
+        ESP_LOGE(TAG,"ERROR: limit_semaphore is NULL");
+        return ESP_FAIL;
+    }
+    current_duty_semaphore = xSemaphoreCreateBinary();
     xSemaphoreGive(current_duty_semaphore);
+    if(current_duty_semaphore == NULL)
+    {
+        ESP_LOGE(TAG,"ERROR: current_duty_semaphore is NULL");
+        return ESP_FAIL;
+    }
+    speed_change_semaphore = xSemaphoreCreateBinary();
     xSemaphoreGive(speed_change_semaphore);
+    if(speed_change_semaphore == NULL)
+    {
+        ESP_LOGE(TAG,"ERROR: speed_change_semaphore is NULL");
+        return ESP_FAIL;
+    }
+    
+    
 
     ESP_LOGI(TAG, "Creating timer and operator...");
     mcpwm_timer_config_t timer_config = {

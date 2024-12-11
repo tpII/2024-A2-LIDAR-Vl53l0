@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 @TimeSeries(collection = "Instruction", timeField = "time")
 @Schema(description = "Model representing an instruction sent to the system")
@@ -15,6 +16,7 @@ public class Instruction {
     @Schema(description = "Unique identifier of the instruction", example = "63f7b9a6e94b1e456d2a3c9f")
     private String id;
 
+    @NotBlank(message = "Instruction description cannot be blank")
     @Schema(description = "Description of the instruction", example = "Forward")
     private String instruction;
 
@@ -30,8 +32,9 @@ public class Instruction {
         this.time = time;
     }
 
-    public Instruction() {}
-    
+    public Instruction() {
+    }
+
     public Instruction(String instruction, String parameter1, String parameter2) {
         this.instruction = instruction;
 
@@ -46,12 +49,9 @@ public class Instruction {
         return instruction;
     }
 
-
-
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
-
 
     public String getId() {
         return id;

@@ -44,7 +44,8 @@ esp_err_t initBuffer()
 {
     if (buffer_access == NULL)
     {
-        buffer_access = xSemaphoreCreateMutex();
+        buffer_access = xSemaphoreCreateBinary();
+        xSemaphoreGive(buffer_access);
         if (buffer_access == NULL)
         {
             ESP_LOGE(TAG, "Error creating Semaphore");
@@ -70,25 +71,25 @@ esp_err_t initBuffer()
 esp_err_t getInstruction(char *inst)
 {
     // Toma el semáforo antes de acceder al buffer
-    if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)
+    if (xSemaphoreTake(buffer_access, pdMS_TO_TICKS(50)) == pdTRUE)
     {
-        
+
         // Comprobar si el buffer  está vacío
         if (get_index == push_index)
         {
             xSemaphoreGive(buffer_access); // Liberar el semáforo
             return ESP_ERR_NOT_FOUND;      // Buffer vacío
         }
-        
+
         // Copiar la instrucción en la posición de get_index
         strncpy(inst, instructions_buffer[get_index], INSTRUCTION_MAX_LENGTH);
-       
+
         // Actualizar get_index de forma cíclica
         get_index = (get_index + 1) % INSTRUCTIONS_BUFFER_SIZE;
 
         // Liberar el semáforo después de acceder al buffer
         xSemaphoreGive(buffer_access);
-        
+
         return ESP_OK;
     }
 
@@ -111,9 +112,9 @@ esp_err_t saveInstruction(char *inst)
 {
 
     // Toma el semáforo antes de acceder al buffer
-    if (xSemaphoreTake(buffer_access, portMAX_DELAY) == pdTRUE)
+    if (xSemaphoreTake(buffer_access, pdMS_TO_TICKS(50)) == pdTRUE)
     {
-      
+
         // Verificar si el buffer está lleno
         uint8_t next_push_index = (push_index + 1) % INSTRUCTIONS_BUFFER_SIZE;
         if (next_push_index == get_index)
@@ -121,16 +122,16 @@ esp_err_t saveInstruction(char *inst)
             xSemaphoreGive(buffer_access); // Liberar el semáforo
             return ESP_FAIL;               // Buffer lleno
         }
-       
+
         // Copiar la instrucción a la posición de push_index
         strncpy(instructions_buffer[push_index], inst, INSTRUCTION_MAX_LENGTH);
-      
+
         // Actualizar push_index de forma cíclica
         push_index = next_push_index;
 
         // Liberar el semáforo después de acceder al buffer
         xSemaphoreGive(buffer_access);
-        
+
         return ESP_OK;
     }
 

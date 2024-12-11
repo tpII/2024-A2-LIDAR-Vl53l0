@@ -167,7 +167,7 @@ export class MainComponent {
  */
   sendInstruction(speed: string): void {
     const instruction = { speed: speed };
-
+    /*
     this.InstructionsService.createInstruction(instruction).subscribe({
       next: (response) => {
         console.log('Instrucción creada:', response);
@@ -176,7 +176,7 @@ export class MainComponent {
         console.error('Error al crear la instrucción:', error);
       }
     });
-  
+  */
   }
   
   /**

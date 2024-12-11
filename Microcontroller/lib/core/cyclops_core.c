@@ -4,7 +4,6 @@
 #include "limit_switch.h"
 #include "esp_log.h"
 #include "motors.h"
-#include "servo.h"
 #include "battery.h"
 #include "mqtt_handler.h"
 #include "ap_server.h"
@@ -16,6 +15,7 @@ static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
 TaskHandle_t instructionHandlerTaskHandler = NULL;
 TaskHandle_t batteryTaskHandler = NULL;
+TaskHandle_t mappingTaskHandler = NULL;
 
 static void servoInterruptionTask(void *);
 static void instructionHandler(void *);
@@ -55,13 +55,11 @@ esp_err_t system_init()
 
     motors_setup();
 
-    //err = mapping_init();
+    err = mapping_init();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
     }
-
-    // Deberia considerar hacerlka tipo esp_err_t
 
     return err;
 }
@@ -107,7 +105,7 @@ esp_err_t createTasks()
         2048,
         NULL,
         2,
-        &instructionHandlerTaskHandler,
+        &mappingTaskHandler,
         tskNO_AFFINITY);
 
     if (task_created != pdPASS)
@@ -154,7 +152,7 @@ static void servoInterruptionTask(void *parameter)
 {
     while (1)
     {
-        //check_limit_switch();
+        check_limit_switch();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
@@ -204,24 +202,28 @@ static void executeInstruction(char *inst)
     }
     else if (strncmp(inst, "SpeedUp", 7) == 0)
     {
-        // servo_set_speed(UP);
+        servo_set_speed(UP);
     }
     else if (strncmp(inst, "SpeedDown", 9) == 0)
     {
-        // servo_set_speed(DOWN);
+        servo_set_speed(DOWN);
     }
     else if (strncmp(inst, "Pause", 5) == 0)
     {
-        if (servo_pause() != ESP_OK)
-        {
-            // WHAT?
+
+        if(mapping_pause() !=ESP_OK){
+            ESP_LOGE(TAG,"ERROR TRYING TO STOP SERVO");
+        } else {
+            vTaskSuspend(mappingTaskHandler);
         }
+        
     }
     else if (strncmp(inst, "Play", 4) == 0)
     {
-        if (servo_restart() != ESP_OK)
-        {
-            // WHAT?
+        if(mapping_restart() !=ESP_OK){
+            ESP_LOGE(TAG,"ERROR TRYING TO RESTART SERVO");
+        } else {
+           vTaskResume(mappingTaskHandler);
         }
     }
 }
@@ -252,7 +254,7 @@ void mappingTask(void *parameter)
     esp_err_t err = ESP_OK;
     while (1)
     {
-        //err = getMappingValue(&angle, &distance);
+        err = getMappingValue(&angle, &distance);
         if (err != ESP_OK)
         {
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);

@@ -143,7 +143,7 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
     
     // Limpiar el objeto JSON
     cJSON_Delete(json);
-
+    ESP_LOGW(TAG,"Deserialization Done");
     return ESP_OK;
 }
 

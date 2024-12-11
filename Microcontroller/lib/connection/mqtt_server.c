@@ -57,6 +57,7 @@ esp_err_t mqtt_start()
     esp_err_t err = initBuffer();
     if(err != ESP_OK){
         ESP_LOGE(TAG,"Error Initializing Instruction Buffer");
+        return ESP_FAIL;
     }
 
     err = mqtt_connect();
@@ -299,7 +300,7 @@ esp_err_t mqtt_disconnect()
  */
 static void instruction_handler(char *str, size_t length)
 {
-
+    ESP_LOGW(TAG,"DATA RECEIVE %s",str);
     memset(inst, 0, sizeof(inst));
     char *message = (char *)malloc(length + 1);
     if (message == NULL)
