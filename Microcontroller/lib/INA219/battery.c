@@ -1,6 +1,6 @@
 #include "battery.h"
 #include "esp_log.h"
-#include "ina219.h"
+#include "ina219v2.h"
 #include "string.h"
 #define CONFIG_SHUNT_RESISTOR_MILLI_OHM 100 // SHOULD BE ADDED DIRECT IN sdkconfig
 
@@ -34,16 +34,23 @@ esp_err_t battery_sensor_init()
     }
 
     ESP_LOGI(TAG, "Initalizing INA219");
-    ESP_ERROR_CHECK(ina219_init(&dev));
-
-    ESP_LOGI(TAG, "Configuring INA219");
-    ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
-                                     INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
-                                     INA219_MODE_CONT_SHUNT_BUS));
+    dev.i2c_addr = INA219_ADDRESS;
+    esp_err_t ret = ina219_init(&dev);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "INA219 initialization failed with error %s", esp_err_to_name(ret));
+        return ret;
+    }
 
     ESP_LOGI(TAG, "Calibrating INA219");
 
-    ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));
+    // Calibra el INA219 y maneja el error si ocurre
+    ret = ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "INA219 calibration failed with error %s", esp_err_to_name(ret));
+        return ret;
+    }
 
     bus_voltage = 0.0f;
     shunt_voltage = 0.0f;
@@ -75,6 +82,20 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
         ESP_LOGE(TAG, "Failed to read bus voltage");
         return ret;
     }
+    ret = ina219_get_shunt_voltage(&dev, &shunt_voltage);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to read bus voltage");
+        return ret;
+    }
+    ret = ina219_get_current(&dev, &current);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to read bus voltage");
+        return ret;
+    }
+
+    ESP_LOGW(TAG, "BV: %f - SV: %f - C: %f", bus_voltage, shunt_voltage, current);
 
     // Verificar que el voltaje esté dentro de un rango razonable
     if (bus_voltage < 6.0 || bus_voltage > 8.4)
