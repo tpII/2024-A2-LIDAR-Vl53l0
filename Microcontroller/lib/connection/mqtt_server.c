@@ -312,7 +312,7 @@ static void instruction_handler(char *str, size_t length)
     message[length] = '\0'; // Termina la cadena con '\0'
     esp_err_t err = deserealize_json_data(message, inst, length);
     free(message);
-
+    ESP_LOGW(TAG,"Des Receive: %s",inst);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error deserializing Instruction");
@@ -326,11 +326,13 @@ static void instruction_handler(char *str, size_t length)
             esp_restart(); // Llamada para reiniciar el MCU
         }
         else
-        {
+        {   
+            ESP_LOGW(TAG,"Saving...");
             if (saveInstruction(inst) != ESP_OK)
             {
                 ESP_LOGE(TAG, "Error saving Instruction");
             }
+            ESP_LOGW(TAG,"SAVED");
         }
     }
 }

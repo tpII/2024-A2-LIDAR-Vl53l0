@@ -2,7 +2,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "limit_switch.h"
-#include "instruction_buffer.h"
 #include "esp_log.h"
 #include "motors.h"
 #include "servo.h"
@@ -11,6 +10,7 @@
 #include "ap_server.h"
 #include "lights.h"
 #include "mqtt_server.h"
+#include "mapping.h"
 
 static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
@@ -20,7 +20,7 @@ TaskHandle_t batteryTaskHandler = NULL;
 static void servoInterruptionTask(void *);
 static void instructionHandler(void *);
 static void executeInstruction(char *);
-
+static void mappingTask(void *);
 
 esp_err_t system_init()
 {
@@ -52,15 +52,24 @@ esp_err_t system_init()
     {
         ESP_LOGW(TAG, "Error Setting Up Lights");
     }
-    // Deberia considerar hacerlka tipo esp_err_t
+
     motors_setup();
+
+    //err = mapping_init();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
+    }
+
+    // Deberia considerar hacerlka tipo esp_err_t
+
     return err;
 }
 
 esp_err_t createTasks()
 {
     // BACKGROUND TASKs
-    
+
     BaseType_t task_created = xTaskCreatePinnedToCore(
         servoInterruptionTask,         // Función de la tarea
         "ServoInterruptionTask",       // Nombre de la tarea
@@ -90,6 +99,20 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         ESP_LOGE(TAG, "Error Creating Instruction HandlerTask");
+        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+    }
+    task_created = xTaskCreatePinnedToCore(
+        mappingTask,
+        "MappingTask",
+        2048,
+        NULL,
+        2,
+        &instructionHandlerTaskHandler,
+        tskNO_AFFINITY);
+
+    if (task_created != pdPASS)
+    {
+        ESP_LOGE(TAG, "Error Creating Mapping Task");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
     /*
@@ -138,20 +161,21 @@ static void servoInterruptionTask(void *parameter)
 
 static void instructionHandler(void *parameter)
 {
-    char *inst = "";
+    char inst[20];
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getInstruction(inst);
+        err = getInstruccionMessage(inst);
         if (err == ESP_OK)
         {
             executeInstruction(inst);
-            ESP_LOGW(TAG,"INST RECEIVED - %s",inst);
+            ESP_LOGW(TAG, "INST RECEIVED - %s", inst);
         }
         else if (err == ESP_ERR_TIMEOUT)
         {
             ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
         }
+        memset(inst, 0, 20);
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
@@ -180,11 +204,11 @@ static void executeInstruction(char *inst)
     }
     else if (strncmp(inst, "SpeedUp", 7) == 0)
     {
-        servo_set_speed(UP);
+        // servo_set_speed(UP);
     }
     else if (strncmp(inst, "SpeedDown", 9) == 0)
     {
-        servo_set_speed(DOWN);
+        // servo_set_speed(DOWN);
     }
     else if (strncmp(inst, "Pause", 5) == 0)
     {
@@ -218,5 +242,21 @@ void batteryTask(void *parameter)
             ESP_LOGW(TAG, "Error Reading Battery Level %s", esp_err_to_name(err));
         }
         vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
+
+void mappingTask(void *parameter)
+{
+    uint16_t distance = 0;
+    uint16_t angle = 0;
+    esp_err_t err = ESP_OK;
+    while (1)
+    {
+        //err = getMappingValue(&angle, &distance);
+        if (err != ESP_OK)
+        {
+            ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
+        }
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }

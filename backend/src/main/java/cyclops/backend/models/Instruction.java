@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.TimeSeries;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@TimeSeries(collection = "Instruction", timeField = "date")
+@TimeSeries(collection = "Instruction", timeField = "time")
 @Schema(description = "Model representing an instruction sent to the system")
 public class Instruction {
 
@@ -20,7 +20,15 @@ public class Instruction {
 
     @CreatedDate
     @Schema(description = "Date and time the instruction was created", example = "2024-12-05T14:30:00Z", format = "date-time")
-    private Date date;
+    private Date time;
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
     public Instruction() {}
     
@@ -29,26 +37,21 @@ public class Instruction {
 
     }
 
-    public Instruction(String instruction, String parameter1, String parameter2, Date date) {
+    public Instruction(String instruction, String parameter1, String parameter2, Date time) {
         this.instruction = instruction;
-        this.date = date;
+        this.time = time;
     }
 
     public String getInstruction() {
         return instruction;
     }
 
-    public Date getDate() {
-        return date;
-    }
+
 
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
-  
-    public void setDate(Date date) {
-        this.date = date;
-    }
+
 
     public String getId() {
         return id;
@@ -63,7 +66,7 @@ public class Instruction {
         return "Instruction{" +
                 "id='" + id + '\'' +
                 ", instruction='" + instruction + '\'' +
-                ", date=" + date +
+                ", date=" + time +
                 '}';
     }
 

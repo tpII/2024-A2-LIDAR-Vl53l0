@@ -9,7 +9,7 @@
 // Definición de pines para los motores
 #define MOTOR1_PIN1 GPIO_NUM_19  // Pin de control para Motor 1 (dirección 1)
 #define MOTOR1_PIN2 GPIO_NUM_18  // Pin de control para Motor 1 (dirección 2)
-#define MOTOR2_PIN1 GPIO_NUM_5   // Pin de control para Motor 2 (dirección 1)
+#define MOTOR2_PIN1 GPIO_NUM_4   // Pin de control para Motor 2 (dirección 1)
 #define MOTOR2_PIN2 GPIO_NUM_17  // Pin de control para Motor 2 (dirección 2)
 
 typedef struct {

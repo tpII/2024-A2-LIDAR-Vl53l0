@@ -28,14 +28,14 @@ esp_err_t mapping_init()
         ESP_LOGE(TAG, "Error initializing I2C");
         return ESP_FAIL;
     }
-
-     ESP_LOGI(TAG, "Initializing LiDAR...");
-     if (!vl53l0x_init())
-     {
-         ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
-         return ESP_FAIL;
-     }
- 
+    /*
+    ESP_LOGI(TAG, "Initializing LiDAR...");
+    if (!vl53l0x_init())
+    {
+        ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
+        return ESP_FAIL;
+    }
+*/
     ESP_LOGI(TAG, "Initializing ServoMotor...");
     err = servo_initialize();
     if (err != ESP_OK)
@@ -43,7 +43,7 @@ esp_err_t mapping_init()
         ESP_LOGE(TAG, "Error initializing Servo");
         return ESP_FAIL;
     }
-    err = servo_start();
+    //err = servo_start();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error Starting Servo");
@@ -65,6 +65,9 @@ esp_err_t getMappingValue(uint16_t *angle, uint16_t *distance)
     bool success = false;
     uint16_t value = 0;
     *angle = readAngle();
+    *distance = value; //For debugg
+    return ESP_OK; //For debugg
+    /*
 #ifndef VL53L0X
     success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &value);
     if (success && (value != VL53L0X_OUT_OF_RANGE || value >= MIN_DISTANCE))
@@ -76,5 +79,5 @@ esp_err_t getMappingValue(uint16_t *angle, uint16_t *distance)
 #else
     ESP_LOGE(TAG, "ERROR VL53L0X NOT DEFINED");
     return ESP_FAIL;
-#endif
+#endif*/
 }

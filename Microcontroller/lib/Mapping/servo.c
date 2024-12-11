@@ -7,13 +7,14 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include <string.h>
+#include <driver/gpio.h>
 
 // Parámetros específicos para el servomotor de giro continuo
 #define SERVO_MIN_PULSEWIDTH_US 900   // Ancho de pulso mínimo (giro rápido en un sentido)
 #define SERVO_MAX_PULSEWIDTH_US 2100  // Ancho de pulso máximo (giro rápido en el sentido opuesto)
 #define SERVO_STOP_PULSEWIDTH_US 1500 // Ancho de pulso para detener el servo
 
-#define SERVO_PULSE_GPIO 4                   // GPIO connects to the PWM signal line
+#define SERVO_PULSE_GPIO GPIO_NUM_14         // GPIO connects to the PWM signal line
 #define SERVO_TIMEBASE_RESOLUTION_HZ 1000000 // 1MHz, 1us per tick
 #define SERVO_TIMEBASE_PERIOD 20000          // 20000 ticks, 20ms
 
@@ -154,7 +155,7 @@ esp_err_t servo_initialize(void)
 esp_err_t servo_start(void)
 {
 
-    return servo_set_speed_ISR(SERVO_LOW_SPEED_CCW); // Inicia con el duty en 900us
+    return servo_set_speed_ISR(SERVO_MEDIUM_SPEED_CCW); // Inicia con el duty en 900us
 }
 
 esp_err_t servo_stop(void)

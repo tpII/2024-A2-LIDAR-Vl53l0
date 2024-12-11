@@ -3,6 +3,7 @@ package cyclops.backend.Configuration;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageProducer;
@@ -12,14 +13,18 @@ import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannel
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.support.GenericMessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cyclops.backend.models.Instruction;
 import cyclops.backend.models.MappingValue;
 import cyclops.backend.models.Message;
+import cyclops.backend.services.InstructionService;
 import cyclops.backend.services.MappingValueService;
 import cyclops.backend.services.MessageService;
+import jakarta.websocket.MessageHandler;
 
 @Configuration
 public class MqttConfig {
@@ -32,6 +37,7 @@ public class MqttConfig {
     public MqttConfig(MappingValueService mappingValueService, MessageService messageService) {
         this.mappingValueService = mappingValueService;
         this.messageService = messageService;
+
     }
 
     @Bean
@@ -43,11 +49,13 @@ public class MqttConfig {
         return factory;
     }
 
+    // SEND
     @Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
     }
 
+    // RECEIVE MQTT
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MqttPahoMessageHandler mqttMessageHandler() {
