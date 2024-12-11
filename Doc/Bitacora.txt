@@ -98,3 +98,6 @@ Se testeo y mejoro la libreria lights
 
 18 de Noviembre
 Libreria INA219 I2C
+
+06 de Diciembre
+INA219 Funcionando y testeado
