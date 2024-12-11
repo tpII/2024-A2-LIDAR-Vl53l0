@@ -4,8 +4,8 @@
 #include "string.h"
 #define CONFIG_SHUNT_RESISTOR_MILLI_OHM 100 // SHOULD BE ADDED DIRECT IN sdkconfig
 
-#define FULL_CHARGE 8.4 //FULL CHARGE 8.4V
-#define MIN_CHARGE  6.4 //MIN CHARGE 6V (0%)
+#define FULL_CHARGE 8.4 // FULL CHARGE 8.4V
+#define MIN_CHARGE 6.4  // MIN CHARGE 6V (0%)
 
 static const char *TAG = "BATTERY";
 
@@ -20,6 +20,12 @@ esp_err_t battery_sensor_init()
 {
 
     memset(&dev, 0, sizeof(ina219_t));
+    ESP_LOGI(TAG, "Initializing I2C...");
+    if (i2c_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error initializing I2C");
+        return ESP_FAIL;
+    }
 
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {
@@ -49,8 +55,9 @@ esp_err_t battery_sensor_init()
 }
 
 esp_err_t battery_sensor_read(uint8_t *battery_level)
-{   
-    if(!success){
+{
+    if (!success)
+    {
         return ESP_ERR_NOT_ALLOWED;
     }
     if (battery_level == NULL)
@@ -69,7 +76,7 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
         return ret;
     }
 
-     // Verificar que el voltaje esté dentro de un rango razonable
+    // Verificar que el voltaje esté dentro de un rango razonable
     if (bus_voltage < 6.0 || bus_voltage > 8.4)
     {
         ESP_LOGW(TAG, "Voltage out of expected range: %.2fV", bus_voltage);

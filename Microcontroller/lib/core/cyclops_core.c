@@ -21,6 +21,7 @@ static void servoInterruptionTask(void *);
 static void instructionHandler(void *);
 static void executeInstruction(char *);
 static void mappingTask(void *);
+static void batteryTask(void *parameter);
 
 esp_err_t system_init()
 {
@@ -55,10 +56,19 @@ esp_err_t system_init()
 
     motors_setup();
 
-    err = mapping_init();
+    /*err = mapping_init();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
+    }
+
+    return err;
+    */
+
+    err = battery_sensor_init();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR");
     }
 
     return err;
@@ -113,21 +123,21 @@ esp_err_t createTasks()
         ESP_LOGE(TAG, "Error Creating Mapping Task");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
-    /*
-        task_created = xTaskCreatePinnedToCore(
-            batteryTask,
-            "BateryTask",
-            2048,
-            NULL,
-            2,
-            &batteryTaskHandler,
-            tskNO_AFFINITY);
 
-        if (task_created != pdPASS)
-        {
-            ESP_LOGE(TAG, "Error Creating Battery Task");
-            return ESP_FAIL; // Retorna error si la tarea no se pudo crear
-        }*/
+    task_created = xTaskCreatePinnedToCore(
+        batteryTask,
+        "BateryTask",
+        2048,
+        NULL,
+        2,
+        &batteryTaskHandler,
+        tskNO_AFFINITY);
+
+    if (task_created != pdPASS)
+    {
+        ESP_LOGE(TAG, "Error Creating Battery Task");
+        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+    }
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
 }
 
@@ -152,7 +162,7 @@ static void servoInterruptionTask(void *parameter)
 {
     while (1)
     {
-        check_limit_switch();
+        //check_limit_switch();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
@@ -211,24 +221,29 @@ static void executeInstruction(char *inst)
     else if (strncmp(inst, "Pause", 5) == 0)
     {
 
-        if(mapping_pause() !=ESP_OK){
-            ESP_LOGE(TAG,"ERROR TRYING TO STOP SERVO");
-        } else {
+        if (mapping_pause() != ESP_OK)
+        {
+            ESP_LOGE(TAG, "ERROR TRYING TO STOP SERVO");
+        }
+        else
+        {
             vTaskSuspend(mappingTaskHandler);
         }
-        
     }
     else if (strncmp(inst, "Play", 4) == 0)
     {
-        if(mapping_restart() !=ESP_OK){
-            ESP_LOGE(TAG,"ERROR TRYING TO RESTART SERVO");
-        } else {
-           vTaskResume(mappingTaskHandler);
+        if (mapping_restart() != ESP_OK)
+        {
+            ESP_LOGE(TAG, "ERROR TRYING TO RESTART SERVO");
+        }
+        else
+        {
+            vTaskResume(mappingTaskHandler);
         }
     }
 }
 
-void batteryTask(void *parameter)
+static void batteryTask(void *parameter)
 {
     esp_err_t err = ESP_OK;
     uint8_t level = 0;
@@ -237,7 +252,8 @@ void batteryTask(void *parameter)
         err = battery_sensor_read(&level);
         if (err == ESP_OK)
         {
-            sendBatteryLevel(level);
+            //sendBatteryLevel(level);
+            ESP_LOGW(TAG,"Battery Level: %u",level);
         }
         else
         {
@@ -247,14 +263,14 @@ void batteryTask(void *parameter)
     }
 }
 
-void mappingTask(void *parameter)
+static void mappingTask(void *parameter)
 {
     uint16_t distance = 0;
     uint16_t angle = 0;
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getMappingValue(&angle, &distance);
+        //err = getMappingValue(&angle, &distance);
         if (err != ESP_OK)
         {
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
