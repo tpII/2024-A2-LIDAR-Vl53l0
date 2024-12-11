@@ -56,22 +56,22 @@ esp_err_t system_init()
 
     motors_setup();
 
-    /*err = mapping_init();
+    err = mapping_init();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
     }
 
     return err;
-    */
+    
 
-    err = battery_sensor_init();
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR");
-    }
+    // err = battery_sensor_init();
+    // if (err != ESP_OK)
+    // {
+    //     ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR");
+    // }
 
-    return err;
+    // return err;
 }
 
 esp_err_t createTasks()
@@ -124,20 +124,20 @@ esp_err_t createTasks()
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
-    task_created = xTaskCreatePinnedToCore(
-        batteryTask,
-        "BateryTask",
-        2048,
-        NULL,
-        2,
-        &batteryTaskHandler,
-        tskNO_AFFINITY);
+    // task_created = xTaskCreatePinnedToCore(
+    //     batteryTask,
+    //     "BateryTask",
+    //     2048,
+    //     NULL,
+    //     2,
+    //     &batteryTaskHandler,
+    //     tskNO_AFFINITY);
 
-    if (task_created != pdPASS)
-    {
-        ESP_LOGE(TAG, "Error Creating Battery Task");
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
-    }
+    // if (task_created != pdPASS)
+    // {
+    //     ESP_LOGE(TAG, "Error Creating Battery Task");
+    //     return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+    // }
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
 }
 
@@ -249,7 +249,7 @@ static void batteryTask(void *parameter)
     uint8_t level = 0;
     while (1)
     {
-        err = battery_sensor_read(&level);
+        // err = battery_sensor_read(&level);
         if (err == ESP_OK)
         {
             //sendBatteryLevel(level);
@@ -270,7 +270,7 @@ static void mappingTask(void *parameter)
     esp_err_t err = ESP_OK;
     while (1)
     {
-        //err = getMappingValue(&angle, &distance);
+        err = getMappingValue(&angle, &distance);
         if (err != ESP_OK)
         {
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);

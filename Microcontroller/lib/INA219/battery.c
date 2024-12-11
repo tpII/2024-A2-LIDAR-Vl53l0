@@ -20,12 +20,6 @@ esp_err_t battery_sensor_init()
 {
 
     memset(&dev, 0, sizeof(ina219_t));
-    ESP_LOGI(TAG, "Initializing I2C...");
-    if (i2c_init() != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error initializing I2C");
-        return ESP_FAIL;
-    }
 
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {

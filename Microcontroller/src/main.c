@@ -9,16 +9,20 @@ static const char *TAG = "MAIN";
 
 void app_main(void)
 {
-        if (system_init() != ESP_OK)
+        esp_err_t err = ESP_FAIL;
+        err = system_init();
+        if (err != ESP_OK)
         {
                 ESP_LOGE(TAG, "FATAL ERROR");
         }
-
-        if (createTasks() != ESP_OK)
-        {
-                ESP_LOGE(TAG, "FATAL ERROR");
+        else{
+                err = createTasks();
+                if (err != ESP_OK)
+                {
+                        ESP_LOGE(TAG, "FATAL ERROR");
+                }
         }
-
+        
         ESP_LOGI(TAG, "ALL DONE");
 
         // TESTING SAVING INST
