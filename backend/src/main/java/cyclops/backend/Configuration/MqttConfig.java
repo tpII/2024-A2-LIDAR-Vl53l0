@@ -20,6 +20,7 @@ import cyclops.backend.models.MappingValue;
 import cyclops.backend.models.Message;
 import cyclops.backend.services.MappingValueService;
 import cyclops.backend.services.MessageService;
+import jakarta.annotation.PreDestroy;
 
 @Configuration
 public class MqttConfig {
@@ -29,7 +30,8 @@ public class MqttConfig {
     private static final String[] RTOPICS = { "Mapping", "Messages", "Battery"};
     private static final String[] STOPICS = {"Instruction"};
     private static final String BACKEND_ID = "backend-service"; // ID único para el backend
-    private static final int RETRY_INTERVAL_MS = 5000; // Tiempo entre intentos en milisegundos
+    private static final int RETRY_INTERVAL_MS = 2000; // Tiempo entre intentos en milisegundos
+    private volatile boolean running = true;
 
     private final MappingValueService mappingValueService;
     private final MessageService messageService;
@@ -47,6 +49,8 @@ public class MqttConfig {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(serverUri); // Broker MQTT
         options.setCleanSession(true);
+        options.setAutomaticReconnect(false);
+        options.setConnectionTimeout(10);
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -76,6 +80,7 @@ public class MqttConfig {
     public MqttPahoMessageHandler mqttMessageHandler() {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(BACKEND_ID+"-outbound", mqttClientFactory());
         messageHandler.setDefaultTopic(STOPICS[0]);
+        
         return messageHandler;
     }
 
@@ -86,6 +91,7 @@ public class MqttConfig {
                 mqttClientFactory(), RTOPICS);
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setQos(1);
+        monitorConnection(adapter); // Inicia el monitoreo de la conexión
         return adapter;
     }
 
@@ -132,4 +138,55 @@ public class MqttConfig {
             e.printStackTrace(); // Manejo simple de la excepción, puedes mejorar esto
         }
     }
+
+    @PreDestroy
+    public void shutdown() {
+        running = false;
+    }
+
+
+
+      // Detecta cambios de conexión y realiza reconexión automática
+      private void monitorConnection(MqttPahoMessageDrivenChannelAdapter adapter) {
+        new Thread(() -> {
+            while (running) {
+                try {
+                    if (!NetworkUtils.isMyIp(BACKEND_IP)) {
+                        System.out.println("IP cambiada o conexión perdida. Intentando reconectar...");
+                        waitForBroker();
+                        //adapter.removeMessageHandler(this::handleMqttMessage);
+                        reconnect(adapter);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error en el monitoreo de la conexión: " + e.getMessage());
+                }
+                try {
+                    Thread.sleep(RETRY_INTERVAL_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }).start();
+    }
+
+    private void reconnect(MqttPahoMessageDrivenChannelAdapter adapter) {
+        while (running) {
+            try {
+                adapter.stop();
+                adapter.start();
+                System.out.println("Reconexión exitosa.");
+                break;
+            } catch (Exception e) {
+                System.err.println("Error durante la reconexión: " + e.getMessage());
+                try {
+                    Thread.sleep(RETRY_INTERVAL_MS);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+    }
+
 }
