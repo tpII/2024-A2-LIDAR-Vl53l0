@@ -39,7 +39,7 @@ public class InstructionService {
     private void sendInstruction(Instruction instruction) {
         // Crear el mensaje a enviar (payload)
         String payload = convertInstructionToPayload(instruction);
-
+        System.out.println("Inst: "+payload);
         // Crear el mensaje con el tópico adecuado
         Message<String> message = MessageBuilder.withPayload(payload)
                 .setHeader("Instruction", "Instruction") // Establecer el tópico

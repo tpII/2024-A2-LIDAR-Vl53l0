@@ -55,15 +55,14 @@ esp_err_t system_init()
     }
 
     motors_setup();
-
+    /*
     err = mapping_init();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
     }
 
-    return err;
-    
+    return err;*/
 
     // err = battery_sensor_init();
     // if (err != ESP_OK)
@@ -71,7 +70,7 @@ esp_err_t system_init()
     //     ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR");
     // }
 
-    // return err;
+    return err;
 }
 
 esp_err_t createTasks()
@@ -109,7 +108,7 @@ esp_err_t createTasks()
         ESP_LOGE(TAG, "Error Creating Instruction HandlerTask");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
-    task_created = xTaskCreatePinnedToCore(
+    /*task_created = xTaskCreatePinnedToCore(
         mappingTask,
         "MappingTask",
         2048,
@@ -122,7 +121,7 @@ esp_err_t createTasks()
     {
         ESP_LOGE(TAG, "Error Creating Mapping Task");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
-    }
+    }*/
 
     // task_created = xTaskCreatePinnedToCore(
     //     batteryTask,
@@ -162,7 +161,7 @@ static void servoInterruptionTask(void *parameter)
 {
     while (1)
     {
-        //check_limit_switch();
+        // check_limit_switch();
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
@@ -252,8 +251,8 @@ static void batteryTask(void *parameter)
         // err = battery_sensor_read(&level);
         if (err == ESP_OK)
         {
-            //sendBatteryLevel(level);
-            ESP_LOGW(TAG,"Battery Level: %u",level);
+            // sendBatteryLevel(level);
+            ESP_LOGW(TAG, "Battery Level: %u", level);
         }
         else
         {
