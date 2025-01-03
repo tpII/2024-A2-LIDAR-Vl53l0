@@ -153,5 +153,6 @@ Modifico para que reciba los puntos a graficar desde el backend en el mapa.
 09 de Diciembre
 Funcionalidad de botones
 
-
+03 de Enero
+Testeo desplazamiento de auto en mapeo.
 
