@@ -17,8 +17,11 @@ static float power;
 
 esp_err_t battery_sensor_init()
 {
+    ESP_LOGI(TAG, "Setting memory to 0");
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     memset(&dev, 0, sizeof(ina219_t));
+    
 
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {
@@ -27,16 +30,21 @@ esp_err_t battery_sensor_init()
     }
 
     ESP_LOGI(TAG, "Initalizing INA219");
-    ESP_ERROR_CHECK(ina219_init(&dev));
+        esp_err_t err = ina219_init(&dev);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "INA219 initialization failed: %s", esp_err_to_name(err));
+        return err;
+    }
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Configuring INA219");
     ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
                                      INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
-                                     INA219_MODE_CONT_SHUNT_BUS));
+                                     INA219_MODE_CONT_SHUNT_BUS));vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Calibrating INA219");
 
-    ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));
+    ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     bus_voltage = 0.0f;
     shunt_voltage = 0.0f;

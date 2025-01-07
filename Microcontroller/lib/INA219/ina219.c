@@ -260,7 +260,7 @@ static esp_err_t write_reg_16(ina219_t *dev, uint8_t reg_addr, uint16_t val)
 static esp_err_t read_conf_bits(ina219_t *dev, uint16_t mask, uint8_t bit, uint16_t *res)
 {
     uint16_t raw;
-    CHECK(read_reg_16(dev->addr, REG_CONFIG, &raw));
+    CHECK(read_reg_16(dev, REG_CONFIG, &raw));
 
     *res = (raw & mask) >> bit;
 
@@ -276,7 +276,7 @@ esp_err_t ina219_init(ina219_t *dev)
     CHECK_ARG(dev);
 
     // Leer el valor del registro de configuración
-    CHECK(read_reg_16(dev->addr, REG_CONFIG, &dev->config));
+    CHECK(read_reg_16(dev, REG_CONFIG, &dev->config));
 
     // Registrar la configuración leída para depuración
     ESP_LOGD(TAG, "Initialize, config: 0x%04x", dev->config);
@@ -288,7 +288,7 @@ esp_err_t ina219_reset(ina219_t *dev)
 {
 
     CHECK_ARG(dev);
-    CHECK(write_reg_16(dev->addr, REG_CONFIG, 1 << BIT_RST));
+    CHECK(write_reg_16(dev, REG_CONFIG, 1 << BIT_RST));
 
     dev->config = DEF_CONFIG;
 
@@ -362,7 +362,7 @@ esp_err_t ina219_calibrate(ina219_t *dev, float r_shunt)
     CHECK_ARG(dev);
 
     ina219_gain_t gain;
-    CHECK(ina219_get_gain(dev->addr, &gain));
+    CHECK(ina219_get_gain(dev, &gain));
   
     dev->i_lsb = (uint16_t)(u_shunt_max[gain] / r_shunt / 32767 * 100000000);
     dev->i_lsb /= 100000000;
