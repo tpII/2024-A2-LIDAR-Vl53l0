@@ -1,7 +1,7 @@
 #include "freeRtosTasks.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "limit_switch.h"
+#include "../Mapping/limit_switch.h"
 
 static void servoInterruptionTask(void *);
 

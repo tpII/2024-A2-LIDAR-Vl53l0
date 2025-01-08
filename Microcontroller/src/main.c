@@ -8,6 +8,7 @@ static const char *TAG = "MAIN";
 
 #define VL53L0X
 // #define VL61L0X
+// #define VL61L0X
 
 int app_main(void)
 {
@@ -20,6 +21,7 @@ int app_main(void)
                 ESP_LOGE(TAG, "Error Iniciando Mapping:  %s", esp_err_to_name(err));
                 return 1;
         }
+        ESP_LOGI(TAG, "Mapping Service Iniciado!");
 
         ESP_LOGI(TAG, "Iniciando Battery Service...");
         err = battery_sensor_init();
@@ -28,6 +30,7 @@ int app_main(void)
                 ESP_LOGE(TAG, "Error Iniciando Battery:  %s", esp_err_to_name(err));
                 return 1;
         }
+        ESP_LOGI(TAG, "Battery Service Iniciado!");
 
         uint16_t angle = 0;
         uint16_t distance = 0;
@@ -49,5 +52,6 @@ int app_main(void)
                 vTaskDelay(200);
         }
 
+        ESP_LOGE(TAG, "END OF MAIN...");
         return 0;
 }
