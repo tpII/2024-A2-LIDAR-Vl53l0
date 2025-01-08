@@ -62,12 +62,12 @@ esp_err_t i2c_init()
 
     static bool is_initialized = false; // Estado de inicialización
 
-    bus_semaphore = xSemaphoreCreateBinary();
-
     if(is_initialized){
         ESP_LOGI(TAG, "I2C already initialized, skipping initialization.");
         return ESP_OK;
     }
+
+    bus_semaphore = xSemaphoreCreateBinary();
 
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
