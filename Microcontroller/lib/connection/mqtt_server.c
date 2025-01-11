@@ -8,11 +8,11 @@
  *
  * @version 1.0
  * @date 2024-12-04
- * 
+ *
  * @author Guerrico Leonel (lguerrico@outlook.com)
- * 
+ *
  * @note Ensure the MQTT broker is reachable and configured properly in `URL`.
- * 
+ *
  * @copyright
  * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
@@ -25,14 +25,14 @@
 #include "esp_system.h"
 
 // Constants and Global Variables
-#define NUM_TOPICS 4 ///< Number of topics to subscribe to                         
+#define NUM_TOPICS 4 ///< Number of topics to subscribe to
 
-static const char *TAG = "MQTT_SERVER"; ///< Log tag for MQTT Server
-static const char *URL = "mqtt://192.168.4.2:1883"; ///< MQTT broker URL
-static esp_mqtt_client_handle_t mqtt_client = NULL; ///< Handle for MQTT client
+static const char *TAG = "MQTT_SERVER";                                          ///< Log tag for MQTT Server
+static const char *URL = "mqtt://192.168.4.2:1883";                              ///< MQTT broker URL
+static esp_mqtt_client_handle_t mqtt_client = NULL;                              ///< Handle for MQTT client
 static const char *TOPICS[] = {"Instruction", "Messages", "Mapping", "Battery"}; ///< Topics to subscribe to
-static char inst[40] = {0}; ///< Buffer for instructions
-static uint32_t MQTT_CONNEECTED = 0; ///< MQTT connection status
+static char inst[40] = {0};                                                      ///< Buffer for instructions
+static uint32_t MQTT_CONNEECTED = 0;                                             ///< MQTT connection status
 
 // Function Prototypes
 static esp_err_t mqtt_connect(void);
@@ -43,20 +43,21 @@ static void instruction_handler(char *, size_t length);
 
 /**
  * @brief Initializes and starts the MQTT client
- * 
+ *
  * This function attempts to connect the MQTT client to the broker. If the connection
  * fails, it retries up to `max_retries` before returning an error.
- * 
- * @return 
+ *
+ * @return
  * - ESP_OK on success
  * - ESP_FAIL on connection failure after retries
  */
 esp_err_t mqtt_start()
 {
-    
+
     esp_err_t err = initBuffer();
-    if(err != ESP_OK){
-        ESP_LOGE(TAG,"Error Initializing Instruction Buffer");
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error Initializing Instruction Buffer");
         return ESP_FAIL;
     }
 
@@ -66,7 +67,7 @@ esp_err_t mqtt_start()
     while (err != ESP_OK && retry_count < max_retries)
     {
         ESP_LOGW(TAG, "Reconnecting... attempt %d", retry_count + 1);
-        vTaskDelay(2000 / portTICK_PERIOD_MS); 
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
         err = mqtt_connect();
         retry_count++;
     }
@@ -81,11 +82,11 @@ esp_err_t mqtt_start()
 
 /**
  * @brief Establishes a connection with the MQTT broker
- * 
+ *
  * Sets up the MQTT client configuration and starts the client. The connection status
  * is updated upon successful or failed attempts.
- * 
- * @return 
+ *
+ * @return
  * - ESP_OK on success
  * - ESP_FAIL on failure
  */
@@ -118,10 +119,10 @@ static esp_err_t mqtt_connect()
 
 /**
  * @brief Handles MQTT events
- * 
+ *
  * Processes various MQTT events such as connection, disconnection, subscription,
  * message reception, and errors.
- * 
+ *
  * @param[in] handler_args Unused
  * @param[in] base Event base
  * @param[in] event_id Event identifier
@@ -154,7 +155,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-        if (strncmp(event->topic, "Instruction", event->topic_len) == 0)
+        /*if (strncmp(event->topic, "Instruction", event->topic_len) == 0)
         {
             ESP_LOGI(TAG, "Instruction received");
 
@@ -163,7 +164,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         else
         {
             ESP_LOGW(TAG, "ERROR: Message received from an unexpected Topic(%s)", event->topic);
-        }
+        }*/
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -176,7 +177,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
 /**
  * @brief Subscribes to predefined MQTT topics
- * 
+ *
  * Iterates through the `TOPICS` array and subscribes to each topic.
  */
 static void mqtt_subscribing()
@@ -204,8 +205,8 @@ static void mqtt_subscribing()
  *
  * @param[in] topic The topic to which the message should be published.
  * @param[in] payload The message to publish.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the message was published successfully.
  *      - ESP_FAIL: If the MQTT client is not initialized or an error occurs during publishing.
  */
@@ -235,8 +236,8 @@ esp_err_t mqtt_publish(const char *topic, const char *payload)
  * If the MQTT client is not initialized, the subscription fails.
  *
  * @param[in] topic The topic to which you want to subscribe.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the subscription was successful.
  *      - ESP_FAIL: If the MQTT client is not initialized or the subscription fails.
  */
@@ -261,10 +262,10 @@ static esp_err_t mqtt_subscribe(const char *topic)
 
 /**
  * @brief Disconnects the MQTT client
- * 
+ *
  * Stops the MQTT client and releases resources. Resets the client handle to `NULL`.
- * 
- * @return 
+ *
+ * @return
  * - ESP_OK on success
  * - ESP_FAIL on failure
  */
@@ -288,19 +289,18 @@ esp_err_t mqtt_disconnect()
     return ESP_OK;
 }
 
-
 /**
  * @brief Handles received instruction messages
- * 
+ *
  * Processes messages received on the "Instruction" topic, deserializing JSON data and
  * executing actions based on the instruction content (e.g., restarting the MCU).
- * 
+ *
  * @param[in] data Pointer to the received message
  * @param[in] length Length of the message
  */
 static void instruction_handler(char *str, size_t length)
 {
-    ESP_LOGW(TAG,"DATA RECEIVE %s",str);
+    ESP_LOGW(TAG, "DATA RECEIVE %s", str);
     memset(inst, 0, sizeof(inst));
     char *message = (char *)malloc(length + 1);
     if (message == NULL)
@@ -313,7 +313,7 @@ static void instruction_handler(char *str, size_t length)
     message[length] = '\0'; // Termina la cadena con '\0'
     esp_err_t err = deserealize_json_data(message, inst, length);
     free(message);
-    ESP_LOGW(TAG,"Des Receive: %s",inst);
+    ESP_LOGW(TAG, "Des Receive: %s", inst);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error deserializing Instruction");
@@ -327,13 +327,13 @@ static void instruction_handler(char *str, size_t length)
             esp_restart(); // Llamada para reiniciar el MCU
         }
         else
-        {   
-            ESP_LOGW(TAG,"Saving...");
+        {
+            ESP_LOGW(TAG, "Saving...");
             if (saveInstruction(inst) != ESP_OK)
             {
                 ESP_LOGE(TAG, "Error saving Instruction");
             }
-            ESP_LOGW(TAG,"SAVED");
+            ESP_LOGW(TAG, "SAVED");
         }
     }
 }
