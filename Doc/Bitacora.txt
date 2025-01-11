@@ -102,3 +102,9 @@ Libreria INA219 I2C
 05 de Diciembre
 Se agrego documentacion de las librerias mqtt_handler, mqtt_server, lights, i2c, json_helper e instruction_buffer.
 Se agrego Swagger para documentacion del Backend
+
+06 de Diciembre
+INA219 Funcionando y testeado
+
+07 de Enero
+Se inicia el debugging de la librería de control de los sensores en conjunto

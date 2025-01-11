@@ -1,11 +1,11 @@
 #include "battery.h"
 #include "esp_log.h"
-#include "ina219.h"
+#include "ina219v2.h"
 #include "string.h"
 #define CONFIG_SHUNT_RESISTOR_MILLI_OHM 100 // SHOULD BE ADDED DIRECT IN sdkconfig
 
-#define FULL_CHARGE 8.4 //FULL CHARGE 8.4V
-#define MIN_CHARGE  6.4 //MIN CHARGE 6V (0%)
+#define FULL_CHARGE 8.4 // FULL CHARGE 8.4V
+#define MIN_CHARGE 6.4  // MIN CHARGE 6V (0%)
 
 static const char *TAG = "BATTERY";
 
@@ -17,9 +17,10 @@ static float power;
 
 esp_err_t battery_sensor_init()
 {
+    ESP_LOGI(TAG, "Setting memory to 0");
 
     memset(&dev, 0, sizeof(ina219_t));
-
+    
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {
         ESP_LOGE(TAG, "Invalid shunt resistor value: %d mOhm", CONFIG_SHUNT_RESISTOR_MILLI_OHM);
@@ -27,12 +28,17 @@ esp_err_t battery_sensor_init()
     }
 
     ESP_LOGI(TAG, "Initalizing INA219");
-    ESP_ERROR_CHECK(ina219_init(&dev));
+    dev.i2c_addr = INA219_ADDRESS;
+    esp_err_t err = ina219_init(&dev);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "INA219 initialization failed: %s", esp_err_to_name(err));
+        return err;
+    }
 
-    ESP_LOGI(TAG, "Configuring INA219");
-    ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
-                                     INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
-                                     INA219_MODE_CONT_SHUNT_BUS));
+    // ESP_LOGI(TAG, "Configuring INA219");
+    // ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
+    //                                  INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
+    //                                  INA219_MODE_CONT_SHUNT_BUS));
 
     ESP_LOGI(TAG, "Calibrating INA219");
 
@@ -63,8 +69,22 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
         ESP_LOGE(TAG, "Failed to read bus voltage");
         return ret;
     }
+    ret = ina219_get_shunt_voltage(&dev, &shunt_voltage);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to read bus voltage");
+        return ret;
+    }
+    ret = ina219_get_current(&dev, &current);
+    if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to read bus voltage");
+        return ret;
+    }
 
-     // Verificar que el voltaje esté dentro de un rango razonable
+    ESP_LOGW(TAG, "BV: %f - SV: %f - C: %f", bus_voltage, shunt_voltage, current);
+
+    // Verificar que el voltaje esté dentro de un rango razonable
     if (bus_voltage < 6.0 || bus_voltage > 8.4)
     {
         ESP_LOGW(TAG, "Voltage out of expected range: %.2fV", bus_voltage);
