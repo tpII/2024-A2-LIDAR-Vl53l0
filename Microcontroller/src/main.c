@@ -8,7 +8,6 @@ static const char *TAG = "MAIN";
 
 #define VL53L0X
 // #define VL61L0X
-// #define VL61L0X
 
 int app_main(void)
 {
