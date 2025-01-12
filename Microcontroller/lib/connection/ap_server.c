@@ -4,7 +4,7 @@ static const char *TAG = "wifi softAP";
 static SemaphoreHandle_t client_connected_semaphore;
 
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
-
+static void tcp_server(void *pvParameters);
 
 /**
  * @brief WiFi Event Handler for managing station connections and IP assignment.
@@ -108,6 +108,81 @@ esp_err_t wifi_init_softap(void){
     
     return ESP_OK;
 }
+
+
+
+static void tcp_server(void *pvParameters)
+{
+    char addr_str[128];
+    int keepAlive = 1;
+    int keepIdle = KEEPALIVE_IDLE;
+    int keepInterval = KEEPALIVE_INTERVAL;
+    int keepCount = KEEPALIVE_COUNT;
+    struct sockaddr_storage dest_addr;
+
+    struct sockaddr_in *dest_addr_ip4 = (struct sockaddr_in *)&dest_addr;
+    dest_addr_ip4->sin_addr.s_addr = htonl(INADDR_ANY);
+    dest_addr_ip4->sin_family = AF_INET;
+    dest_addr_ip4->sin_port = htons(PORT);
+    int ip_protocol = IPPROTO_IP;
+    
+    int s = socket(AF_INET, SOCK_STREAM, ip_protocol);
+    if (s < 0) {
+        ESP_LOGE(TAG, "Socket creation failed: errno %d", errno);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    ESP_LOGI(TAG, "Socket created");
+
+    esp_err_t err = bind(s, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Socket unable to bind: err %d", err);
+        goto CLEAN_UP;
+    }
+
+    ESP_LOGI(TAG, "Socket bound: port %d", PORT);
+
+    err = listen(s, 1);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error ocurred during listen: err %d", err);
+        goto CLEAN_UP;
+    }
+
+    while (1) {
+        ESP_LOGI(TAG, "Socket listening");
+
+        struct sockaddr_storage source_addr; // Large enough for IPv4
+        socklen_t addr_len = sizeof(source_addr);
+        int sock = accept(s, (struct sockaddr *)&source_addr, &addr_len);
+        if (sock < 0) {
+            ESP_LOGE(TAG, "Unable to accept connection: errno %d", errno);
+            break;
+        }
+
+        // Set tcp keepalive option
+        setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &keepAlive, sizeof(int));
+        setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &keepIdle, sizeof(int));
+        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &keepInterval, sizeof(int));
+        setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, &keepCount, sizeof(int));
+        // Convert ip address to string
+
+        if (source_addr.ss_family == PF_INET) {
+            inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
+        }
+
+        ESP_LOGI(TAG, "Socket accepted ip address: %s", addr_str);
+
+        shutdown(sock, 0);
+        close(sock);
+    }
+
+    CLEAN_UP:
+        close(s);
+        vTaskDelete(NULL);
+    
+}
+
 
 esp_err_t initialize_server(void)
 {
