@@ -156,3 +156,6 @@ Funcionalidad de botones
 12 de Enero
 Agrego TCP server
 Agrego tarea y funciones correspondientes para recibir instrucciones por HTTP
+
+15 de Enero
+Correccion de errores en tarea para recibir instrucciones por HTTP

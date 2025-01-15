@@ -190,7 +190,7 @@ static void receiveInstruction(void *parameter)
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getHTTPInstruccion(inst);
+        err = getHTTPInstruccion(inst, sizeof(inst));
         if (err == ESP_OK)
         {
             saveInstruction(inst);
@@ -200,7 +200,7 @@ static void receiveInstruction(void *parameter)
         {
             ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
         }
-        memset(inst, 0, 20);
+        memset(inst, 0, sizeof(inst));
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
