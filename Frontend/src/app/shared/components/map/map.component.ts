@@ -22,8 +22,6 @@ export class MapComponent implements OnInit {
   private width = 850;
   private height = 850;
   private svg: any;
-  private robot: any;
-
   private maxDistance = 2; // Distancia máxima en metros
   private scaleFactor = this.width / (this.maxDistance * 2); // Escala para convertir metros a pixeles
   private pointsMap: Map<number, any> = new Map();
@@ -39,7 +37,6 @@ export class MapComponent implements OnInit {
     this.createChart();
    // this.plotPointsFromBackend();
     this.simulateData(); //FOR TEST ONLY
-    this.simulateCarPosition();
   }
 
   /**
@@ -78,7 +75,7 @@ export class MapComponent implements OnInit {
     // Filtrar solo los obstáculos
 
     // Dibujar el robot en el centro
-    this.robot = this.svg
+    this.svg
       .append('rect')
       .attr('x', this.width / 2 - 10)
       .attr('y', this.height / 2 - 10)
@@ -125,23 +122,6 @@ export class MapComponent implements OnInit {
     });
   }
   
-
-  updateCarPosition(x: number, y: number): void {
-    //this.mappingValueService.getCarPosition().subscribe((data) => {
-      // Extraer las coordenadas polares
-    //  const { distance, angle } = data;
-  
-      // Convertir a coordenadas cartesianas
-     // const { x, y } = this.polarToCartesian(distance, angle);
-  
-      // Actualizar la posición del auto en el mapa
-      this.robot
-        .attr('x', x - 10) // Ajustar al centro del rectángulo
-        .attr('y', y - 10);
-   // });
-  }
-
-  
   /**
    * Clears all stored points on the map by removing their corresponding graphical elements 
    * from the SVG and resetting the points map.
@@ -172,64 +152,6 @@ export class MapComponent implements OnInit {
     }, 1000); // Recibir datos cada segundo
   }
 
-  // Simular posición del auto
-  /*
-simulateCarPosition() {
-  setInterval(() => {
-
-    if (!this.mapping) {
-      return; 
-    }
-
-    const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
-    const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
-
-    const { x, y } = this.polarToCartesian(distance, angle);
-
-    // Actualizar la posición del auto en el mapa
-    this.updateCarPosition(x, y);
-  }, 1000); // Actualizar cada segundo
-}
-*/
-simulateCarPosition() {
-  let currentX = parseFloat(this.robot.attr('x')) + 10; // Inicializar la posición actual del auto (centro)
-  let currentY = parseFloat(this.robot.attr('y')) + 10;
-
-  setInterval(() => {
-    if (!this.mapping) {
-      return;
-    }
-
-    // Generar una nueva posición aleatoria para el auto, no tan distante
-    const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
-    const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
-
-    // Asegurarnos de que polarToCartesian nos devuelve las coordenadas correctamente
-    const { x: targetX, y: targetY } = this.polarToCartesian(distance, angle);
-
-    // Calcular la diferencia entre la posición actual y la nueva
-    const deltaX = targetX - currentX;
-    const deltaY = targetY - currentY;
-
-    // Calcular el paso para cada actualización (esto hará el movimiento gradual)
-    const stepX = deltaX * 0.1; // 10% del desplazamiento en cada iteración
-    const stepY = deltaY * 0.1; // 10% del desplazamiento en cada iteración
-
-    // Actualizar la posición del auto en el mapa
-    currentX += stepX;
-    currentY += stepY;
-
-    // Verificar si el auto ha llegado a la nueva posición (evitar pequeños movimientos innecesarios)
-    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) {
-      currentX = targetX;
-      currentY = targetY;
-    }
-
-    this.updateCarPosition(currentX, currentY); // Actualizar la posición del auto en el mapa
-  }, 1000); // Actualizar cada 50 ms para el movimiento gradual
-}
-
-
   /**
    * Converts polar coordinates (distance and angle) to Cartesian coordinates (x, y).
    * The angle is first converted to radians and used to calculate the x and y values based 
@@ -256,29 +178,20 @@ simulateCarPosition() {
    * @param angle The angle of the point for identification in the map.
    */
   plotPoint(x: number, y: number, angle: number) {
-     // Obtener la posición actual del auto (considerando que la coordenada del auto es el centro del rectángulo)
-    const carX = parseFloat(this.robot.attr('x')) + 10; // Posición X del centro del auto
-    const carY = parseFloat(this.robot.attr('y')) + 10; // Posición Y del centro del auto
-
-
-    // Ajustar las coordenadas del punto a la posición del auto
-    const adjustedX = carX + x - this.width / 2;
-    const adjustedY = carY + y - this.height / 2;
-
     // Verificar si ya existe un punto para el ángulo dado
     if (this.pointsMap.has(angle)) {
       // Actualizar posición del punto existente
       const existingPoint = this.pointsMap.get(angle);
       existingPoint
-        .attr('cx', adjustedX)
-        .attr('cy', adjustedY)
+        .attr('cx', x)
+        .attr('cy', y)
         .attr('fill','black'); 
     } else {
       // Crear un nuevo punto y agregarlo al mapa
       const newPoint = this.svg
         .append('circle')
-        .attr('cx', adjustedX)
-        .attr('cy', adjustedY)
+        .attr('cx', x)
+        .attr('cy', y)
         .attr('r', 4)
         .attr('fill', 'black');
       this.pointsMap.set(angle, newPoint);
