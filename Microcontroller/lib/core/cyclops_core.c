@@ -193,7 +193,10 @@ static void receiveInstruction(void *parameter)
         err = getHTTPInstruccion(inst, sizeof(inst));
         if (err == ESP_OK)
         {
-            saveInstruction(inst);
+            if (saveInstruction(inst) != ESP_OK)
+            {
+                ESP_LOGE(TAG, "Failed to save instruction");
+            }
             ESP_LOGW(TAG, "INST RECEIVED - %s", inst);
         }
         else if (err == ESP_ERR_TIMEOUT)

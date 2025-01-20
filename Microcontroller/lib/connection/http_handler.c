@@ -1,7 +1,7 @@
 #include "http_handler.h"
 
 static const char *TAG = "HTTP_HANDLER";                                       
-//static const char *URL =   // Backend URL
+static const char *URL =  "http://localhost:8080/instruction" // Backend URL
 
 
 esp_err_t getHTTPInstruccion(char *inst, size_t inst_size)
