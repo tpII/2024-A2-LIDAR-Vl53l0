@@ -110,7 +110,7 @@ esp_err_t wifi_init_softap(void){
 }
 
 
-
+/*
 static void tcp_server(void *pvParameters)
 {
     char addr_str[128];
@@ -182,7 +182,7 @@ static void tcp_server(void *pvParameters)
         vTaskDelete(NULL);
     
 }
-
+*/
 
 esp_err_t initialize_server(void)
 {

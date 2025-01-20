@@ -1,18 +1,43 @@
 #include "http_handler.h"
+#include "json_helper.h"
+#include "esp_log.h"
+#include "esp_http_client.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "instruction_buffer.h"
 
-static const char *TAG = "HTTP_HANDLER";                                       
-static const char *URL =  "http://localhost:8080/instruction" // Backend URL
+#define INST_MAX_SIZE 20
+static const char *TAG = "HTTP_HANDLER";
+static const char *URL = "http://192.168.4.2:8080/instruction/6775a80b51d58c54c879d816"; // Backend URL
 
+static void decodeInstruction(int, char *);
 
-esp_err_t getHTTPInstruccion(char *inst, size_t inst_size)
+esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
+{
+    switch (evt->event_id)
+    {
+    case HTTP_EVENT_ON_DATA:
+        printf("HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
+        decodeInstruction(evt->data_len, (char *)evt->data);
+
+        break;
+
+    default:
+        break;
+    }
+    return ESP_OK;
+}
+
+esp_err_t getHTTPInstruction(char *inst, size_t inst_size)
 {
     esp_err_t err;
 
     esp_http_client_config_t config = {
         .url = URL,
-        .timeout_ms = 5000,                        
-    };
-
+        .timeout_ms = 5000,
+        .cert_pem = NULL,
+        .event_handler = client_event_get_handler};
     esp_http_client_handle_t client = esp_http_client_init(&config);
     if (!client)
     {
@@ -22,58 +47,26 @@ esp_err_t getHTTPInstruccion(char *inst, size_t inst_size)
 
     // Realizar la solicitud GET
     err = esp_http_client_perform(client);
-    if (err == ESP_OK)
+    if (err != ESP_OK)
     {
-        int http_status = esp_http_client_get_status_code(client);
-        if (http_status == 200)
-        {
-            int content_length = esp_http_client_get_content_length(client);
-            if (content_length > 0 && content_length < inst_size)
-            {
-                char response[content_length + 1];
-                esp_http_client_read(client, response, content_length);
-                response[content_length] = '\0'; 
+        ESP_LOGE(TAG, "ERROR PERFORMING GET");
+        return ESP_FAIL;
+    }
+    esp_http_client_cleanup(client);
+    return ESP_FAIL;
+}
 
-                // Parsear el JSON
-                cJSON *json = cJSON_Parse(response);
-                if (json == NULL)
-                {
-                    ESP_LOGE(TAG, "Failed to parse JSON");
-                    esp_http_client_cleanup(client);
-                    return ESP_ERR_INVALID_RESPONSE;
-                }
-
-                // Extraer la instruccion del JSON
-                cJSON *instruction = cJSON_GetObjectItem(json, "instruction");
-                if (cJSON_IsString(instruction))
-                {
-                    snprintf(inst, inst_size, "%s", instruction->valuestring);
-                    cJSON_Delete(json);
-                    esp_http_client_cleanup(client);
-                    return ESP_OK;
-                }
-                else
-                {
-                    ESP_LOGE(TAG, "Invalid JSON format");
-                }
-
-                cJSON_Delete(json);
-            }
-            else
-            {
-                ESP_LOGE(TAG, "Invalid response size");
-            }
-        }
-        else
-        {
-            ESP_LOGE(TAG, "HTTP status code: %d", http_status);
-        }
+static void decodeInstruction(int length, char *str)
+{
+    char msg[INST_MAX_SIZE] = "";
+    esp_err_t err = deserealize_json_data(str, msg, INST_MAX_SIZE);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ERORR DECODING JSON");
     }
     else
     {
-        ESP_LOGE(TAG, "HTTP request failed: %s", esp_err_to_name(err));
+        ESP_LOGW(TAG, "INST: %s", msg);
+        saveInstruction(msg);
     }
-
-    esp_http_client_cleanup(client);
-    return ESP_FAIL;
 }

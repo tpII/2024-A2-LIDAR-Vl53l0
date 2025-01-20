@@ -114,7 +114,7 @@ esp_err_t createTasks()
     task_created = xTaskCreatePinnedToCore(
         receiveInstruction,
         "receiveInstructionTask",
-        2048,
+        4096,
         NULL,
         2,
         &receiveInstructionTaskHandler,
@@ -186,11 +186,11 @@ static void servoInterruptionTask(void *parameter)
 
 static void receiveInstruction(void *parameter)
 {
-    char inst[20];
+    static char inst[20];
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getHTTPInstruccion(inst, sizeof(inst));
+        err = getHTTPInstruction(inst, sizeof(inst));
         if (err == ESP_OK)
         {
             if (saveInstruction(inst) != ESP_OK)
@@ -204,14 +204,13 @@ static void receiveInstruction(void *parameter)
             ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
         }
         memset(inst, 0, sizeof(inst));
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 
 static void instructionHandler(void *parameter)
 {
-    ch
-    ar inst[20];
+    char inst[20];
     esp_err_t err = ESP_OK;
     while (1)
     {
