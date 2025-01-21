@@ -14,10 +14,12 @@
 static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
 TaskHandle_t instructionHandlerTaskHandler = NULL;
+TaskHandle_t receiveInstructionTaskHandler = NULL;
 TaskHandle_t batteryTaskHandler = NULL;
 TaskHandle_t mappingTaskHandler = NULL;
 
 static void servoInterruptionTask(void *);
+static void receiveInstruction(void *);
 static void instructionHandler(void *);
 static void executeInstruction(char *);
 static void mappingTask(void *);
@@ -108,6 +110,22 @@ esp_err_t createTasks()
         ESP_LOGE(TAG, "Error Creating Instruction HandlerTask");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
+
+    task_created = xTaskCreatePinnedToCore(
+        receiveInstruction,
+        "receiveInstructionTask",
+        4096,
+        NULL,
+        2,
+        &receiveInstructionTaskHandler,
+        tskNO_AFFINITY);
+
+    if (task_created != pdPASS)
+    {
+        ESP_LOGE(TAG, "Error Creating  Receive Instruction Task");
+        return ESP_FAIL; 
+    }
+
     /*task_created = xTaskCreatePinnedToCore(
         mappingTask,
         "MappingTask",
@@ -163,6 +181,30 @@ static void servoInterruptionTask(void *parameter)
     {
         // check_limit_switch();
         vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
+static void receiveInstruction(void *parameter)
+{
+    static char inst[20];
+    esp_err_t err = ESP_OK;
+    while (1)
+    {
+        err = getHTTPInstruction(inst, sizeof(inst));
+        if (err == ESP_OK)
+        {
+            if (saveInstruction(inst) != ESP_OK)
+            {
+                ESP_LOGE(TAG, "Failed to save instruction");
+            }
+            ESP_LOGW(TAG, "INST RECEIVED - %s", inst);
+        }
+        else if (err == ESP_ERR_TIMEOUT)
+        {
+            ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
+        }
+        memset(inst, 0, sizeof(inst));
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 
