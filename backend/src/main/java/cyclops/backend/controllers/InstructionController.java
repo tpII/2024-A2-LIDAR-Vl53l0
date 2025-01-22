@@ -63,4 +63,14 @@ public class InstructionController {
         instructionService.deleteInstruction(id);
     }
 
+    @GetMapping("/last")
+    @Operation(summary = "Retrieve the last instruction", description = "Fetches the most recent instruction from the database.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Last intruction retrieved successfully", content = @Content(schema = @Schema(implementation = Instruction.class))),
+            @ApiResponse(responseCode = "204", description = "No new instruction available", content = @Content)
+    })
+    public Instruction getLaInstruction() {
+        return instructionService.getLastInstruction()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "NO NEW INSTRUCTION"));
+    }
 }

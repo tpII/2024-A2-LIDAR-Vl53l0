@@ -1,8 +1,14 @@
 package cyclops.backend.services;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
@@ -20,11 +26,16 @@ public class InstructionService {
 
     private final InstructionDAO instructionDAO;
     private MessageChannel mqttOutChannel;
+    private final LocalDateTime systemStartTime;
+    private final MongoTemplate mongoTemplate;
 
-    public InstructionService(InstructionDAO instructionDAO,
+    public InstructionService(InstructionDAO instructionDAO, MongoTemplate mongoTemplate,
             @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel) {
         this.instructionDAO = instructionDAO;
         this.mqttOutChannel = mqttOuChannel;
+        this.systemStartTime = LocalDateTime.now();
+        this.mongoTemplate = mongoTemplate;
+
     }
 
     @Transactional
@@ -39,7 +50,7 @@ public class InstructionService {
     private void sendInstruction(Instruction instruction) {
         // Crear el mensaje a enviar (payload)
         String payload = convertInstructionToPayload(instruction);
-        System.out.println("Inst: "+payload);
+        System.out.println("Inst: " + payload);
         // Crear el mensaje con el tópico adecuado
         Message<String> message = MessageBuilder.withPayload(payload)
                 .setHeader("Instruction", "Instruction") // Establecer el tópico
@@ -67,6 +78,22 @@ public class InstructionService {
 
     public void deleteInstruction(String id) {
         instructionDAO.deleteById(id);
+    }
+
+    public Optional<Instruction> getLastInstruction() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("read").is(false).and("date").gte(systemStartTime));
+        query.with(Sort.by(Sort.Direction.DESC, "date"));
+        query.limit(1);
+
+        Instruction lastInstruction = mongoTemplate.findOne(query, Instruction.class);
+
+        if (lastInstruction != null) {
+            Query updateQuery = new Query(Criteria.where("_id").is(lastInstruction.getId()));
+            Update update = new Update().set("read", true);
+            mongoTemplate.updateFirst(updateQuery, update, Message.class);
+        }
+        return Optional.ofNullable(lastInstruction);
     }
 
 }

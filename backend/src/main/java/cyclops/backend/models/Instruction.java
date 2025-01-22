@@ -1,5 +1,6 @@
 package cyclops.backend.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -22,13 +23,16 @@ public class Instruction {
 
     @CreatedDate
     @Schema(description = "Date and time the instruction was created", example = "2024-12-05T14:30:00Z", format = "date-time")
-    private Date time;
+    private LocalDateTime time;
 
-    public Date getTime() {
+    @Schema(description = "Indicates whether the instruction has been read", example = "false")
+    private boolean read = false;
+
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 
@@ -40,7 +44,7 @@ public class Instruction {
 
     }
 
-    public Instruction(String instruction, String parameter1, String parameter2, Date time) {
+    public Instruction(String instruction, String parameter1, String parameter2, LocalDateTime time) {
         this.instruction = instruction;
         this.time = time;
     }
@@ -59,6 +63,14 @@ public class Instruction {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    public boolean getRead() {
+        return read;
     }
 
     @Override

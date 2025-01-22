@@ -1,5 +1,7 @@
 package cyclops.backend.models;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
@@ -22,12 +24,15 @@ public class MappingValue {
 
     @CreatedDate
     @Schema(description = "Date and time of value creation", example = "2024-12-05T12:00:00Z", format = "date-time")
-    private String date;
+    private LocalDateTime date;
+
+    @Schema(description = "Indicates whether the MappingValue has been read", example = "false")
+    private boolean read = false;
 
     public MappingValue() {
     }
 
-    public MappingValue(long distance, int angle, String date) {
+    public MappingValue(long distance, int angle, LocalDateTime date) {
         this.distance = distance;
         this.angle = angle;
         this.date = date;
@@ -41,7 +46,7 @@ public class MappingValue {
         return angle;
     }
 
-    public String getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
@@ -53,7 +58,7 @@ public class MappingValue {
         this.angle = angle;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -63,5 +68,13 @@ public class MappingValue {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setRead(boolean read){
+        this.read = read;
+    }
+
+    public boolean getRead(){
+        return read;
     }
 }

@@ -1,5 +1,8 @@
 package cyclops.backend.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
@@ -17,10 +20,12 @@ public class MessageService {
 
     private final MessageDAO messageDAO;
     private final MongoTemplate mongoTemplate;
+    private final LocalDateTime systemStartTime;
 
     public MessageService(MessageDAO messageDAO, MongoTemplate mongoTemplate) {
         this.messageDAO = messageDAO;
         this.mongoTemplate = mongoTemplate;
+        this.systemStartTime = LocalDateTime.now();
     }
 
     public void saveMessage(Message message) {
@@ -34,11 +39,11 @@ public class MessageService {
     public void deleteMessage(String id) {
         messageDAO.deleteById(id);
     }
-    
-    public Optional<Message> getLastMesage(){
+
+    public Optional<Message> getLastMesage() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("read").is(false));
-        query.with(Sort.by(Sort.Direction.DESC,"date"));
+        query.addCriteria(Criteria.where("read").is(false).and("date").gte(systemStartTime));
+        query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
 
         Message lastMessage = mongoTemplate.findOne(query, Message.class);
@@ -48,9 +53,9 @@ public class MessageService {
             Update update = new Update().set("read", true);
             mongoTemplate.updateFirst(updateQuery, update, Message.class);
         }
-    
+
         return Optional.ofNullable(lastMessage);
 
     }
-   
+
 }
