@@ -41,17 +41,7 @@ public class InstructionController {
         instructionService.saveInstruction(instruction);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get an instruction by ID", description = "Retrieves an instruction using its unique identifier")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Instruction retrieved successfully", content = @Content(schema = @Schema(implementation = Instruction.class))),
-            @ApiResponse(responseCode = "404", description = "Instruction not found", content = @Content)
-    })
-    public Instruction getInstruction(@PathVariable String id) {
-        return instructionService.getInstruction(id)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
-    }
+    
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an instruction by ID", description = "Deletes an instruction using its unique identifier")
@@ -63,6 +53,18 @@ public class InstructionController {
         instructionService.deleteInstruction(id);
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get an instruction by ID", description = "Retrieves an instruction using its unique identifier")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Instruction retrieved successfully", content = @Content(schema = @Schema(implementation = Instruction.class))),
+            @ApiResponse(responseCode = "404", description = "Instruction not found", content = @Content)
+    })
+    public Instruction getInstruction(@PathVariable String id) {
+        return instructionService.getInstruction(id)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found with id: " + id));
+    }
+    
     @GetMapping("/last")
     @Operation(summary = "Retrieve the last instruction", description = "Fetches the most recent instruction from the database.")
     @ApiResponses({

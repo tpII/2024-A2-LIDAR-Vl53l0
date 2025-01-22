@@ -9,7 +9,7 @@
 
 #define INST_MAX_SIZE 20
 static const char *TAG = "HTTP_HANDLER";
-static const char *URL = "http://192.168.4.2:8080/instruction/6775a80b51d58c54c879d816"; // Backend URL
+static const char *URL = "http://192.168.4.2:8080/instruction/last"; // Backend URL
 
 static void decodeInstruction(int, char *);
 
@@ -19,6 +19,7 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     {
     case HTTP_EVENT_ON_DATA:
         printf("HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
+        ESP_LOGW(TAG,"HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
         decodeInstruction(evt->data_len, (char *)evt->data);
 
         break;
@@ -50,8 +51,14 @@ esp_err_t getHTTPInstruction(char *inst, size_t inst_size)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR PERFORMING GET");
+        esp_http_client_cleanup(client);
+
         return ESP_FAIL;
     }
+
+    int status_code = esp_http_client_get_status_code(client);
+    ESP_LOGI(TAG, "HTTP Status Code: %d", status_code);
+
     esp_http_client_cleanup(client);
     return ESP_FAIL;
 }

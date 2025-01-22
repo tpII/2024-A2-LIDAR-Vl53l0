@@ -28,6 +28,7 @@ void app_main(void)
         ESP_LOGI(TAG, "ALL DONE");
 
         // TESTING SAVING INST
+        /*
         char inst1[] = "TESTING SEMDING MESSAGE";
 
             while (1)
@@ -41,5 +42,5 @@ void app_main(void)
                 }
                 vTaskDelay(1500 / portTICK_PERIOD_MS);
         }
-
+*/
 }

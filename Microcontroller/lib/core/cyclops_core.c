@@ -204,7 +204,7 @@ static void receiveInstruction(void *parameter)
             ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
         }
         memset(inst, 0, sizeof(inst));
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
 
