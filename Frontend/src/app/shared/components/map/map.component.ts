@@ -2,6 +2,12 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { MappingValueService } from '../../../core/services/mapping-value.service';
 import * as d3 from 'd3';
 
+
+export interface Point {
+  angle: number;
+  distance: number;
+}
+
 /**
  * @component MapComponent
  * @description This component is responsible for managing the map view and visualizing the data received from the backend. 
@@ -26,17 +32,68 @@ export class MapComponent implements OnInit {
   private scaleFactor = this.width / (this.maxDistance * 2); // Escala para convertir metros a pixeles
   private pointsMap: Map<number, any> = new Map();
 
+  private pointsToPlot: { distance: number; angle: number }[] = []; // Lista de puntos pendientes
+  //private pointsMap = new Map<string, any>(); // Mapa para graficar puntos únicos
   constructor(private mappingValueService: MappingValueService) {}
 
-  /**
+    /**
    * Initializes the component by creating the chart and plotting points from the backend.
    * This function is triggered when the component is first loaded, and it ensures that the 
    * chart is created and data is fetched from the backend to be visualized.
    */
-  ngOnInit() {
-    this.createChart();
-   // this.plotPointsFromBackend();
-    this.simulateData(); //FOR TEST ONLY
+    ngOnInit() {
+      this.createChart();
+     // this.plotPointsFromBackend();
+     setInterval(() => this.receivePointsFromBackend(), 500); // Llama cada 500ms
+     setInterval(() => this.plotStoredPoints(), 100); // Graficar cada 100ms
+     // this.simulateData(); //FOR TEST ONLY
+    }
+
+  receivePointsFromBackend(): void {
+    this.mappingValueService.getMappingValue().subscribe((data) => {
+      if (data && Array.isArray(data)) {
+        // Almacena los nuevos puntos en la lista
+        this.pointsToPlot.push(...data);
+      } else {
+        console.warn('Datos inesperados recibidos del backend:', data);
+      }
+    });
+  }
+
+  plotStoredPoints(): void {
+    if (!this.pointsToPlot.length || !this.mapping) {
+      return; // Nada que graficar
+    }
+
+    this.pointsToPlot.forEach((point) => {
+      // Convertir de polar (ángulo, distancia) a coordenadas cartesianas (x, y)
+      const { x, y } = this.polarToCartesian(point.distance, point.angle);
+
+      // Crear una clave única para identificar el punto
+    //  const key = `${point.angle}-${point.distance}`;
+
+     // if (this.pointsMap.has(key)) {
+      if (this.pointsMap.has(point.angle)) {
+        // Si el punto ya existe, actualiza su posición
+        const existingPoint = this.pointsMap.get(point.angle);
+        existingPoint
+          .attr('cx', x)
+          .attr('cy', y);
+      } else {
+        // Si no existe, crea un nuevo punto en el mapa
+        const newPoint = this.svg
+          .append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 4)
+          .attr('fill', 'blue');
+       //   this.pointsMap.set(key, newPoint);
+          this.pointsMap.set(point.angle, newPoint);
+      }
+    });
+
+    // Vaciar la lista de puntos ya procesados
+    this.pointsToPlot = [];
   }
 
   /**

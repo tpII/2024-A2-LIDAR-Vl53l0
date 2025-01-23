@@ -156,3 +156,5 @@ Funcionalidad de botones
 03 de Enero
 Testeo desplazamiento de auto en mapeo.
 
+23 de Enero
+Modifico para que reciba lista de puntos desde el backend
