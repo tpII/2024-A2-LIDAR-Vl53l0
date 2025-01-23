@@ -20,12 +20,11 @@ public class MessageService {
 
     private final MessageDAO messageDAO;
     private final MongoTemplate mongoTemplate;
-    private final LocalDateTime systemStartTime;
+    private static final LocalDateTime systemStartTime = LocalDateTime.now();
 
     public MessageService(MessageDAO messageDAO, MongoTemplate mongoTemplate) {
         this.messageDAO = messageDAO;
         this.mongoTemplate = mongoTemplate;
-        this.systemStartTime = LocalDateTime.now();
     }
 
     public void saveMessage(Message message) {

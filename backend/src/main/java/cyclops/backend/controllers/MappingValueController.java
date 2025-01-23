@@ -15,10 +15,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/sensor")
@@ -61,6 +67,20 @@ public class MappingValueController {
     })
     public void deleteMessage(@PathVariable String id) {
         sensorValueService.deleteSensorValue(id);
+    }
+
+    @GetMapping("/values")
+    @Operation(summary = "Retrieve all unread mapping values", description = "Retrieve a list of unread mapping values.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Mapping value list retrieved successfully", content = @Content(schema = @Schema(implementation = MappingValue.class))),
+            @ApiResponse(responseCode = "404", description = "Mapping value not found", content = @Content)
+    })
+    public ResponseEntity<?> getUnreadValues() {
+        List<MappingValue> unreadValues = sensorValueService.getUnreadMappingValues();
+        if (unreadValues.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron valores.");
+        }
+        return ResponseEntity.ok(unreadValues);
     }
 
 }

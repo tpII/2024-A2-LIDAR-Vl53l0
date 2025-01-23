@@ -26,14 +26,13 @@ public class InstructionService {
 
     private final InstructionDAO instructionDAO;
     private MessageChannel mqttOutChannel;
-    private final LocalDateTime systemStartTime;
+    private static final LocalDateTime systemStartTime = LocalDateTime.now();
     private final MongoTemplate mongoTemplate;
 
     public InstructionService(InstructionDAO instructionDAO, MongoTemplate mongoTemplate,
             @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel) {
         this.instructionDAO = instructionDAO;
         this.mqttOutChannel = mqttOuChannel;
-        this.systemStartTime = LocalDateTime.now();
         this.mongoTemplate = mongoTemplate;
 
     }
@@ -91,7 +90,7 @@ public class InstructionService {
         if (lastInstruction != null) {
             Query updateQuery = new Query(Criteria.where("_id").is(lastInstruction.getId()));
             Update update = new Update().set("read", true);
-            mongoTemplate.updateFirst(updateQuery, update, Message.class);
+            mongoTemplate.updateFirst(updateQuery, update, Instruction.class);
         }
         return Optional.ofNullable(lastInstruction);
     }
