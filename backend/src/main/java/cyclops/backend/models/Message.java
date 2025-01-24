@@ -1,5 +1,6 @@
 package cyclops.backend.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -31,7 +32,7 @@ public class Message {
 
     @CreatedDate
     @Schema(description = "The date and time when the message was created", example = "2024-12-05T14:30:00Z", format = "date-time")
-    private Date date;
+    private LocalDateTime date;
 
     public Message() {
     }
@@ -40,7 +41,7 @@ public class Message {
         this.message = message;
     }
 
-    public Message(String message, Date date) {
+    public Message(String message, LocalDateTime date) {
         this.message = message;
         this.date = date;
     }
@@ -49,7 +50,7 @@ public class Message {
         return message;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
@@ -57,7 +58,7 @@ public class Message {
         this.message = message;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

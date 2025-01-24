@@ -1,4 +1,5 @@
 #include "esp_log.h"
+#include "cyclops_core.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "mapping.h"
@@ -8,10 +9,7 @@
 
 static const char *TAG = "MAIN";
 
-#define VL53L0X
-// #define VL61L0X
-
-int app_main(void)
+void app_main(void)
 {
         esp_err_t err;
 
