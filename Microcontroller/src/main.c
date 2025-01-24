@@ -1,5 +1,5 @@
 #include "esp_log.h"
-#include "freeRtosTasks.h"
+#include "cyclops_core.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "mapping.h"
@@ -8,7 +8,7 @@
 
 static const char *TAG = "MAIN";
 
-int app_main(void)
+void app_main(void)
 {
         esp_err_t err;
 
@@ -33,7 +33,7 @@ int app_main(void)
         ESP_LOGI(TAG, "Iniciando Tareas...");
         err = createTasks();
         if (err != ESP_OK)
-        {
+        { 
                 ESP_LOGE(TAG, "Error Iniciando Tareas:  %s", esp_err_to_name(err));
                 return 1;
         }

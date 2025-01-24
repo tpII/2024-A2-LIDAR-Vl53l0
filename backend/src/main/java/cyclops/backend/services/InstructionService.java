@@ -40,10 +40,10 @@ public class InstructionService {
     @Transactional
     public void saveInstruction(Instruction instruction) {
         instructionDAO.save(instruction);
-        /*System.out.println(instruction.toString());
+        System.out.println(instruction.toString());
         String payload = convertInstructionToPayload(instruction);
         System.out.println("Payload en JSON: " + payload);
-        sendInstruction(instruction);*/
+        sendInstruction(instruction);
     }
 
     private void sendInstruction(Instruction instruction) {
@@ -81,7 +81,7 @@ public class InstructionService {
 
     public Optional<Instruction> getLastInstruction() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("read").is(false));
+        query.addCriteria(Criteria.where("read").is(false).and("date").gte(systemStartTime));
         query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
 

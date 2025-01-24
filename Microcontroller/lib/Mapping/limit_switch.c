@@ -31,6 +31,11 @@ esp_err_t interrupt_init()
 
     flag_semaphore = xSemaphoreCreateBinary();
     xSemaphoreGive(flag_semaphore);
+    if (flag_semaphore == NULL)
+    {
+        ESP_LOGE(TAG, "ERROR: flag_semaphore is NULL");
+        return ESP_FAIL;
+    }
 
     esp_err_t err = gpio_set_direction(LIMIT_SWITCH_PIN, GPIO_MODE_INPUT);
     if (err != ESP_OK)

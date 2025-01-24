@@ -14,7 +14,10 @@
 #define SERVO_MEDIUM_SPEED_CCW  1950    
 #define SERVO_MAX_SPEED_CCW     2100    
 
-
+typedef enum {
+    UP,
+    DOWN
+} SERVO_DIRECTION;
 
 
 
@@ -22,8 +25,10 @@
 esp_err_t servo_initialize(void);
 esp_err_t servo_start(void);
 esp_err_t servo_stop(void);
+esp_err_t servo_pause(void);
+esp_err_t servo_restart(void);
 int16_t readAngle(void);
-void servo_set_speed(char*);
+void servo_set_speed(SERVO_DIRECTION);
 void servo_invert(void);
 
 

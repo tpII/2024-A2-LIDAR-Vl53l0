@@ -1,20 +1,20 @@
 /**
  * @file json_helper.c
  * @brief Implementation of JSON Helper Library for ESP32
- * 
- * This file contains the implementation of utility functions for creating, 
- * parsing, and printing JSON objects using the `cJSON` library. These functions 
+ *
+ * This file contains the implementation of utility functions for creating,
+ * parsing, and printing JSON objects using the `cJSON` library. These functions
  * simplify working with JSON in ESP32 applications.
- * 
+ *
  * @version 1.0
  * @date 2024-12-05
- * 
+ *
  * @note
  * - Dynamically allocated JSON strings must be freed by the caller.
  * - Ensure JSON strings are well-formed to avoid parsing errors.
- * 
+ *
  * @author Guerrico Leonel (lguerrico@outlook.com)
- * 
+ *
  */
 #include "json_helper.h"
 #include "esp_log.h"
@@ -29,16 +29,16 @@ static const char *TAG = "JSON_HELPER";
 
 /**
  * @brief Creates a JSON string from key-value pairs.
- * 
- * Generates a JSON string from an array of keys and values. The resulting string 
+ *
+ * Generates a JSON string from an array of keys and values. The resulting string
  * is dynamically allocated, and the caller is responsible for freeing it.
- * 
+ *
  * @param[out] msg Pointer to the dynamically allocated JSON string.
  * @param[in] keys Array of keys for the JSON object.
  * @param[in] values Array of values corresponding to the keys.
  * @param[in] length Number of key-value pairs.
- * 
- * @return 
+ *
+ * @return
  * - `ESP_OK`: If the JSON string was successfully created.
  * - `ESP_FAIL`: If there was an error creating the JSON object or adding key-value pairs.
  */
@@ -74,15 +74,15 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
 
 /**
  * @brief Deserializes a JSON string and extracts specific data.
- * 
- * Parses a JSON string, validates its structure, and extracts values for the keys 
+ *
+ * Parses a JSON string, validates its structure, and extracts values for the keys
  * "instruction" and "time". Logs extracted data and validates buffer size for safe copying.
- * 
+ *
  * @param[in] data The JSON string to parse.
  * @param[out] msg Buffer to store the extracted instruction.
  * @param[in] message_length Length of the output buffer.
- * 
- * @return 
+ *
+ * @return
  * - `ESP_OK`: If the data was successfully deserialized.
  * - `ESP_ERR_INVALID_ARG`: If expected keys are missing in the JSON string.
  * - `ESP_ERR_INVALID_SIZE`: If the extracted instruction exceeds the buffer size.
@@ -97,8 +97,8 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
         ESP_LOGE("JSON", "Error parsing JSON data");
         return ESP_FAIL;
     }
-
-    // Verificar que el JSON tiene las claves esperadas
+    // ESP_LOGW(TAG,"JSON: %s",cJSON_Print(json));
+    //  Verificar que el JSON tiene las claves esperadas
     cJSON *instruction_json = cJSON_GetObjectItem(json, "instruction");
     cJSON *time_json = cJSON_GetObjectItem(json, "time");
 
@@ -111,21 +111,27 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
 
     // Obtener los valores
     const char *instruction = cJSON_GetStringValue(instruction_json);
-    const char *time = cJSON_GetStringValue(time_json);
-
-    if (instruction == NULL || time == NULL)
+    if (instruction == NULL)
     {
-        ESP_LOGE("JSON", "Error getting values for 'instruction' or 'time'");
+        ESP_LOGE("JSON", "Error getting value for 'instruction'");
         cJSON_Delete(json); // Limpiar el objeto JSON
         return ESP_FAIL;
     }
 
+    // Obtener el valor de 'time' como número
+    long long time = cJSON_GetNumberValue(time_json);
+    if (time == 0 && cJSON_IsNumber(time_json) == 0) // Verificar si es número
+    {
+        ESP_LOGE("JSON", "Error getting value for 'time'");
+        cJSON_Delete(json); // Limpiar el objeto JSON
+        return ESP_FAIL;
+    }
     // Loggear las claves y valores para debug
     ESP_LOGW(TAG, "Key: instruction -> value: %s", instruction);
-    ESP_LOGW(TAG, "Key: time -> value: %s", time);
+    ESP_LOGW(TAG, "Key: time -> value: %lld", time);
 
     // Validar el tamaño del mensaje
-    if (strlen(instruction) > message_length)
+    if (strlen(instruction) >= message_length)
     {
         ESP_LOGE("JSON", "Message length exceeds buffer size");
         cJSON_Delete(json);
@@ -134,19 +140,20 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
 
     // Copiar el valor de la instrucción al buffer
     strncpy(msg, instruction, message_length);
+    
     // Limpiar el objeto JSON
     cJSON_Delete(json);
-
+    ESP_LOGW(TAG,"Deserialization Done");
     return ESP_OK;
 }
 
 /**
  * @brief Prints a JSON string to the log.
- * 
+ *
  * Logs the given JSON string. If the string is null, logs an error message.
- * 
+ *
  * @param[in] json_str The JSON string to print.
- * 
+ *
  * @note This function is mainly use for debug
  */
 void print_json_data(const char *json_str)

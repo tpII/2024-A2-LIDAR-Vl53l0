@@ -1,5 +1,4 @@
 #include "ap_server.h"
-#include <lwip/inet.h>
 
 static const char *TAG = "wifi softAP";
 static SemaphoreHandle_t client_connected_semaphore;
@@ -7,8 +6,19 @@ static SemaphoreHandle_t client_connected_semaphore;
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
 static void tcp_server(void *pvParameters);
 
-
-// no es necesario por el momento
+/**
+ * @brief WiFi Event Handler for managing station connections and IP assignment.
+ * 
+ * This function handles various WiFi events such as station connecting and disconnecting,
+ * as well as IP assignment for connected clients. It logs the MAC address and AID of 
+ * the connected or disconnected stations and signals when an IP is assigned to a client.
+ * 
+ * @param[in] arg Pointer to the argument passed to the event handler (usually NULL).
+ * @param[in] event_base Event base identifier.
+ * @param[in] event_id Specific event ID to handle.
+ * @param[in] event_data Data associated with the event, such as MAC address and AID.
+ * 
+ */
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
@@ -99,6 +109,8 @@ esp_err_t wifi_init_softap(void){
     return ESP_OK;
 }
 
+
+/*
 static void tcp_server(void *pvParameters)
 {
     char addr_str[128];
@@ -170,6 +182,7 @@ static void tcp_server(void *pvParameters)
         vTaskDelete(NULL);
     
 }
+*/
 
 esp_err_t initialize_server(void)
 {
@@ -184,6 +197,7 @@ esp_err_t initialize_server(void)
     esp_err_t err2 = wifi_init_softap();
     if(err2 != ESP_OK){
         ESP_LOGE(TAG, "Error initializing WiFi Soft AP: %s", esp_err_to_name(err2));
+        return err2;
     }
     return ESP_OK;
 }
