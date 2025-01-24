@@ -81,7 +81,7 @@ public class InstructionService {
 
     public Optional<Instruction> getLastInstruction() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("read").is(false).and("date").gte(systemStartTime));
+        query.addCriteria(Criteria.where("read").is(false));
         query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
 
