@@ -75,6 +75,8 @@ esp_err_t i2c_init()
         return ESP_OK;
     }
 
+    bus_semaphore = xSemaphoreCreateBinary();
+
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
         .sda_io_num = I2C_MASTER_SDA_IO,

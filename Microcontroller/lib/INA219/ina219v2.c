@@ -31,11 +31,15 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ESP_LOGI(TAG, "Enviando a dirección: 0x%02X, Registro: 0x%02X, MSB: 0x%02X, LSB: 0x%02X",
              dev->i2c_addr, reg, (value >> 8) & 0xFF, value & 0xFF);
 
+    ESP_LOGI(TAG, "Obteniendo bus");
+
     if (!i2c_get_bus())
     {
         ESP_LOGE(TAG, "BUS BUSY");
         return ESP_FAIL; // No se pudo obtener el bus
     }
+
+    ESP_LOGI(TAG, "Bus obtenido");
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (!cmd)
@@ -44,6 +48,8 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
         i2c_give_bus();
         return ESP_ERR_NO_MEM;
     }
+
+    ESP_LOGI(TAG, "CMD CREADO");
 
     esp_err_t ret = ESP_OK;
     uint8_t data[] = {reg, (value >> 8) & 0xFF, value & 0xFF};
