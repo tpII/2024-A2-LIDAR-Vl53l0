@@ -14,7 +14,6 @@ static float bus_voltage;
 static float shunt_voltage;
 static float current;
 static float power;
-static uint8_t success = 1;
 
 esp_err_t battery_sensor_init()
 {
@@ -43,29 +42,18 @@ esp_err_t battery_sensor_init()
 
     ESP_LOGI(TAG, "Calibrating INA219");
 
-    // Calibra el INA219 y maneja el error si ocurre
-    ret = ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "INA219 calibration failed with error %s", esp_err_to_name(ret));
-        return ret;
-    }
+    ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));
 
     bus_voltage = 0.0f;
     shunt_voltage = 0.0f;
     current = 0.0f;
     power = 0.0f;
 
-    success = 0;
     return ESP_OK;
 }
 
 esp_err_t battery_sensor_read(uint8_t *battery_level)
 {
-    if (!success)
-    {
-        return ESP_ERR_NOT_ALLOWED;
-    }
     if (battery_level == NULL)
     {
         ESP_LOGE(TAG, "Battery level pointer is NULL");

@@ -1,15 +1,14 @@
 #include "esp_log.h"
-#include "cyclops_core.h"
+#include "freeRtosTasks.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "mapping.h"
 #include "battery.h"
-#include "freeRtosTasks.h"
 #include "motors.h"
 
 static const char *TAG = "MAIN";
 
-void app_main(void)
+int app_main(void)
 {
         esp_err_t err;
 

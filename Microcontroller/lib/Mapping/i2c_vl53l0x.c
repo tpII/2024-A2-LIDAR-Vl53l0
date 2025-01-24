@@ -109,7 +109,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     } else {
         ESP_LOGE(TAG, "Error en la transferencia I2C en read_reg: %s", esp_err_to_name(ret));
         success = false;
-    } 
+    }
 
     //ESP_LOGI(TAG, "Liberar el comando I2C");
     i2c_cmd_link_delete(cmd);

@@ -1,6 +1,6 @@
 #include "gpio.h"
 
-#define GPIO_XSHUT_FIRST GPIO_NUM_14 // Cambia esto al número de pin que desees
+#define GPIO_XSHUT_FIRST GPIO_NUM_23 // Cambia esto al número de pin que desees
 // #define GPIO_XSHUT_SECOND GPIO_NUM_NC // Cambia esto al número de pin que desees
 // #define GPIO_XSHUT_THIRD GPIO_NUM_NC // Cambia esto al número de pin que desees
 

@@ -62,14 +62,6 @@ esp_err_t i2c_init()
 
     static bool is_initialized = false; // Estado de inicialización
 
-    bus_semaphore = xSemaphoreCreateBinary();
-    xSemaphoreGive(bus_semaphore);
-    if(bus_semaphore == NULL)
-    {
-        ESP_LOGE(TAG,"ERROR: bus_semaphore is NULL");
-        return ESP_FAIL;
-    }
-
     if(is_initialized){
         ESP_LOGI(TAG, "I2C already initialized, skipping initialization.");
         return ESP_OK;
@@ -106,6 +98,12 @@ esp_err_t i2c_init()
         ESP_LOGE(TAG, "Error in i2c_driver_install: %s", esp_err_to_name(err));
         // Seng Msg to User and Turn ON error led
         return err;
+    }
+
+    if (xSemaphoreGive(bus_semaphore) != pdTRUE)
+    {
+        ESP_LOGE(TAG, "Error Initializing I2C Bus Semaphore");
+        return ESP_FAIL;
     }
     
     is_initialized = true;

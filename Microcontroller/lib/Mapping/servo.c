@@ -7,14 +7,13 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include <string.h>
-#include <driver/gpio.h>
 
 // Parámetros específicos para el servomotor de giro continuo
 #define SERVO_MIN_PULSEWIDTH_US 900   // Ancho de pulso mínimo (giro rápido en un sentido)
 #define SERVO_MAX_PULSEWIDTH_US 2100  // Ancho de pulso máximo (giro rápido en el sentido opuesto)
 #define SERVO_STOP_PULSEWIDTH_US 1500 // Ancho de pulso para detener el servo
 
-#define SERVO_PULSE_GPIO GPIO_NUM_14         // GPIO connects to the PWM signal line
+#define SERVO_PULSE_GPIO 4                   // GPIO connects to the PWM signal line
 #define SERVO_TIMEBASE_RESOLUTION_HZ 1000000 // 1MHz, 1us per tick
 #define SERVO_TIMEBASE_PERIOD 20000          // 20000 ticks, 20ms
 
@@ -36,8 +35,7 @@ static volatile uint16_t last_angle_offset = 0;
 static volatile uint16_t angle = 0;
 static volatile uint32_t next_speed = 0;
 static volatile bool change_speed_flag = false;
-static volatile uint64_t partialTimeBase = 0;
-static volatile uint64_t pauseTimeBase = 0;
+
 // static portMUX_TYPE limit_mux = portMUX_INITIALIZER_UNLOCKED;
 static SemaphoreHandle_t limit_semaphore;
 
@@ -53,28 +51,12 @@ esp_err_t servo_initialize(void)
 {
 
     limit_semaphore = xSemaphoreCreateBinary();
-    xSemaphoreGive(limit_semaphore);
-    if(limit_semaphore == NULL)
-    {
-        ESP_LOGE(TAG,"ERROR: limit_semaphore is NULL");
-        return ESP_FAIL;
-    }
     current_duty_semaphore = xSemaphoreCreateBinary();
-    xSemaphoreGive(current_duty_semaphore);
-    if(current_duty_semaphore == NULL)
-    {
-        ESP_LOGE(TAG,"ERROR: current_duty_semaphore is NULL");
-        return ESP_FAIL;
-    }
     speed_change_semaphore = xSemaphoreCreateBinary();
+    // Inicialización del semáforo en estado libre
+    xSemaphoreGive(limit_semaphore);
+    xSemaphoreGive(current_duty_semaphore);
     xSemaphoreGive(speed_change_semaphore);
-    if(speed_change_semaphore == NULL)
-    {
-        ESP_LOGE(TAG,"ERROR: speed_change_semaphore is NULL");
-        return ESP_FAIL;
-    }
-    
-    
 
     ESP_LOGI(TAG, "Creating timer and operator...");
     mcpwm_timer_config_t timer_config = {
@@ -171,7 +153,7 @@ esp_err_t servo_initialize(void)
 esp_err_t servo_start(void)
 {
 
-    return servo_set_speed_ISR(SERVO_MEDIUM_SPEED_CCW); // Inicia con el duty en 900us
+    return servo_set_speed_ISR(SERVO_LOW_SPEED_CCW); // Inicia con el duty en 900us
 }
 
 esp_err_t servo_stop(void)
@@ -284,12 +266,53 @@ void servo_invert()
     ESP_LOGW(TAG, "INVERT END");
 }
 
+/*int16_t readAngle()
+{
+    static uint16_t duty = 0;
+    static uint64_t time_now = 0;
+    static uint64_t time_reference = 0;
+    static int16_t angle_offset = 0;
+    static int64_t scaled_speed = 0;
+    static int64_t first_term = 0;
+    static int64_t second_term = 0;
+
+    // Obtener variables necesarias con semáforo
+    if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
+    {
+        angle_offset = last_angle_offset;
+        time_reference = time_base;
+        xSemaphoreGive(limit_semaphore);
+    }
+    ESP_LOGW(TAG, "Angle offset: %d - Time reference: %" PRIu64, angle_offset, time_reference);
+
+    if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
+    {
+        duty = current_duty;
+        xSemaphoreGive(current_duty_semaphore);
+    }
+
+    time_now = esp_timer_get_time();
+    ESP_LOGW(TAG, "Time now: %" PRIu64, time_now);
+    // Calcular velocidad escalada en grados/segundo, en enteros para evitar uso de punto flotante
+    scaled_speed = (int64_t)BASE_SPEED * (duty - SERVO_STOP) / DIFFERENTIAL;
+    if (scaled_speed < 0)
+    {
+        scaled_speed = -scaled_speed;
+    }
+    ESP_LOGW(TAG, "Scalated Speed: %" PRId64, scaled_speed);
+    first_term = scaled_speed * ((int64_t)(time_now - time_reference));
+    ESP_LOGW(TAG, "First Term: %" PRIu64, first_term);
+    ESP_LOGW(TAG, "Full: %" PRId64, ((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
+
+    // Calcular y devolver el ángulo en grados
+    return (int16_t)(((first_term / CONVERSION_FACTOR) + angle_offset) % 360);
+}*/
 int16_t readAngle()
 {
-    uint16_t duty = 0;
+    uint16_t duty=0;
     uint64_t time_now = esp_timer_get_time();
-    int16_t angle_offset = 0;
-    uint64_t time_reference = 0;
+    int16_t angle_offset=0 ;
+    uint64_t time_reference=0;
 
     // Obtener variables necesarias con semáforo
     if (xSemaphoreTake(limit_semaphore, portMAX_DELAY) == pdTRUE)
@@ -308,81 +331,48 @@ int16_t readAngle()
     // Calcular velocidad escalada y ángulo
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
-    ESP_LOGW(TAG, "Angle = %" PRIi16, angle);
+    ESP_LOGW(TAG,"Angle = %"PRIi16,angle);
     return (angle + 360) % 360; // Garantiza valores positivos
 }
 
-void servo_set_speed(SERVO_DIRECTION dir)
+void servo_set_speed(char *inst)
 {
     static volatile uint32_t duty = 0;
     if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        if (current_duty != SERVO_STOP)
+        if (strcmp(inst, "SLOW") == 0)
         {
-            switch (dir)
+            if (current_duty > SERVO_STOP)
             {
-
-            case UP:
-                if (current_duty == SERVO_LOW_SPEED_CCW || current_duty == SERVO_LOW_SPEED_CW)
-                {
-                    if (current_duty == SERVO_LOW_SPEED_CCW)
-                    {
-                        duty = SERVO_MEDIUM_SPEED_CCW;
-                    }
-                    else
-                    {
-                        duty = SERVO_MEDIUM_SPEED_CW;
-                    }
-                }
-                else
-                {
-                    if (current_duty == SERVO_MEDIUM_SPEED_CCW || current_duty == SERVO_MEDIUM_SPEED_CW)
-                    {
-                        if (current_duty == SERVO_MEDIUM_SPEED_CCW)
-                        {
-                            duty = SERVO_MAX_SPEED_CCW;
-                        }
-                        else
-                        {
-                            duty = SERVO_MAX_SPEED_CW;
-                        }
-                    }
-                }
-                break;
-            case DOWN:
-                if (current_duty == SERVO_MAX_SPEED_CCW || current_duty == SERVO_MAX_SPEED_CW)
-                {
-                    if (current_duty == SERVO_MAX_SPEED_CCW)
-                    {
-                        duty = SERVO_MEDIUM_SPEED_CCW;
-                    }
-                    else
-                    {
-                        duty = SERVO_MEDIUM_SPEED_CW;
-                    }
-                }
-                else
-                {
-                    if (current_duty == SERVO_MEDIUM_SPEED_CCW || current_duty == SERVO_MEDIUM_SPEED_CW)
-                    {
-                        if (current_duty == SERVO_MEDIUM_SPEED_CCW)
-                        {
-                            duty = SERVO_LOW_SPEED_CCW;
-                        }
-                        else
-                        {
-                            duty = SERVO_LOW_SPEED_CW;
-                        }
-                    }
-                }
-
-                break;
-            default:
-                current_duty = SERVO_STOP;
-                break;
+                duty = SERVO_LOW_SPEED_CCW;
+            }
+            else
+            {
+                duty = SERVO_LOW_SPEED_CW;
             }
         }
-
+        else if (strcmp(inst, "MEDIUM") == 0)
+        {
+            if (current_duty > SERVO_STOP)
+            {
+                duty = SERVO_MEDIUM_SPEED_CCW;
+            }
+            else
+            {
+                duty = SERVO_MEDIUM_SPEED_CW;
+            }
+        }
+        else
+        {
+            if (current_duty > SERVO_STOP)
+            {
+                duty = SERVO_MAX_SPEED_CCW;
+            }
+            else
+            {
+                duty = SERVO_MAX_SPEED_CW;
+            }
+        }
         xSemaphoreGive(current_duty_semaphore);
     }
     if (xSemaphoreTake(speed_change_semaphore, portMAX_DELAY) == pdTRUE)
@@ -391,35 +381,4 @@ void servo_set_speed(SERVO_DIRECTION dir)
         change_speed_flag = 1;
         xSemaphoreGive(speed_change_semaphore);
     }
-}
-
-esp_err_t servo_pause(){
-
-    if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
-        if(servo_stop() != ESP_OK){
-            ESP_LOGE(TAG,"FAIL TO PAUSE SERVO");
-            xSemaphoreGive(limit_semaphore);
-            return ESP_FAIL;
-        }
-        partialTimeBase = time_base;
-        pauseTimeBase = esp_timer_get_time();
-        xSemaphoreGive(limit_semaphore);
-        return ESP_OK;
-    }
-    return ESP_ERR_TIMEOUT;
-}
-
-esp_err_t servo_restart(){
-    uint64_t auxTime=0;
-    if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
-        auxTime = esp_timer_get_time() - pauseTimeBase;
-        if(servo_start() != ESP_OK){
-            ESP_LOGE(TAG,"FAIL TO RESTART SERVO");
-            xSemaphoreGive(limit_semaphore);
-            return ESP_FAIL;
-        }
-        partialTimeBase -= auxTime;
-        xSemaphoreGive(limit_semaphore);
-    }
-    return ESP_ERR_TIMEOUT;
 }
