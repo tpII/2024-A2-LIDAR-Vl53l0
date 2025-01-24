@@ -14,13 +14,13 @@ static float bus_voltage;
 static float shunt_voltage;
 static float current;
 static float power;
-static uint8_t success = 1;
 
 esp_err_t battery_sensor_init()
 {
+    ESP_LOGI(TAG, "Setting memory to 0");
 
     memset(&dev, 0, sizeof(ina219_t));
-
+    
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {
         ESP_LOGE(TAG, "Invalid shunt resistor value: %d mOhm", CONFIG_SHUNT_RESISTOR_MILLI_OHM);
@@ -29,38 +29,31 @@ esp_err_t battery_sensor_init()
 
     ESP_LOGI(TAG, "Initalizing INA219");
     dev.i2c_addr = INA219_ADDRESS;
-    esp_err_t ret = ina219_init(&dev);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "INA219 initialization failed with error %s", esp_err_to_name(ret));
-        return ret;
+    esp_err_t err = ina219_init(&dev);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "INA219 initialization failed: %s", esp_err_to_name(err));
+        return err;
     }
+
+    // ESP_LOGI(TAG, "Configuring INA219");
+    // ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
+    //                                  INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
+    //                                  INA219_MODE_CONT_SHUNT_BUS));
 
     ESP_LOGI(TAG, "Calibrating INA219");
 
-    // Calibra el INA219 y maneja el error si ocurre
-    ret = ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "INA219 calibration failed with error %s", esp_err_to_name(ret));
-        return ret;
-    }
+    ESP_ERROR_CHECK(ina219_calibrate(&dev, (float)CONFIG_SHUNT_RESISTOR_MILLI_OHM / 1000.0f));
 
     bus_voltage = 0.0f;
     shunt_voltage = 0.0f;
     current = 0.0f;
     power = 0.0f;
 
-    success = 0;
     return ESP_OK;
 }
 
 esp_err_t battery_sensor_read(uint8_t *battery_level)
 {
-    if (!success)
-    {
-        return ESP_ERR_NOT_ALLOWED;
-    }
     if (battery_level == NULL)
     {
         ESP_LOGE(TAG, "Battery level pointer is NULL");
