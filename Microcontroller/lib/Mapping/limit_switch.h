@@ -4,7 +4,7 @@
 #include <driver/gpio.h>
 #include "servo.h"
 
-#define LIMIT_SWITCH_PIN GPIO_NUM_4 // Revisar GPIO
+#define LIMIT_SWITCH_PIN GPIO_NUM_25 // Revisar GPIO
 
 esp_err_t interrupt_init(void);
 
