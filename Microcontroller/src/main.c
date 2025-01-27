@@ -84,8 +84,8 @@ int app_main(void)
                 return 1;
         }
         ESP_LOGI(TAG, "Sistemas Iniciado!");
-
-
+        //GENERO PUNTO DE RETORNO
+        //ENVIO BIENVENIDA
         ESP_LOGI(TAG, "Iniciando Tareas...");
         err = createTasks();
         if (err != ESP_OK)
@@ -94,7 +94,7 @@ int app_main(void)
                 return 1;
         }
         ESP_LOGI(TAG, "Tareas Iniciadas!");
-
+        /*
         ESP_LOGI(TAG, "Iniciando Motores Service...");
         motors_setup();
         ESP_LOGI(TAG, "Motores Service Iniciado!");
@@ -103,7 +103,7 @@ int app_main(void)
         // uint16_t distance = 0;
         // uint8_t battery_level = 0;
         while (1)
-        {       
+        {
                 ESP_LOGW(TAG, "Going FORWARD");
                 motors_command(FORWARD);
                 vTaskDelay(200);
@@ -126,6 +126,6 @@ int app_main(void)
                 vTaskDelay(200);
         }
 
-        ESP_LOGE(TAG, "END OF MAIN...");
+        ESP_LOGE(TAG, "END OF MAIN...");*/
         return 0;
 }

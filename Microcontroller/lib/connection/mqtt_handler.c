@@ -1,18 +1,18 @@
 /**
  * @file mqtt_handler.c
- * @author 
+ * @author
  *      Guerrico Leonel (lguerrico@outlook.com)
  * @brief Implementation of MQTT message handling for the system
- * 
- * This file provides the core functionality for interacting with an MQTT broker. 
+ *
+ * This file provides the core functionality for interacting with an MQTT broker.
  * It includes functions to send control messages (informational, warning, and error),
  * mapping data (distance and angle), and any other MQTT-related operations.
- * 
+ *
  * The functions implemented here are designed for:
  * - Sending JSON-encoded messages via MQTT.
  * - Handling control messages and mapping data.
  * - Interfacing with other modules through structured JSON payloads.
- * 
+ *
  * @version 1.0
  * @date 2024-12-04
  *
@@ -79,7 +79,7 @@ esp_err_t getInstruccionMessage(char *msg)
  * @return
  *      - ESP_OK: If the message was successfully created and sent.
  *      - ESP_FAIL: If there was an error creating the JSON or sending the message.
- * 
+ *
  * @note This function relies on the following functions:
  *      - `create_json_data`: Creates the JSON structure.
  *      - `print_json_data`: Logs the JSON for debugging.
@@ -114,21 +114,20 @@ static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, c
     return ESP_OK;
 }
 
-
 /**
  * @brief Sends an informational control message.
- * 
- * This function sends a control message with the severity level set to "INFO". 
+ *
+ * This function sends a control message with the severity level set to "INFO".
  * It wraps the `sendControlMessage` function for convenience.
- * 
- * @param[in] TAG A label identifying the source library or component generating 
+ *
+ * @param[in] TAG A label identifying the source library or component generating
  *            the message (e.g., "MQTT_HANDLER").
  * @param[in] msg The informational message content to send.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the message was successfully sent.
  *      - ESP_FAIL: If there was an error sending the message.
- * 
+ *
  * @see sendControlMessage
  */
 esp_err_t sendInfoMesage(const char *TAG, const char *msg)
@@ -138,18 +137,18 @@ esp_err_t sendInfoMesage(const char *TAG, const char *msg)
 
 /**
  * @brief Sends a warning control message.
- * 
- * This function sends a control message with the severity level set to "WARNING". 
+ *
+ * This function sends a control message with the severity level set to "WARNING".
  * It wraps the `sendControlMessage` function for convenience.
- * 
- * @param[in] TAG A label identifying the source library or component generating 
+ *
+ * @param[in] TAG A label identifying the source library or component generating
  *            the message (e.g., "MQTT_HANDLER").
  * @param[in] msg The warning message content to send.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the message was successfully sent.
  *      - ESP_FAIL: If there was an error sending the message.
- * 
+ *
  * @see sendControlMessage
  */
 
@@ -160,18 +159,18 @@ esp_err_t sendWarningMesage(const char *TAG, const char *msg)
 
 /**
  * @brief Sends an error control message.
- * 
- * This function sends a control message with the severity level set to "ERROR". 
+ *
+ * This function sends a control message with the severity level set to "ERROR".
  * It wraps the `sendControlMessage` function for convenience.
- * 
- * @param[in] TAG A label identifying the source library or component generating 
+ *
+ * @param[in] TAG A label identifying the source library or component generating
  *            the message (e.g., "MQTT_HANDLER").
  * @param[in] msg The error message content to send.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the message was successfully sent.
  *      - ESP_FAIL: If there was an error sending the message.
- * 
+ *
  * @see sendControlMessage
  */
 
@@ -180,33 +179,32 @@ esp_err_t sendErrorMesage(const char *TAG, const char *msg)
     return sendControlMessage(TAG, "ERROR", msg);
 }
 
-
 /**
  * @brief Sends mapping data as a JSON payload.
- * 
- * This function generates a JSON object containing the mapping data, specifically 
+ *
+ * This function generates a JSON object containing the mapping data, specifically
  * the distance and angle, and sends it using the MQTT protocol.
- * 
+ *
  * The JSON structure is as follows:
  * {
  *   "distance": "<distance>",
  *   "angle": "<angle>"
  * }
- * 
+ *
  * @param[in] distance The distance value to include in the mapping data.
  * @param[in] angle The angle value to include in the mapping data.
- * 
- * @return 
+ *
+ * @return
  *      - ESP_OK: If the mapping data was successfully sent.
  *      - ESP_FAIL: If there was an error creating or sending the JSON payload.
- * 
+ *
  * @note This function relies on the following:
  *      - `create_json_data`: Creates the JSON structure.
  *      - `print_json_data`: Logs the JSON for debugging.
  *      - `mqtt_publish`: Publishes the JSON payload via MQTT.
- * 
- * @warning Ensure the `distance` and `angle` parameters are valid values. 
- *          The function converts them to strings with a maximum buffer size 
+ *
+ * @warning Ensure the `distance` and `angle` parameters are valid values.
+ *          The function converts them to strings with a maximum buffer size
  *          of 6 characters.
  */
 
@@ -237,5 +235,15 @@ esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
         return err;
     }
 
+    return ESP_OK;
+}
+
+esp_err_t sendBatteryLevel(uint8_t batteryLevel)
+{
+    const char*values[1];
+    char buffer[6];
+    sprintf(buffer,sizeof(buffer),"%d",batteryLevel);
+    values[1]=buffer;
+    const char *keys[1]={""};
     return ESP_OK;
 }

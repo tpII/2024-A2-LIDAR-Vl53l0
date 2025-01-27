@@ -67,6 +67,18 @@ static void decodeInstruction(int length, char *str)
     else
     {
         ESP_LOGW(TAG, "INST: %s", msg);
-        saveInstruction(msg);
+        if (strncmp(msg, "REBOOT", strlen("REBOOT")) == 0)
+        {
+            ESP_LOGW(TAG, "Reiniciando el MCU...");
+            esp_restart(); // Llamada para reiniciar el MCU
+        }
+        else if (strncmp(msg, "ABORT", strlen("ABORT")) == 0)
+        {
+            ESP_LOGW(TAG, "Abortando...");
+        }
+        else
+        {
+            saveInstruction(msg);
+        }
     }
 }

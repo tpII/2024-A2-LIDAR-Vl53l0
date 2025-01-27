@@ -17,8 +17,14 @@ esp_err_t setCheckpoint()
     return ESP_OK;
 }
 
+//ANALIZAR EL SERVO
 void activeCheckpoint()
 {
     ESP_LOGI(TAG, "Activating checkpoint...");
+    //PREPARANDO EL ABORTAR
+    //ABORTANDO TAREAS
+    //LIMPIANDO MEMORIA (dinamica y buffer)
+    //REINICIANDO SEMAFOROS
+    //ABORTANDO
     longjmp(checkpoint, 1);
 }
