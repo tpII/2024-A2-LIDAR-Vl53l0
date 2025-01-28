@@ -10,4 +10,6 @@ esp_err_t interrupt_init(void);
 
 void check_limit_switch(void);
 
+esp_err_t delete_flag_semaphore(void);
+
 #endif 

@@ -69,4 +69,6 @@ bool i2c_get_bus();
  */
 bool i2c_give_bus();
 
+esp_err_t i2c_delete_bus();
+
 #endif

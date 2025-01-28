@@ -86,3 +86,14 @@ void check_limit_switch()
         xSemaphoreGive(flag_semaphore);
     }
 }
+
+esp_err_t delete_flag_semaphore()
+{
+    if (flag_semaphore != NULL) {
+        vSemaphoreDelete(flag_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+    return ESP_OK;
+}

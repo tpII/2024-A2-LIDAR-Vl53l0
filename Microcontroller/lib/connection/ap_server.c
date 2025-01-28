@@ -209,3 +209,14 @@ esp_err_t wait_for_client_connection() {
     ESP_LOGI(TAG, "¡Dispositivo conectado!");
     return ESP_OK;
 }
+
+esp_err_t delete_client_semaphore()
+{
+    if (client_connected_semaphore != NULL) {
+        vSemaphoreDelete(client_connected_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+    return ESP_OK;
+}

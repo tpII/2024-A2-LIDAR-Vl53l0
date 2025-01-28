@@ -30,7 +30,7 @@ esp_err_t servo_restart(void);
 int16_t readAngle(void);
 void servo_set_speed(SERVO_DIRECTION);
 void servo_invert(void);
-
+esp_err_t delete_servo_semaphores(void);
 
 
 #endif

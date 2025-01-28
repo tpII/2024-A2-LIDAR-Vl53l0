@@ -67,4 +67,6 @@ esp_err_t getInstruction(char *);
  */
 esp_err_t saveInstruction(char *);
 
+esp_err_t delete_buffer_semaphore();
+
 #endif
