@@ -51,6 +51,7 @@
 #include "mapping.h"
 #include "battery.h"
 #include "motors.h"
+#include "mqtt_handler.h"
 
 static const char *TAG = "MAIN";
 
@@ -84,8 +85,14 @@ int app_main(void)
                 return 1;
         }
         ESP_LOGI(TAG, "Sistemas Iniciado!");
-        //GENERO PUNTO DE RETORNO
-        //ENVIO BIENVENIDA
+        // GENERO PUNTO DE RETORNO
+        // ENVIO BIENVENIDA
+        err = sendBarrier();
+        if (err != ESP_OK)
+        {
+                ESP_LOGE(TAG, "Error al enviar barrera");
+                return 1;
+        }
         ESP_LOGI(TAG, "Iniciando Tareas...");
         err = createTasks();
         if (err != ESP_OK)
