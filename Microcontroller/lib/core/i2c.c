@@ -141,3 +141,14 @@ bool i2c_get_bus(){
 bool i2c_give_bus(){
     return xSemaphoreGive(bus_semaphore);
 }
+
+esp_err_t i2c_delete_bus()
+{
+    if (bus_semaphore != NULL) {
+        vSemaphoreDelete(bus_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+    return ESP_OK;
+}

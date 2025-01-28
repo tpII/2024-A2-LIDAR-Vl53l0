@@ -423,3 +423,29 @@ esp_err_t servo_restart(){
     }
     return ESP_ERR_TIMEOUT;
 }
+
+esp_err_t delete_servo_semaphores()
+{
+    if (limit_semaphore != NULL) {
+        vSemaphoreDelete(limit_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+
+    if (current_duty_semaphore != NULL) {
+        vSemaphoreDelete(current_duty_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+
+    if (speed_change_semaphore != NULL) {
+        vSemaphoreDelete(speed_change_semaphore);
+    }
+    else {
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}

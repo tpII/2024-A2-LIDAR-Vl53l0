@@ -137,3 +137,14 @@ esp_err_t saveInstruction(char *inst)
 
     return ESP_FAIL;
 }
+
+esp_err_t delete_buffer_semaphore()
+{
+    if (buffer_access != NULL) {
+        vSemaphoreDelete(buffer_access);
+    }
+    else {
+        return ESP_FAIL;
+    }
+    return ESP_OK;
+}

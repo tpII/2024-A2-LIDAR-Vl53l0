@@ -3,6 +3,7 @@
 
 #include "esp_err.h"
 #include "esp_log.h"
+#include "cyclops_core.h"
 
 esp_err_t setCheckpoint(void);
 
