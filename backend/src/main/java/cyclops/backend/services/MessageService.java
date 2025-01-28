@@ -1,8 +1,6 @@
 package cyclops.backend.services;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
@@ -42,10 +40,9 @@ public class MessageService {
     }
 
     public Optional<Message> getLastMesage() {
-        LocalDateTime rp = referencePointService.getReferencePoint()
-                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
+        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
         Query query = new Query();
-        if (rp == null) {
+        if (rp.isEmpty()) {
             query.addCriteria(Criteria.where("read").is(false));
         } else {
             query.addCriteria(Criteria.where("read").is(false).and("date")

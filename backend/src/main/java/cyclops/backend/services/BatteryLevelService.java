@@ -9,8 +9,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import cyclops.backend.models.BatteryLevel;
+
 import cyclops.backend.interfacesDAO.BatteryLevelDAO;
+import cyclops.backend.models.BatteryLevel;
 
 @Service
 public class BatteryLevelService {
@@ -39,10 +40,10 @@ public class BatteryLevelService {
     }
 
     public Optional<BatteryLevel> getLastBatteryLevel() {
-        LocalDateTime rp = referencePointService.getReferencePoint()
-                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
+        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
+
         Query query = new Query();
-        if (rp == null) {
+        if (rp.isEmpty()) {
             query.addCriteria(Criteria.where("read").is(false));
         } else {
             query.addCriteria(Criteria.where("read").is(false).and("date")

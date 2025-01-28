@@ -86,13 +86,7 @@ int app_main(void)
         }
         ESP_LOGI(TAG, "Sistemas Iniciado!");
         // GENERO PUNTO DE RETORNO
-        // ENVIO BIENVENIDA
-        err = sendBarrier();
-        if (err != ESP_OK)
-        {
-                ESP_LOGE(TAG, "Error al enviar barrera");
-                return 1;
-        }
+        
         ESP_LOGI(TAG, "Iniciando Tareas...");
         err = createTasks();
         if (err != ESP_OK)

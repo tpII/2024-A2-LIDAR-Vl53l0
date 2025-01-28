@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.stereotype.Service;
-import cyclops.backend.interfacesDAO.MappingValueDAO;
-import cyclops.backend.models.MappingValue;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import cyclops.backend.interfacesDAO.MappingValueDAO;
+import cyclops.backend.models.MappingValue;
 
 @Service
 public class MappingValueService {
@@ -40,10 +41,9 @@ public class MappingValueService {
     }
 
     public List<MappingValue> getUnreadMappingValues() {
-        LocalDateTime rp = referencePointService.getReferencePoint()
-                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
+        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
         Query query = new Query();
-        if (rp == null) {
+        if (rp.isEmpty()) {
             query.addCriteria(Criteria.where("read").is(false));
         } else {
             query.addCriteria(Criteria.where("read").is(false).and("date")

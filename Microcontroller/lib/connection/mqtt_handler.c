@@ -238,18 +238,19 @@ esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
 
     return ESP_OK;
 }
-
 esp_err_t sendBatteryLevel(uint8_t batteryLevel)
 {
-    const char *values[1];
-    char buffer[6];
-    sprintf(buffer, sizeof(buffer), "%d", batteryLevel);
-    values[1] = buffer;
+    const char *values[1];                                // Tamaño correcto para un solo valor
+    char buffer[6];                                       // Espacio suficiente para representar valores de 0 a 255
+    snprintf(buffer, sizeof(buffer), "%d", batteryLevel); // Usar snprintf para evitar desbordamientos
+    values[0] = buffer;                                   // Asignar al índice válido (0)
+
     const char *keys[1] = {"level"};
     cJSON *json = NULL;
-    esp_err_t err = create_json_data(&json, keys, values, 1);
 
-    print_json_data(json);
+    // Crear el JSON
+    esp_err_t err = create_json_data(&json, keys, values, 1);
+    //print_json_data(json); // Revisar si esta función necesita liberación de memoria o copias seguras
 
     if (err != ESP_OK)
     {
@@ -257,12 +258,16 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
         return err;
     }
 
+    // Publicar el mensaje
     err = mqtt_publish(BATTERY_VALUE, json);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err));
+        cJSON_Delete(json); // Liberar memoria antes de salir
         return err;
     }
+
+    cJSON_Delete(json); // Liberar memoria al finalizar
 
     return ESP_OK;
 }

@@ -35,7 +35,7 @@ void activeCheckpoint()
     longjmp(checkpoint, 1);
 }
 
-esp_err_t restart_semaphores()
+/* esp_err_t restart_semaphores()
 {
     esp_err_t err;
     err = delete_client_semaphore(); // ap_server
@@ -74,3 +74,4 @@ esp_err_t restart_semaphores()
 
     return ESP_OK;
 }
+*/

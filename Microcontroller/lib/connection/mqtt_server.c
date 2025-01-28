@@ -25,12 +25,12 @@
 #include "esp_system.h"
 
 // Constants and Global Variables
-#define NUM_TOPICS 4 ///< Number of topics to subscribe to
+#define NUM_TOPICS 5 ///< Number of topics to subscribe to
 
 static const char *TAG = "MQTT_SERVER";                                          ///< Log tag for MQTT Server
 static const char *URL = "mqtt://192.168.4.2:1883";                              ///< MQTT broker URL
 static esp_mqtt_client_handle_t mqtt_client = NULL;                              ///< Handle for MQTT client
-static const char *TOPICS[] = {"Instruction", "Messages", "Mapping", "Battery"}; ///< Topics to subscribe to
+static const char *TOPICS[] = {"Instruction", "Messages", "Mapping", "Battery", "Barrier"}; ///< Topics to subscribe to
 static char inst[40] = {0};                                                      ///< Buffer for instructions
 static uint32_t MQTT_CONNEECTED = 0;                                             ///< MQTT connection status
 

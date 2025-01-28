@@ -81,10 +81,9 @@ public class InstructionService {
     }
 
     public Optional<Instruction> getLastInstruction() {
-        LocalDateTime rp = referencePointService.getReferencePoint()
-                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
+        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
         Query query = new Query();
-        if (rp == null) {
+        if (rp.isEmpty()) {
             query.addCriteria(Criteria.where("read").is(false));
         } else {
             query.addCriteria(Criteria.where("read").is(false).and("date")

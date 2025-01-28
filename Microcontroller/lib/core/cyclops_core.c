@@ -56,6 +56,14 @@ esp_err_t system_init()
     }
     ESP_LOGI(TAG, "MQTT Service Iniciado!");
 
+    // ENVIO BIENVENIDA
+    //err = sendBarrier();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error al enviar barrera");
+        return 1;
+    }
+
     ESP_LOGI(TAG, "Iniciando Luces Service...");
     err = lights_init();
     if (err != ESP_OK)
@@ -111,7 +119,7 @@ esp_err_t createTasks()
     task_created = xTaskCreatePinnedToCore(
         instructionHandler,
         "InstructionsHadlerTask",
-        2048,
+        4096,
         NULL,
         2,
         &instructionHandlerTaskHandler,
@@ -141,7 +149,7 @@ esp_err_t createTasks()
     task_created = xTaskCreatePinnedToCore(
         mappingTask,
         "MappingTask",
-        2048,
+        4096,
         NULL,
         2,
         &mappingTaskHandler,
@@ -156,7 +164,7 @@ esp_err_t createTasks()
     task_created = xTaskCreatePinnedToCore(
         batteryTask,
         "BateryTask",
-        2048,
+        4096,
         NULL,
         2,
         &batteryTaskHandler,
@@ -348,6 +356,7 @@ static void mappingTask(void *parameter)
         }
         {
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
+            sendMappingValue(distance,angle);
         }
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }

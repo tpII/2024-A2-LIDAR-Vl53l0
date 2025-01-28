@@ -382,7 +382,7 @@ void servo_set_speed(SERVO_DIRECTION dir)
                 break;
             }
         }
-
+        ESP_LOGE(TAG,"VELOCIDAD ACTUAL: %lu",current_duty);
         xSemaphoreGive(current_duty_semaphore);
     }
     if (xSemaphoreTake(speed_change_semaphore, portMAX_DELAY) == pdTRUE)
