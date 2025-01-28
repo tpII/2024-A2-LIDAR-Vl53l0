@@ -102,4 +102,7 @@ esp_err_t sendInfoMesage(const char *TAG, const char *msg);
  */
 esp_err_t sendWarningMesage(const char *TAG, const char *msg);
 
+
+esp_err_t sendBarrier(void);
+
 #endif // _MQTT_HANDLER_H_

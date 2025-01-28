@@ -17,11 +17,13 @@ public class MappingValueService {
 
     private final MappingValueDAO sensorValueDAO;
     private final MongoTemplate mongoTemplate;
-    private static final LocalDateTime systemStartTime = LocalDateTime.now();
+    private final ReferencePointService referencePointService;
 
-    public MappingValueService(MappingValueDAO sensorValueDAO, MongoTemplate mongoTemplate) {
+    public MappingValueService(MappingValueDAO sensorValueDAO, MongoTemplate mongoTemplate,
+            ReferencePointService referencePointService) {
         this.sensorValueDAO = sensorValueDAO;
         this.mongoTemplate = mongoTemplate;
+        this.referencePointService = referencePointService;
 
     }
 
@@ -38,14 +40,26 @@ public class MappingValueService {
     }
 
     public List<MappingValue> getUnreadMappingValues() {
+        LocalDateTime rp = referencePointService.getReferencePoint()
+                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
         Query query = new Query();
-        query.addCriteria(Criteria.where("read").is(false).and("date")
-                .gte(systemStartTime));
+        if (rp == null) {
+            query.addCriteria(Criteria.where("read").is(false));
+        } else {
+            query.addCriteria(Criteria.where("read").is(false).and("date")
+                    .gte(rp));
+        }
 
         List<MappingValue> unreadValues = mongoTemplate.find(query, MappingValue.class);
         if (!unreadValues.isEmpty()) {
-            Query updateQuery = new Query(Criteria.where("read").is(false).and("date")
-                    .gte(systemStartTime));
+            Query updateQuery = new Query();
+            if (rp == null) {
+                updateQuery.addCriteria(Criteria.where("read").is(false));
+            } else {
+                updateQuery.addCriteria(Criteria.where("read").is(false).and("date")
+                        .gte(rp));
+            }
+
             Update update = new Update().set("read", true);
             mongoTemplate.updateMulti(updateQuery, update, MappingValue.class);
         }

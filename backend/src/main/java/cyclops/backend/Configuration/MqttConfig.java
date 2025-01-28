@@ -16,29 +16,37 @@ import org.springframework.messaging.handler.annotation.Header;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cyclops.backend.models.BatteryLevel;
 import cyclops.backend.models.MappingValue;
 import cyclops.backend.models.Message;
+import cyclops.backend.services.BatteryLevelService;
 import cyclops.backend.services.MappingValueService;
 import cyclops.backend.services.MessageService;
+import cyclops.backend.services.ReferencePointService;
 import jakarta.annotation.PreDestroy;
 
 @Configuration
 public class MqttConfig {
-    //"tcp://192.168.4.2:1883"
+    // "tcp://192.168.4.2:1883"
     private static final String BACKEND_IP = "192.168.4.2";
-    private static final String[] serverUri = {"tcp://" + BACKEND_IP + ":1883"};
-    private static final String[] RTOPICS = { "Mapping", "Messages", "Battery"};
-    private static final String[] STOPICS = {"Instruction"};
+    private static final String[] serverUri = { "tcp://" + BACKEND_IP + ":1883" };
+    private static final String[] RTOPICS = { "Mapping", "Messages", "Battery", "Barrier" };
+    private static final String[] STOPICS = { "Instruction" };
     private static final String BACKEND_ID = "backend-service"; // ID único para el backend
     private static final int RETRY_INTERVAL_MS = 2000; // Tiempo entre intentos en milisegundos
     private volatile boolean running = true;
 
     private final MappingValueService mappingValueService;
     private final MessageService messageService;
+    private final BatteryLevelService batteryLevelService;
+    private final ReferencePointService referencePointService;
 
-    public MqttConfig(MappingValueService mappingValueService, MessageService messageService) {
+    public MqttConfig(MappingValueService mappingValueService, MessageService messageService,
+            BatteryLevelService batteryLevelService, ReferencePointService referencePointService) {
         this.mappingValueService = mappingValueService;
         this.messageService = messageService;
+        this.batteryLevelService = batteryLevelService;
+        this.referencePointService = referencePointService;
 
     }
 
@@ -59,7 +67,8 @@ public class MqttConfig {
         System.out.println("Esperando a que la IP del host sea " + BACKEND_IP + "...");
         while (!NetworkUtils.isMyIp(BACKEND_IP)) {
             try {
-                System.out.println("La IP actual no es " + BACKEND_IP + ", reintentando en " + RETRY_INTERVAL_MS + "ms...");
+                System.out.println(
+                        "La IP actual no es " + BACKEND_IP + ", reintentando en " + RETRY_INTERVAL_MS + "ms...");
                 Thread.sleep(RETRY_INTERVAL_MS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -68,6 +77,7 @@ public class MqttConfig {
         }
         System.out.println("La IP del host ahora es " + BACKEND_IP + ". Continuando...");
     }
+
     // SEND
     @Bean
     public MessageChannel mqttOutboundChannel() {
@@ -78,16 +88,17 @@ public class MqttConfig {
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MqttPahoMessageHandler mqttMessageHandler() {
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(BACKEND_ID+"-outbound", mqttClientFactory());
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(BACKEND_ID + "-outbound",
+                mqttClientFactory());
         messageHandler.setDefaultTopic(STOPICS[0]);
-        
+
         return messageHandler;
     }
 
     // Escucha de mensajes entrantes en los tópicos
     @Bean
     public MessageProducer inbound() {
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BACKEND_ID+"-inbound",
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BACKEND_ID + "-inbound",
                 mqttClientFactory(), RTOPICS);
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setQos(1);
@@ -113,8 +124,12 @@ public class MqttConfig {
                 saveMessage(payload);
                 break;
             case "Battery":
-                // saveBatteryLevel(payload);
+                saveBatteryLevel(payload);
                 break;
+            case "Barrier":
+                referencePointService.updateReferencePoint();
+                break;
+
         }
     }
 
@@ -139,22 +154,30 @@ public class MqttConfig {
         }
     }
 
+    private void saveBatteryLevel(String payload) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BatteryLevel value = mapper.readValue(payload, BatteryLevel.class);
+            batteryLevelService.saveBatteryLevel(value);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
     @PreDestroy
     public void shutdown() {
         running = false;
     }
 
-
-
-      // Detecta cambios de conexión y realiza reconexión automática
-      private void monitorConnection(MqttPahoMessageDrivenChannelAdapter adapter) {
+    // Detecta cambios de conexión y realiza reconexión automática
+    private void monitorConnection(MqttPahoMessageDrivenChannelAdapter adapter) {
         new Thread(() -> {
             while (running) {
                 try {
                     if (!NetworkUtils.isMyIp(BACKEND_IP)) {
                         System.out.println("IP cambiada o conexión perdida. Intentando reconectar...");
                         waitForBroker();
-                        //adapter.removeMessageHandler(this::handleMqttMessage);
+                        // adapter.removeMessageHandler(this::handleMqttMessage);
                         reconnect(adapter);
                     }
                 } catch (Exception e) {

@@ -39,12 +39,12 @@ public class Instruction {
     public Instruction() {
     }
 
-    public Instruction(String instruction, String parameter1, String parameter2) {
+    public Instruction(String instruction) {
         this.instruction = instruction;
 
     }
 
-    public Instruction(String instruction, String parameter1, String parameter2, LocalDateTime time) {
+    public Instruction(String instruction, LocalDateTime time) {
         this.instruction = instruction;
         this.time = time;
     }

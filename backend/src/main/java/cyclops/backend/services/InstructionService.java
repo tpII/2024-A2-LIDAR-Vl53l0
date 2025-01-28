@@ -26,14 +26,15 @@ public class InstructionService {
 
     private final InstructionDAO instructionDAO;
     private MessageChannel mqttOutChannel;
-    private static final LocalDateTime systemStartTime = LocalDateTime.now();
+    private final ReferencePointService referencePointService;
     private final MongoTemplate mongoTemplate;
 
     public InstructionService(InstructionDAO instructionDAO, MongoTemplate mongoTemplate,
-            @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel) {
+            @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel, ReferencePointService referencePointService) {
         this.instructionDAO = instructionDAO;
         this.mqttOutChannel = mqttOuChannel;
         this.mongoTemplate = mongoTemplate;
+        this.referencePointService = referencePointService;
 
     }
 
@@ -80,8 +81,15 @@ public class InstructionService {
     }
 
     public Optional<Instruction> getLastInstruction() {
+        LocalDateTime rp = referencePointService.getReferencePoint()
+                .orElseThrow(() -> new IllegalStateException("Punto de referencia no establecido."));
         Query query = new Query();
-        query.addCriteria(Criteria.where("read").is(false));
+        if (rp == null) {
+            query.addCriteria(Criteria.where("read").is(false));
+        } else {
+            query.addCriteria(Criteria.where("read").is(false).and("date")
+                    .gte(rp));
+        }
         query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
 
