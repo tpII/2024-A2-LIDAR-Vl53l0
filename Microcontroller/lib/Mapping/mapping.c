@@ -2,6 +2,7 @@
 #include "servo.h"
 #include "vl53l0x.h"
 #include "esp_log.h"
+#include "esp_check.h"
 
 #define MIN_DISTANCE 100
 
@@ -9,7 +10,7 @@ static const char *TAG = "MAPPING";
 static esp_err_t getValue(uint16_t *);
 
 // Función de comparación para ordenar de menor a mayor
-uint16_t compare(const void *a, const void *b) {
+int compare(const void *a, const void *b) {
     return (*(uint16_t*)a - *(uint16_t*)b);
 }
 
