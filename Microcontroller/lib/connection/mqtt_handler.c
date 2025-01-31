@@ -250,7 +250,7 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
 
     // Crear el JSON
     esp_err_t err = create_json_data(&json, keys, values, 1);
-    //print_json_data(json); // Revisar si esta función necesita liberación de memoria o copias seguras
+    print_json_data(json); // Revisar si esta función necesita liberación de memoria o copias seguras
 
     if (err != ESP_OK)
     {
@@ -263,11 +263,12 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err));
-        cJSON_Delete(json); // Liberar memoria antes de salir
+       // cJSON_Delete(json); // Liberar memoria antes de salir
         return err;
     }
 
-    cJSON_Delete(json); // Liberar memoria al finalizar
+   // cJSON_Delete(json); // Liberar memoria al finalizar
+   ESP_LOGI(TAG, "Battery level published");
 
     return ESP_OK;
 }

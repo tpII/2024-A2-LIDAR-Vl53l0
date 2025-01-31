@@ -90,6 +90,4 @@ esp_err_t initialize_server(void);
  */
 esp_err_t wait_for_client_connection(void); 
 
-esp_err_t delete_client_semaphore(void);
-
 #endif

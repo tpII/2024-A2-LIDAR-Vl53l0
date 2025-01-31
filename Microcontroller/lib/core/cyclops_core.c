@@ -102,7 +102,7 @@ esp_err_t createTasks()
     BaseType_t task_created = xTaskCreatePinnedToCore(
         servoInterruptionTask,         // Función de la tarea
         "ServoInterruptionTask",       // Nombre de la tarea
-        2048,                          // Tamaño de la pila
+        4096,                          // Tamaño de la pila
         NULL,                          // Argumento de la tarea (NULL si no es necesario)
         1,                             // Prioridad
         &servoInterruptionTaskHandler, // Puntero al handle de la tarea (NULL si no es necesario)
@@ -304,6 +304,7 @@ static void executeInstruction(char *inst)
         else
         {
             vTaskSuspend(mappingTaskHandler);
+            ESP_LOGE(TAG, "Mapping task suspended");
         }
     }
     else if (strncmp(inst, "Play", 4) == 0)
@@ -315,6 +316,7 @@ static void executeInstruction(char *inst)
         else
         {
             vTaskResume(mappingTaskHandler);
+            ESP_LOGE(TAG, "Mapping task resumed");
         }
     }
 }
@@ -334,9 +336,9 @@ static void batteryTask(void *parameter)
         else
         {
             ESP_LOGW(TAG, "Battery Level: %u", level);
-            /*if(sendBatteryLevel(level) != ESP_OK){
+            if(sendBatteryLevel(level) != ESP_OK){
                 ESP_LOGE(TAG,"ERROR SENDING BATTERY LEVEL");
-            }*/
+            }
         }
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }

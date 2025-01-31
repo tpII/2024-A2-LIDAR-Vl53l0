@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.TimeSeries;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
-@TimeSeries(collection = "Instruction", timeField = "time")
+@TimeSeries(collection = "BatteryLevel", timeField = "time")
 @Schema(description = "Model representing the battery level reported to the system")
 public class BatteryLevel {
 

@@ -38,12 +38,6 @@ void activeCheckpoint()
 /* esp_err_t restart_semaphores()
 {
     esp_err_t err;
-    err = delete_client_semaphore(); // ap_server
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to delete the semaphore for WiFi client.");
-        return err;
-    }
     err = i2c_delete_bus();  // i2c
     if (err != ESP_OK)
     {

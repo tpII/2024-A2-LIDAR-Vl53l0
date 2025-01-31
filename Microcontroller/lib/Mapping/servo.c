@@ -213,7 +213,7 @@ void servo_invert()
         {
             if (change_speed_flag)
             {
-                change_speed_flag = true;
+                change_speed_flag = false;
                 current_duty = next_speed;
             }
             xSemaphoreGive(speed_change_semaphore);
@@ -421,7 +421,11 @@ esp_err_t servo_restart(){
         partialTimeBase -= auxTime;
         xSemaphoreGive(limit_semaphore);
     }
-    return ESP_ERR_TIMEOUT;
+    else 
+    {
+        return ESP_ERR_TIMEOUT;
+    }
+    return ESP_OK;
 }
 
 esp_err_t delete_servo_semaphores()
