@@ -19,4 +19,15 @@ export class MappingValueService {
       })
     );
   }
+
+  getMappingValues(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUri}/values`).pipe( // revisar endpoint
+      catchError((error) => {
+        console.error('Error fetching the list of mapping values:', error);
+        // Devuelve un array vacío como fallback
+        return of([]);
+      })
+    );
+  }
+  
 }

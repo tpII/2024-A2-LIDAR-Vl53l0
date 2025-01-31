@@ -162,3 +162,8 @@ Correccion de errores en tarea para recibir instrucciones por HTTP
 
 20 de Enero
 Revision de errores en libreria HTTP y tarea para recibir instrucciones
+03 de Enero
+Testeo desplazamiento de auto en mapeo.
+
+23 de Enero
+Modifico para que reciba lista de puntos desde el backend
