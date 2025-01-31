@@ -5,7 +5,7 @@
 static char *TAG = "CHECKPOINT";
 static jmp_buf checkpoint;
 
-esp_err_t restart_semaphores(void);
+esp_err_t delete_semaphores(void);
 
 esp_err_t setCheckpoint()
 {
@@ -30,12 +30,12 @@ void activeCheckpoint()
     //free_memory();
     //clean_buffer();
     //REINICIANDO SEMAFOROS
-    //restart_semaphores();
+    //delete_semaphores();
     //ABORTANDO
     longjmp(checkpoint, 1);
 }
 
-/* esp_err_t restart_semaphores()
+/* esp_err_t delete_semaphores()
 {
     esp_err_t err;
     err = i2c_delete_bus();  // i2c
