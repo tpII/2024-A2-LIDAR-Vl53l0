@@ -148,3 +148,18 @@ esp_err_t delete_buffer_semaphore()
     }
     return ESP_OK;
 }
+
+esp_err_t clearBuffer() 
+{
+
+    if (xSemaphoreTake(buffer_access, pdMS_TO_TICKS(50)) == pdTRUE)
+    {
+        memset(instructions_buffer, 0, sizeof(instructions_buffer)); // Poner todo en 0
+        push_index = 0;
+        get_index = 0;
+        xSemaphoreGive(buffer_access);
+        return ESP_OK;
+    }
+
+    return ESP_ERR_TIMEOUT;
+}

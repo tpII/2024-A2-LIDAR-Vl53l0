@@ -26,16 +26,16 @@ void activeCheckpoint()
     //PREPARANDO EL ABORTAR
     //ABORTANDO TAREAS
     //abort_tasks();
-    //LIMPIANDO MEMORIA (dinamica y buffer)
-    //free_memory();
-    //clean_buffer();
+    //LIMPIANDO MEMORIA (dinamica y buffer) 
+    //free_memory(); -> No, no se usa malloc 
+    //clearBuffer(); 
     //REINICIANDO SEMAFOROS
     //delete_semaphores();
     //ABORTANDO
     longjmp(checkpoint, 1);
 }
 
-/* esp_err_t delete_semaphores()
+esp_err_t delete_semaphores()
 {
     esp_err_t err;
     err = i2c_delete_bus();  // i2c
@@ -68,4 +68,3 @@ void activeCheckpoint()
 
     return ESP_OK;
 }
-*/
