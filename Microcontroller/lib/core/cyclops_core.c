@@ -17,6 +17,7 @@ TaskHandle_t instructionHandlerTaskHandler = NULL;
 TaskHandle_t receiveInstructionTaskHandler = NULL;
 TaskHandle_t batteryTaskHandler = NULL;
 TaskHandle_t mappingTaskHandler = NULL;
+TaskHandle_t checkRAMHandler = NULL;
 
 static void servoInterruptionTask(void *);
 static void receiveInstruction(void *);
@@ -24,6 +25,7 @@ static void instructionHandler(void *);
 static void executeInstruction(char *);
 static void mappingTask(void *);
 static void batteryTask(void *parameter);
+static void checkRAM(void *);
 
 esp_err_t system_init()
 {
@@ -173,6 +175,21 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         ESP_LOGE(TAG, "Error Creating Battery Task");
+        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+    }
+
+    task_created = xTaskCreatePinnedToCore(
+        checkRAM,
+        "checkRAM",
+        4096,
+        NULL,
+        2,
+        &checkRAMHandler,
+        tskNO_AFFINITY);
+
+    if (task_created != pdPASS)
+    {
+        ESP_LOGE(TAG, "Error Creating check RAM Task");
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
@@ -347,7 +364,7 @@ static void batteryTask(void *parameter)
 static void mappingTask(void *parameter)
 {
     uint16_t distance = 0;
-    uint16_t angle = 0;
+    int16_t angle = 0;
     esp_err_t err = ESP_OK;
     while (1)
     {
@@ -356,10 +373,21 @@ static void mappingTask(void *parameter)
         {
             ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE");
         }
-        {
+        else{
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
             sendMappingValue(distance,angle);
         }
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        vTaskDelay(4 / portTICK_PERIOD_MS);
+    }
+}
+
+static void checkRAM(void *parameter)
+{
+
+    while (1)
+    {
+        ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
+        ESP_LOGI(TAG, "Memoria libre en el heap: %lu %% **************************************", (esp_get_free_heap_size()*100)/327680);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

@@ -137,7 +137,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         MQTT_CONNEECTED = 1;
-        mqtt_subscribing();
+        //mqtt_subscribing();
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -154,7 +154,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
         break;
     case MQTT_EVENT_DATA:
-        ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+        ESP_LOGI(TAG, "MQTT_EVENT_DATA - %s",event->topic);
         /*if (strncmp(event->topic, "Instruction", event->topic_len) == 0)
         {
             ESP_LOGI(TAG, "Instruction received");
@@ -167,7 +167,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         }*/
         break;
     case MQTT_EVENT_ERROR:
-        ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+        ESP_LOGI(TAG, "MQTT_EVENT_ERROR %s ***************************************************************************************", event->data);
         break;
     default:
         ESP_LOGI(TAG, "Other event id:%d", event->event_id);

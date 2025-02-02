@@ -1,6 +1,5 @@
 package cyclops.backend.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,30 +40,19 @@ public class MappingValueService {
     }
 
     public List<MappingValue> getUnreadMappingValues() {
-        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
-        Query query = new Query();
-        if (rp.isEmpty()) {
-            query.addCriteria(Criteria.where("read").is(false));
-        } else {
-            query.addCriteria(Criteria.where("read").is(false).and("date")
-                    .gte(rp));
-        }
-
+        Query query = new Query().addCriteria(Criteria.where("read").is(false));
+    
+       
         List<MappingValue> unreadValues = mongoTemplate.find(query, MappingValue.class);
+        System.out.println("List: " + unreadValues);
+    
         if (!unreadValues.isEmpty()) {
-            Query updateQuery = new Query();
-            if (rp == null) {
-                updateQuery.addCriteria(Criteria.where("read").is(false));
-            } else {
-                updateQuery.addCriteria(Criteria.where("read").is(false).and("date")
-                        .gte(rp));
-            }
-
             Update update = new Update().set("read", true);
-            mongoTemplate.updateMulti(updateQuery, update, MappingValue.class);
+            mongoTemplate.updateMulti(query, update, MappingValue.class);
         }
-
+    
         return unreadValues;
     }
+    
 
 }

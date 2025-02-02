@@ -309,7 +309,8 @@ int16_t readAngle()
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
     ESP_LOGW(TAG, "Angle = %" PRIi16, angle);
-    return (angle + 360) % 360; // Garantiza valores positivos
+    //return ((((angle + 360 - 90) % 360) + 360) % 360); // Garantiza valores positivos
+    return ((((angle - 90) % 360) + 360) % 360);
 }
 
 void servo_set_speed(SERVO_DIRECTION dir)

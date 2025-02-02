@@ -28,7 +28,7 @@ export class MapComponent implements OnInit {
   private width = 850;
   private height = 850;
   private svg: any;
-  private maxDistance = 2; // Distancia máxima en metros
+  private maxDistance = 1; // Distancia máxima en metros
   private scaleFactor = this.width / (this.maxDistance * 2); // Escala para convertir metros a pixeles
   private pointsMap: Map<number, any> = new Map();
 
@@ -44,13 +44,14 @@ export class MapComponent implements OnInit {
     ngOnInit() {
       this.createChart();
      // this.plotPointsFromBackend();
-     setInterval(() => this.receivePointsFromBackend(), 500); // Llama cada 500ms
-     setInterval(() => this.plotStoredPoints(), 100); // Graficar cada 100ms
+     setInterval(() => this.receivePointsFromBackend(), 10); // Llama cada 500ms
+     setInterval(() => this.plotStoredPoints(), 5); // Graficar cada 100ms
      // this.simulateData(); //FOR TEST ONLY
     }
 
-  receivePointsFromBackend(): void {
-    this.mappingValueService.getMappingValue().subscribe((data) => {
+  /*receivePointsFromBackend(): void {
+    this.mappingValueService.getMappingValues().subscribe((data) => {
+      console.log("Data receivedX: "+data);
       if (data && Array.isArray(data)) {
         // Almacena los nuevos puntos en la lista
         this.pointsToPlot.push(...data);
@@ -58,7 +59,23 @@ export class MapComponent implements OnInit {
         console.warn('Datos inesperados recibidos del backend:', data);
       }
     });
-  }
+  }*/
+    receivePointsFromBackend(): void {
+      this.mappingValueService.getMappingValues().subscribe((data) => {
+        console.log("Data received czxc:", data);
+    
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((point) => {
+            //console.log(point);
+            this.pointsToPlot.push(point); // Agrega cada punto individualmente
+          });
+        } else {
+          console.warn('Datos inesperados recibidos del backend:', data);
+        }
+      });
+      console.log("List of points to plot: ", this.pointsToPlot)
+    }
+    
 
   plotStoredPoints(): void {
     if (!this.pointsToPlot.length || !this.mapping) {
@@ -67,8 +84,10 @@ export class MapComponent implements OnInit {
 
     this.pointsToPlot.forEach((point) => {
       // Convertir de polar (ángulo, distancia) a coordenadas cartesianas (x, y)
-      const { x, y } = this.polarToCartesian(point.distance, point.angle);
-
+      console.log("d,a: ",point.distance, point.angle)
+      const meters = point.distance/1000
+      const { x, y } = this.polarToCartesian(meters, point.angle);
+      console.log("Cartesian: ",x,y);
       // Crear una clave única para identificar el punto
     //  const key = `${point.angle}-${point.distance}`;
 
@@ -79,14 +98,16 @@ export class MapComponent implements OnInit {
         existingPoint
           .attr('cx', x)
           .attr('cy', y);
+        console.log("EP: ",existingPoint);
       } else {
         // Si no existe, crea un nuevo punto en el mapa
         const newPoint = this.svg
           .append('circle')
           .attr('cx', x)
           .attr('cy', y)
-          .attr('r', 4)
-          .attr('fill', 'blue');
+          .attr('r', 1)
+          .attr('fill', 'black');
+        console.log("NP: ",newPoint);
        //   this.pointsMap.set(key, newPoint);
           this.pointsMap.set(point.angle, newPoint);
       }
@@ -117,30 +138,50 @@ export class MapComponent implements OnInit {
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height)
-      .style('background', '#ffffff') // Fondo blanco
+      .style('background', '#ffffff'); // Fondo blanco
 
-      // Crear borde alrededor del contenido
-      this.svg
-        .append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', this.width)
-        .attr('height', this.height)
-        .attr('fill', 'none')
-        .attr('stroke', '#213A7D')
-        .attr('stroke-width', 16);
-    // Filtrar solo los obstáculos
-
-    // Dibujar el robot en el centro
+    // Crear borde alrededor del contenido
     this.svg
       .append('rect')
-      .attr('x', this.width / 2 - 10)
-      .attr('y', this.height / 2 - 10)
-      .attr('width', 20)
-      .attr('height', 20)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .attr('fill', 'none')
+      .attr('stroke', '#213A7D')
+      .attr('stroke-width', 16);
+
+    // Definir los puntos del triángulo
+    const triangleSize = 20;
+    const cx = this.width / 2;
+    const cy = this.height / 2;
+
+    const points = [
+        [cx, cy - triangleSize], // Punta arriba
+        [cx - triangleSize, cy + triangleSize], // Esquina inferior izquierda
+        [cx + triangleSize, cy + triangleSize]  // Esquina inferior derecha
+    ].map(p => p.join(',')).join(' ');
+
+    // Dibujar el triángulo en el centro
+    this.svg
+      .append('polygon')
+      .attr('points', points)
       .attr('fill', '#213A7D');
 
-  }
+        // Dibujar las circunferencias con los radios dados
+        const radii = [0.25, 0.50, 0.75, 1]; // Radios en metros
+        radii.forEach(radius => {
+            this.svg
+              .append('circle')
+              .attr('cx', cx)
+              .attr('cy', cy)
+              .attr('r', radius * this.scaleFactor) // Escalar el radio
+              .attr('fill', 'none')
+              .attr('stroke', '#213A7D')
+              .attr('stroke-width', 2);
+        });
+}
+
 
   /**
    * Receives data from the backend and plots the points on the map.
@@ -148,14 +189,16 @@ export class MapComponent implements OnInit {
    * and either updates existing points or creates new ones to display on the map.
    */
   plotPointsFromBackend(): void {
-    this.mappingValueService.getMappingValue().subscribe((data) => {
+    this.mappingValueService.getMappingValues().subscribe((data) => {
 
+      console.log("Data Received: "+data);
       if (!this.mapping) { //revisar
         return; 
       }
 
       data.forEach((point: { distance: number; angle: number }) => {
         // Convertir de polar a cartesiano
+        console.log("d,a: ",point.distance,point.angle);
         const { x, y } = this.polarToCartesian(point.distance, point.angle);
   
         // Graficar el punto en el mapa
@@ -206,7 +249,7 @@ export class MapComponent implements OnInit {
 
       const { x, y } = this.polarToCartesian(distance, angle);
       this.plotPoint(x, y, angle);
-    }, 1000); // Recibir datos cada segundo
+    }, 20); // Recibir datos cada segundo
   }
 
   /**
@@ -220,8 +263,8 @@ export class MapComponent implements OnInit {
    */
   polarToCartesian(distance: number, angle: number) {
     const radians = (angle * Math.PI) / 180; // Convertir grados a radianes
-    const x = this.width / 2 + distance * this.scaleFactor * Math.cos(radians);
-    const y = this.height / 2 - distance * this.scaleFactor * Math.sin(radians); // Invertir eje Y para D3
+    const x = ( this.width / 2 ) + distance * this.scaleFactor * Math.cos(radians);
+    const y = ( this.height / 2 ) - distance * this.scaleFactor * Math.sin(radians); // Invertir eje Y para D3
     return { x, y };
   }
 

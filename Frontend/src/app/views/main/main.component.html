@@ -1,18 +1,10 @@
 <as-split direction="horizontal" unit="percent" [gutterSize]="0">
   <!-- Sidebar Area -->
-  <as-split-area
-    [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav"
-    [lockSize]="true"
-    class="custom-shadow"
-  >
+  <as-split-area [size]="isSideNavExpanded ? maxSizeSidenav : minSizeSidenav" [lockSize]="true" class="custom-shadow">
     <div class="sidenav" (click)="toggleSidebar()">
       <!-- Contenedor del logo -->
       <div class="logo-container">
-        <img
-          *ngIf="isSideNavExpanded; else collapsedLogo"
-          src="/logo.svg"
-          alt="Logo Expandido"
-        />
+        <img *ngIf="isSideNavExpanded; else collapsedLogo" src="/logo.svg" alt="Logo Expandido" />
 
         <ng-template #collapsedLogo>
           <img src="/small_logo.svg" alt="Logo Colapsado" />
@@ -36,27 +28,41 @@
             <span class="status-label" *ngIf="!isControllerConnected">Conectado</span>
             <span class="status-label alert" *ngIf="isControllerConnected">Desconectado</span>
           </div>
-          <div class="status-item alert">
-            <mat-icon class="status-icon">battery_alert</mat-icon>
-            <span class="status-label">Agotada</span>
+          <div class="status-item" [ngClass]="{
+            'alert': batteryLevel < 40,
+            'warn': batteryLevel < 60 && batteryLevel >= 40
+          }">
+            <mat-icon class="status-icon" *ngIf="batteryLevel >= 60">battery_full</mat-icon>
+            <mat-icon class="status-icon" *ngIf="batteryLevel < 60 && batteryLevel >= 40">battery_std</mat-icon>
+            <mat-icon class="status-icon" *ngIf="batteryLevel < 40">battery_alert</mat-icon>
+            
+            
+            <span class="status-label high" *ngIf="batteryLevel >= 60">Alta</span>
+            <span class="status-label warn" *ngIf="batteryLevel < 60 && batteryLevel >= 40">Media</span>
+            <span class="status-label alert" *ngIf="batteryLevel < 40">Baja</span>
           </div>
+
         </div>
       </div>
 
+
+      <ng-template #modalTemplate let-dialogRef>
+        <h2 mat-dialog-title>Mi Modal Simple</h2>
+          <p>Este es un modal sin un componente separado.</p>
+          <button mat-button (click)="dialogRef.close()">Cerrar</button>
+      </ng-template>
+      
+      <!--<button mat-button (click)="openSimpleModal(modalTemplate)">Abrir Modal Simple</button>-->
+
+      
       <!-- Botones en el sidenav -->
       <div class="sidenav-buttons">
-        <button
-          *ngFor="let button of buttons"
-          class="sidenav-button"
-          [ngClass]="{ expanded: isSideNavExpanded }"
-          mat-button
-          [attr.data-label]="button.label"
-          (click)="onButtonClick($event, button)"
-        >
+        <button *ngFor="let button of buttons" class="sidenav-button" [ngClass]="{ expanded: isSideNavExpanded }"
+          mat-button [attr.data-label]="button.label" (click)="onButtonClick($event, button)">
           <mat-icon class="button-icon">{{ button.icon }}</mat-icon>
           <span *ngIf="isSideNavExpanded" class="button-label">{{
             button.label
-          }}</span>
+            }}</span>
         </button>
       </div>
       <!-- Figura azul en la parte inferior del sidebar -->
@@ -65,21 +71,19 @@
   </as-split-area>
 
   <!-- Contenido principal -->
-  <as-split-area
-    [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav"
-  >
+  <as-split-area [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav">
     <div class="main-content">
-        <div id="monitor" 
-          [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" >
-            <app-monitor (click)="onComponentClick($event, 'monitor')"></app-monitor>
-        </div>
-        <div id="map" 
-          [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" >
-            <app-map (click)="onComponentClick($event, 'map')"></app-map>
-        </div>
+      <div id="monitor"> <app-monitor></app-monitor>
+        <!--         [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" >
+            <app-monitor (click)="onComponentClick($event, 'monitor')"></app-monitor>-->
+      </div>
+      <div id="map"><app-map></app-map>
+        <!--   [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" >
+            <app-map (click)="onComponentClick($event, 'map')"></app-map>-->
+      </div>
     </div>
   </as-split-area>
 </as-split>
 
-<app-gamepad (gamepadConnectionStatus)="onGamepadStatusChange($event)" (changeValue)="changeSpeedByGamepad($event)" style="display: none;"></app-gamepad>
-
+<app-gamepad (gamepadConnectionStatus)="onGamepadStatusChange($event)" (changeValue)="changeSpeedByGamepad($event)"
+  style="display: none;"></app-gamepad>

@@ -32,9 +32,9 @@ public class BatteryLevelController {
             @ApiResponse(responseCode = "200", description = "Last battery level retrieved successfully", content = @Content(schema = @Schema(implementation = BatteryLevel.class))),
             @ApiResponse(responseCode = "204", description = "No new battery level available", content = @Content)
     })
-    public BatteryLevel getLaInstruction() {
+    public BatteryLevel getLastBatteryValue() {
         return batteryLevelService.getLastBatteryLevel()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "NO NEW INSTRUCTION"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "NO NEW Battery Value"));
 
     }
 }

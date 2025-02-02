@@ -53,7 +53,8 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
 
     for (size_t i = 0; i < lenght; i++)
     {
-        if (!cJSON_AddStringToObject(root, keys[i], values[i]))
+    //    if (!cJSON_AddStringToObject(root, keys[i], values[i]))
+        if (!cJSON_AddNumberToObject(root, keys[i],  values[i]);)
         {
             ESP_LOGE(TAG, "Error adding key-value to JSON");
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
@@ -62,13 +63,13 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     }
 
     *msg = cJSON_PrintUnformatted(root);
-    cJSON_Delete(root);
+    
     if (*msg == NULL)
     {
         ESP_LOGE(TAG, "Error converting JSON to string");
         return ESP_FAIL; // Error si no se puede generar el string JSON
     }
-
+    cJSON_Delete(root);
     return ESP_OK; // Retornar éxito
 }
 
@@ -140,10 +141,10 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
 
     // Copiar el valor de la instrucción al buffer
     strncpy(msg, instruction, message_length);
-    
+
     // Limpiar el objeto JSON
     cJSON_Delete(json);
-    ESP_LOGW(TAG,"Deserialization Done");
+    ESP_LOGW(TAG, "Deserialization Done");
     return ESP_OK;
 }
 

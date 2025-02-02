@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 
-#define VL53L0X_OUT_OF_RANGE (8190)
+#define VL53L0X_OUT_OF_RANGE (600)
 
 /* Comment these out if not connected */
 // #define VL53L0X_SECOND

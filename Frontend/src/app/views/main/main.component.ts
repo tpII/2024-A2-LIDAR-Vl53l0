@@ -1,13 +1,38 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+@Component({
+  selector: 'app-dialog-content',
+  styleUrls: ['dialog-content.component.scss'],
+  template: `
+      <h2 mat-dialog-title>Función no implementada!</h2>
+      <button mat-button (click)="close()">Cerrar</button>
+  `
+})
+export class DialogContentComponent {
+  constructor(
+    public dialogRef: MatDialogRef<DialogContentComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  close(): void {
+    this.dialogRef.close();
+  }
+}
+
+
+import { ElementRef, ViewChild, TemplateRef } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { AngularSplitModule } from 'angular-split';
 import { CommonModule } from '@angular/common';
 import { GamepadComponent } from '../../shared/components/gamepad/gamepad.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
 import { InstructionsService } from '../../core/services/instructions.service';
 import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
 import { MapComponent } from "../../shared/components/map/map.component";
+import { BatteryValueService } from '../../core/services/battery-value.service';
 
 /**
  * @component MainComponent
@@ -19,7 +44,7 @@ import { MapComponent } from "../../shared/components/map/map.component";
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent, MatMenuModule, MonitorComponent, MapComponent],
+  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent, MatMenuModule, MonitorComponent, MapComponent] ,
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
@@ -29,17 +54,17 @@ export class MainComponent {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   @ViewChild(MonitorComponent) monitorComponent!: MonitorComponent;
 
-  constructor(private InstructionsService: InstructionsService) {}
+  constructor(private InstructionsService: InstructionsService, private batteryService: BatteryValueService, private dialog: MatDialog) { }
 
   // Controlar si la sidebar está expandida o no
   isSideNavExpanded = false;
- // Tamaños mínimo y máximo de la sidebar
- minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
- maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
+  // Tamaños mínimo y máximo de la sidebar
+  minSizeSidenav: number = 7; // Porcentaje para la sidebar colapsada
+  maxSizeSidenav: number = 26; // Porcentaje para la sidebar expandida
 
   // Agregar propiedades para el mando y la batería
   isControllerConnected = true; // Cambiar dinámicamente según el estado real
-  batteryLevel = 75; // Cambiar dinámicamente según el nivel de batería
+  batteryLevel = 55; // Cambiar dinámicamente según el nivel de batería
 
   // Velocidad actual
   speed: string = "Normal";
@@ -52,12 +77,14 @@ export class MainComponent {
     { icon: 'cancel', label: 'RESTABLECER' },
   ];
 
-
- /**
-  * Toggles the expansion state of the sidebar.
-  * If the sidebar is expanded, it collapses, and vice versa.
-  * Logs the current state of the sidebar in the console.
-  */
+  ngOnInit() {
+    setInterval(() => this.getBatteryValue(), 1000);
+  }
+  /**
+   * Toggles the expansion state of the sidebar.
+   * If the sidebar is expanded, it collapses, and vice versa.
+   * Logs the current state of the sidebar in the console.
+   */
   toggleSidebar(): void {
     this.isSideNavExpanded = !this.isSideNavExpanded;
     console.log('Sidebar expanded:', this.isSideNavExpanded);
@@ -73,9 +100,8 @@ export class MainComponent {
    */
   getFooterFigureStyle() {
     return {
-      width: `${
-        this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
-      }%`,
+      width: `${this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
+        }%`,
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
@@ -117,28 +143,36 @@ export class MainComponent {
         button.icon = 'play_arrow';
         button.label = 'REANUDAR';
         this.mapComponent.setup_mapping(false);
-        this.monitorComponent.togglePause(false); 
+        this.monitorComponent.togglePause(false);
+        this.sendInstruction("Pause");
         break;
       case 'REANUDAR':
         button.icon = 'pause';
         button.label = 'PAUSAR';
         this.mapComponent.setup_mapping(true);
-        this.monitorComponent.togglePause(true); 
+        this.monitorComponent.togglePause(true);
+        this.sendInstruction("Play");
         break;
       case 'Lento':
+        this.openModal();
+        /*
         button.label = 'Normal';
         this.speed = 'Normal';
-        this.sendInstruction("MEDIUM");
+        this.sendInstruction("SpeedUp");*/
         break;
       case 'Normal':
+        this.openModal();
+        /*
         button.label = 'Rápido';
         this.speed = 'Rápido';
-        this.sendInstruction("FAST");
+        this.sendInstruction("SpeedUp");*/
         break;
       case 'Rápido':
+        this.openModal();
+/*
         button.label = 'Lento';
         this.speed = 'Lento';
-        this.sendInstruction("SLOW");
+        this.sendInstruction("SpeedDown");*/
         break;
       case 'Guardar Mapeo':
         // Funcion para sacar captura al mapa
@@ -155,7 +189,7 @@ export class MainComponent {
       default:
         break;
     }
-  
+
   }
 
   /**
@@ -165,10 +199,10 @@ export class MainComponent {
    *
    * @param {string} speed - The speed value to include in the instruction (e.g., "SLOW", "MEDIUM", "FAST").
  */
-  sendInstruction(speed: string): void {
-    const instruction = { speed: speed };
-    /*
-    this.InstructionsService.createInstruction(instruction).subscribe({
+  sendInstruction(inst: string): void {
+    //const instruction = { speed: speed };
+
+    this.InstructionsService.createInstruction(inst).subscribe({
       next: (response) => {
         console.log('Instrucción creada:', response);
       },
@@ -176,9 +210,9 @@ export class MainComponent {
         console.error('Error al crear la instrucción:', error);
       }
     });
-  */
+
   }
-  
+
   /**
    * Adjusts the speed of the vehicle based on the gamepad input.
    * The speed is changed sequentially between "Lento", "Normal", and "Rápido" 
@@ -188,7 +222,7 @@ export class MainComponent {
    *
    * @param str The gamepad command, either "SpeedUp" or a command to slow down.
    */
-  changeSpeedByGamepad(str: String){
+  changeSpeedByGamepad(str: String) {
 
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
 
@@ -197,34 +231,36 @@ export class MainComponent {
       return;
     }
 
-    if(str === "SpeedUp"){
+    if (str === "SpeedUp") {
+      this.sendInstruction("SpeedUp");
       //Change speed to next up
-      switch(this.speed) {
+      switch (this.speed) {
         case 'Lento':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-          this.sendInstruction("MEDIUM");
+        //  this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Rápido';
           this.speed = 'Rápido';
-          this.sendInstruction("FAST");
+        //  this.sendInstruction("FAST");
           break;
         default:
           break;
       }
     } else {
       //Change speed to next down
-      switch(this.speed) {
+      this.sendInstruction("SpeedDown");
+      switch (this.speed) {
         case 'Rápido':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-          this.sendInstruction("MEDIUM");
+         // this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Lento';
           this.speed = 'Lento';
-          this.sendInstruction("SLOW");
+       //   this.sendInstruction("SLOW");
           break;
         default:
           break;
@@ -245,7 +281,7 @@ export class MainComponent {
    * ensuring that the vehicle is resumed if it was paused, and sending the corresponding instructions.
    * It also resets the mapping and clears the messages on the monitor.
    */
-  defaultConfig(){
+  defaultConfig() {
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
     const playButton = this.buttons.find((btn) => btn.label === "REANUDAR");
 
@@ -264,9 +300,10 @@ export class MainComponent {
       playButton.icon = 'pause';
       playButton.label = 'PAUSAR';
       this.mapComponent.setup_mapping(true);
+      this.sendInstruction("Play");
     }
-    
-    this.sendInstruction("MEDIUM");
+
+    //this.sendInstruction("MEDIUM");
     this.resetProcess();
     //mandar otras instrucciones para restablecer config
   }
@@ -297,7 +334,7 @@ export class MainComponent {
     if (!target.closest('.console-line') && target.tagName !== 'svg') {
       return;
     }
-  
+
     if (component === 'map') {
       this.isMapExpanded = !this.isMapExpanded;
       this.isMonitorExpanded = false;
@@ -307,5 +344,32 @@ export class MainComponent {
     }
   }
 
+  getBatteryValue(): void {
+    this.batteryService.getBatteryValue().subscribe({
+      next: (data) => {
+        console.log("BL: ",data);
+        if (data !== null) { 
+          const level = data.level;
+          if (typeof level === 'number') {
+            this.batteryLevel = level;
+            console.log("Bat level: ",this.batteryLevel);
+          } else {
+            console.warn('Valor de batería inesperado:', level);
+          }
+        }
+        },
+        
+      error: (err) => {
+        console.error('Error al obtener el nivel de batería:', err);
+      }
+    });
+  }
+
+  openModal(): void {
+    this.dialog.open(DialogContentComponent, {
+      width: '400px', // Tamaño del modal
+      panelClass: 'custom-dialog-container'
+    });
+  }
 
 }

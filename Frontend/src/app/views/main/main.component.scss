@@ -176,6 +176,13 @@
         color: #d32f2f; // Íconos en rojo
       }
     }
+    &.warn {
+      border-color: #ffa000; /* Borde amarillo */
+      background-color: #fff3cd; /* Fondo amarillo suave */
+      .status-icon {
+        color: #ffa000; /* Íconos en amarillo */
+      }
+    }
   }
 
   // Indicadores expandidos (línea horizontal con texto)
@@ -224,6 +231,16 @@
           color: #d32f2f; // Texto en rojo
         }
       }
+      &.warn {
+        border-color: #ffa000; /* Borde amarillo */
+        background-color: #fff3cd; /* Fondo amarillo suave */
+        .status-icon {
+          color: #ffa000; /* Íconos en amarillo */
+        }
+        .status-label {
+          color: #ffa000; // Texto en rojo
+        }
+      }
     }
   }
 }
@@ -255,4 +272,26 @@
 #monitor.hidden {
   width: 0; /* Contrae completamente */
   visibility: hidden; /* Evita que sea visible */
+}
+
+
+::ng-deep .custom-dialog-container {
+  background-color: white; // Color de fondo del modal
+  border-radius: 12px; // Bordes redondeados
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); // Sombra
+  padding: 20px;
+}
+
+
+::ng-deep .mat-dialog-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0033a0;
+  background-color: #f5f5f5; // Color de fondo del modal
+
+}
+
+::ng-deep .mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
 }
