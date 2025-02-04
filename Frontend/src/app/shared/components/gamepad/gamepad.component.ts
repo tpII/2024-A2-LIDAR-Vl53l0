@@ -106,13 +106,25 @@ export class GamepadComponent implements OnInit {
         switch (index) {
           case 0:
             console.log(`Button ${index}: SpeedUp`);
-            this.sendInstruction("SpeedUp");
-            this.changeValue.emit("SpeedUp");
+            //this.sendInstruction('SpeedUp');
+            //this.changeValue.emit('SpeedUp');
             break;
           case 2:
             console.log(`Button ${index}: SpeedDown`);
-            this.sendInstruction("SpeedDown");
-            this.changeValue.emit("SpeedDown");
+            //this.sendInstruction('SpeedDown');
+            //this.changeValue.emit('SpeedDown');
+            break;
+          case 7:
+            console.log(`Button ${index}: Brake`);
+            this.sendInstruction('Brake');
+            break;
+          case 8:
+            console.log(`Button ${index}: ABORT`);
+            this.sendInstruction('ABORT');
+            break;
+          case 9:
+            console.log(`Button ${index}: REBOOT`);
+            this.sendInstruction('REBOOT');
             break;
           default:
             break;
