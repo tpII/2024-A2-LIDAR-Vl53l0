@@ -68,41 +68,44 @@ esp_err_t system_init()
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "MQTT Service Iniciado!"));
 
-    // ENVIO BIENVENIDA
-    // err = sendBarrier();
-    if (err != ESP_OK)
-    {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error al enviar barrera"));
-        return 1;
-    }
-
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Luces Service..."));
+    LOG_MESSAGE_I(TAG, "Iniciando Luces Service...");
     err = lights_init();
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Error Setting Up Lights: %s", esp_err_to_name(err)));
+        LOG_MESSAGE_W(TAG, "Error Setting Up Lights");
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Luces Service Iniciado!"));
+    LOG_MESSAGE_I(TAG, "Luces Service Iniciado!");
 
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Motores..."));
+    LOG_MESSAGE_I(TAG, "Iniciando Motores...");
     motors_setup();
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Motores Iniciados!"));
+    LOG_MESSAGE_I(TAG, "Motores Iniciados!");
 
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Mapping Service..."));
+    LOG_MESSAGE_I(TAG,"Iniciando Mapping Service...");
     err = mapping_init();
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP MAPPING"));
+        LOG_MESSAGE_E(TAG, "ERROR SETTING UP MAPPING");
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Mapping Service Iniciado!"));
+    LOG_MESSAGE_I(TAG,"Mapping Service Iniciado!");
 
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Battery Service..."));
+    LOG_MESSAGE_I(TAG, "Iniciando Battery Service...");
     err = battery_sensor_init();
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR"));
+        LOG_MESSAGE_E(TAG, "ERROR SETTING UP BATTERY SENSOR");
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Battery Service Iniciado!"));
+    LOG_MESSAGE_I(TAG, "Battery Service Iniciado!");
 
     return err;
 }
@@ -255,6 +258,7 @@ static void receiveInstruction(void *parameter)
         if (err != ESP_OK)
         {
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION"));
+            LOG_MESSAGE_E(TAG, "ERROR GETTING INSTRUCTION");
         }
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
@@ -275,6 +279,8 @@ static void instructionHandler(void *parameter)
         else if (err == ESP_ERR_TIMEOUT)
         {
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION"));
+            LOG_MESSAGE_E(TAG, "ERROR GETTING INSTRUCTION");
+
         }
         memset(inst, 0, 20);
         vTaskDelay(50 / portTICK_PERIOD_MS);
@@ -285,22 +291,27 @@ static void executeInstruction(char *inst)
 {
     if (strncmp(inst, "Brake", 5) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Brake");
         motors_command(STOP);
     }
     else if (strncmp(inst, "Backward", 8) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Backward");
         motors_command(BACKWARD);
     }
     else if (strncmp(inst, "Forward", 7) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Forward");
         motors_command(FORWARD);
     }
     else if (strncmp(inst, "Right", 5) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Rotate Right");
         motors_command(ROTATE_RIGHT);
     }
     else if (strncmp(inst, "Left", 4) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Rotate Left");
         motors_command(ROTATE_LEFT);
     }
     else if (strncmp(inst, "SpeedUp", 7) == 0)
@@ -313,19 +324,24 @@ static void executeInstruction(char *inst)
     }
     else if (strncmp(inst, "Pause", 5) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Pause");
 
         if (mapping_pause() != ESP_OK)
         {
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR TRYING TO STOP SERVO"));
+            LOG_MESSAGE_E(TAG, "ERROR TRYING TO STOP SERVO");
+
         }
         else
         {
             vTaskSuspend(mappingTaskHandler);
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Mapping task suspended"));
+            LOG_MESSAGE_E(TAG, "Mapping task suspended");
         }
     }
     else if (strncmp(inst, "Play", 4) == 0)
     {
+        LOG_MESSAGE_W(TAG, "Instruction: Play");
         if (mapping_restart() != ESP_OK)
         {
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR TRYING TO RESTART SERVO"));
@@ -347,8 +363,9 @@ static void batteryTask(void *parameter)
         err = battery_sensor_read(&level);
         if (err != ESP_OK)
         {
-
             ESP_LOGE(TAG, "Error Reading Battery Level %s", esp_err_to_name(err));
+            
+            LOG_MESSAGE_E(TAG, "Error Reading Battery Level");
         }
         else
         {
@@ -356,6 +373,7 @@ static void batteryTask(void *parameter)
             if (sendBatteryLevel(level) != ESP_OK)
             {
                 ESP_LOGE(TAG, "ERROR SENDING BATTERY LEVEL");
+                LOG_MESSAGE_E(TAG, "ERROR SENDING BATTERY LEVEL");
             }
         }
         vTaskDelay(5000 / portTICK_PERIOD_MS);
@@ -373,6 +391,7 @@ static void mappingTask(void *parameter)
         if (err != ESP_OK)
         {
             ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE");
+            LOG_MESSAGE_E(TAG, "FAIL TO GET MAPPING VALUE");
         }
         else
         {

@@ -70,4 +70,6 @@ esp_err_t error_led_off(void);
  */
 void led_blink_task();
 
+esp_err_t led_blink(uint16_t );
+
 #endif

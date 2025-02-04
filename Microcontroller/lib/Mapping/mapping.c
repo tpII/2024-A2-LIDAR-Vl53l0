@@ -5,7 +5,7 @@
 #include "debug_helper.h"
 
 
-#define MIN_DISTANCE 150
+#define MIN_DISTANCE 100
 
 static const char *TAG = "MAPPING";
 static esp_err_t getValue(uint16_t *);
@@ -69,7 +69,19 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
     esp_err_t err = getValue(distance);
     if( err != ESP_OK){
         ESP_LOGW(TAG,"ERROR MAPPING: %s",esp_err_to_name(err));
-        //LLAMAR RUTINA DE REINICIO LIDAR
+        LOG_MESSAGE_W(TAG,"ERROR MAPPING");
+        
+        // //LLAMAR RUTINA DE REINICIO LIDAR
+        ESP_LOGW(TAG, "Reiniciando LiDAR...");
+        LOG_MESSAGE_E(TAG, "Reiniciando LiDAR...");
+        esp_err_t err2 = vl53l0x_reset();
+        if (err2 != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Error restarting the LiDAR: %s", esp_err_to_name(err2));
+            return ESP_FAIL;
+        }
+        vTaskDelay(20 / portTICK_PERIOD_MS);
+
         return err;
     }
     return ESP_OK;     
@@ -130,20 +142,25 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
 // }
 static esp_err_t getValue(uint16_t *distance)
 {
-    bool success = false;
+    esp_err_t success;
     uint16_t val = 0;
 
 #ifndef VL53L0X
         success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &val);
-        if (success && (val < VL53L0X_OUT_OF_RANGE && val >= MIN_DISTANCE))
+        if (success != ESP_OK)
         {
-           *distance = val;
+            // Si la lectura no es exitosa o el valor está fuera de rango
+            ESP_LOGE(TAG, "Error reading: %s", esp_err_to_name(success));
+            return ESP_FAIL;
         }
         else
         {
-            // Si la lectura no es exitosa o el valor está fuera de rango
-            ESP_LOGE(TAG, "Error reading range or invalid value: %d", val);
-            return ESP_FAIL;
+            if(val < VL53L0X_OUT_OF_RANGE && val >= MIN_DISTANCE){
+                *distance = val;
+            }
+            else{
+                ESP_LOGE(TAG, "Invalid value: %d", val);
+            }
         }
 #else
         ESP_LOGE(TAG, "ERROR VL53L0X NOT DEFINED");

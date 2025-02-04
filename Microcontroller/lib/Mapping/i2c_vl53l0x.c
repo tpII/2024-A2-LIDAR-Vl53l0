@@ -30,6 +30,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
 
     if(!i2c_get_bus()){
         ESP_LOGE(TAG,"Error getting I2C Bus");
+        LOG_MESSAGE_E(TAG, "Error getting I2C Bus");
         return false;
     }
     
@@ -38,6 +39,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL) {
         ESP_LOGE(TAG, "Error al crear comando I2C");
+        LOG_MESSAGE_E(TAG, "Error al crear comando I2C");
         i2c_give_bus();
         return false;
     }
@@ -48,6 +50,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Escribir la dirección del dispositivo en el bus (modo escritura)"));
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo");
+        LOG_MESSAGE_E(TAG, "Error al escribir la dirección del dispositivo");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -56,6 +59,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Escribir el registro que queremos leer"));
     if (i2c_master_write_byte(cmd, addr, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir el registro");
+        LOG_MESSAGE_E(TAG, "Error al escribir el registro");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -65,6 +69,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     i2c_master_start(cmd);
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_READ, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo en modo lectura");
+        LOG_MESSAGE_E(TAG, "Error al escribir la dirección del dispositivo en modo lectura");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -75,6 +80,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         case REG_SIZE_8BIT:
             if (i2c_master_read_byte(cmd, data, I2C_MASTER_LAST_NACK) != ESP_OK) {
                 ESP_LOGE(TAG, "Error en la lectura de 8 bits");
+                LOG_MESSAGE_E(TAG, "Error en la lectura de 8 bits");
             } else {
                 success = true;
             }
@@ -85,6 +91,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
                 success = true;
             } else {
                 ESP_LOGE(TAG, "Error en la lectura de 16 bits");
+                LOG_MESSAGE_E(TAG, "Error en la lectura de 16 bits");
             }
             break;
         case REG_SIZE_32BIT:
@@ -95,6 +102,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
                 success = true;
             } else {
                 ESP_LOGE(TAG, "Error en la lectura de 32 bits");
+                LOG_MESSAGE_E(TAG, "Error en la lectura de 32 bits");
             }
             break;
     }
@@ -102,6 +110,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Terminar la transferencia I2C"));
     if (i2c_master_stop(cmd) != ESP_OK){
         ESP_LOGE(TAG, "Error en el cierre de la transferencia con el Master");
+        LOG_MESSAGE_E(TAG, "Error en el cierre de la transferencia con el Master");
         i2c_give_bus();
         return false;
     }
@@ -112,6 +121,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         success = true;
     } else {
         ESP_LOGE(TAG, "Error en la transferencia I2C en read_reg: %s", esp_err_to_name(ret));
+        LOG_MESSAGE_E(TAG, "Error en la transferencia I2C en read_reg");
         success = false;
     } 
 
@@ -129,6 +139,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
 
     if(!i2c_get_bus()){
         ESP_LOGE(TAG,"Error getting I2C Bus");
+        LOG_MESSAGE_E(TAG, "Error getting I2C Bus");
         return false;
     }
 
@@ -136,6 +147,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL) {
         ESP_LOGE(TAG, "Error al crear comando I2C");
+        LOG_MESSAGE_E(TAG, "Error al crear comando I2C");
         i2c_give_bus();
         return false;
     }
@@ -144,6 +156,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     i2c_master_start(cmd);
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo en modo escritura");
+        LOG_MESSAGE_E(TAG, "Error al escribir la dirección del dispositivo en modo escritura");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -153,6 +166,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     if (addr_size == ADDR_SIZE_16BIT) {
         if (i2c_master_write_byte(cmd, (addr >> 8) & 0xFF, true) != ESP_OK) {
             ESP_LOGE(TAG, "Error al enviar el byte alto de la dirección");
+        LOG_MESSAGE_E(TAG, "Error al enviar el byte alto de la dirección");
             i2c_cmd_link_delete(cmd);
             i2c_give_bus();
             return false;
@@ -160,6 +174,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     }
     if (i2c_master_write_byte(cmd, addr & 0xFF, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al enviar el byte bajo de la dirección");
+        LOG_MESSAGE_E(TAG, "Error al enviar el byte bajo de la dirección");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -169,6 +184,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     i2c_master_start(cmd);
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_READ, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al cambiar a modo lectura");
+        LOG_MESSAGE_E(TAG, "Error al cambiar a modo lectura");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -180,6 +196,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
             // Último byte debe terminar con NACK
             if (i2c_master_read_byte(cmd, &bytes[i], I2C_MASTER_NACK) != ESP_OK) {
                 ESP_LOGE(TAG, "Error al leer el último byte");
+                LOG_MESSAGE_E(TAG, "Error al leer el último byte");
                 i2c_cmd_link_delete(cmd);
                 i2c_give_bus();
                 return false;
@@ -188,6 +205,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
             // Leer el byte con ACK
             if (i2c_master_read_byte(cmd, &bytes[i], I2C_MASTER_ACK) != ESP_OK) {
                 ESP_LOGE(TAG, "Error al leer un byte con ACK");
+                LOG_MESSAGE_E(TAG, "Error al leer un byte con ACK");
                 i2c_cmd_link_delete(cmd);
                 i2c_give_bus();
                 return false;
@@ -198,6 +216,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
     // Finalizar la transferencia I2C
     if (i2c_master_stop(cmd) != ESP_OK) {
         ESP_LOGE(TAG, "Error al finalizar la transferencia");
+        LOG_MESSAGE_E(TAG, "Error al finalizar la transferencia");
         i2c_give_bus();
         return false;
     }
@@ -208,6 +227,7 @@ static bool read_reg_bytes(uint8_t slave_addr, addr_size_t addr_size, uint16_t a
         success = true;
     } else {
         ESP_LOGE(TAG, "Error en la transferencia I2C en read_reg_bytes: %s", esp_err_to_name(ret));
+        LOG_MESSAGE_E(TAG, "Error en la transferencia I2C en read_reg_bytes");
     }
 
     // Liberar el comando I2C
@@ -226,6 +246,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
 
     if(!i2c_get_bus()){
         ESP_LOGE(TAG,"Error getting I2C Bus");
+        LOG_MESSAGE_E(TAG, "Error getting I2C Bus");
         return false;
     }
 
@@ -233,6 +254,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL) {
         ESP_LOGE(TAG, "Error al crear comando I2C");
+        LOG_MESSAGE_E(TAG, "Error al crear comando I2C");
         i2c_give_bus();
         return false;
     }
@@ -243,6 +265,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
     // Escribir la dirección del dispositivo en el bus (modo escritura)
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo en modo escritura");
+        LOG_MESSAGE_E(TAG, "Error al escribir la dirección del dispositivo en modo escritura");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -252,6 +275,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
     if (addr_size == ADDR_SIZE_16BIT) {
         if (i2c_master_write_byte(cmd, (addr >> 8) & 0xFF, true) != ESP_OK) {
             ESP_LOGE(TAG, "Error al escribir el byte alto de la dirección");
+            LOG_MESSAGE_E(TAG, "Error al escribir el byte alto de la dirección");
             i2c_cmd_link_delete(cmd);
             i2c_give_bus();
             return false;
@@ -259,6 +283,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
     }
     if (i2c_master_write_byte(cmd, addr & 0xFF, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir el byte bajo de la dirección");
+        LOG_MESSAGE_E(TAG, "Error al escribir el byte bajo de la dirección");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -269,6 +294,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
         case REG_SIZE_8BIT:
             if (i2c_master_write_byte(cmd, data & 0xFF, true) != ESP_OK) {
                 ESP_LOGE(TAG, "Error al escribir el dato de 8 bits");
+                LOG_MESSAGE_E(TAG,"Error al escribir el dato de 8 bits");
                 i2c_cmd_link_delete(cmd);
                 i2c_give_bus();
                 return false;
@@ -279,6 +305,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
             if (i2c_master_write_byte(cmd, (data >> 8) & 0xFF, true) != ESP_OK ||
                 i2c_master_write_byte(cmd, data & 0xFF, true) != ESP_OK) {
                 ESP_LOGE(TAG, "Error al escribir el dato de 16 bits");
+                LOG_MESSAGE_E(TAG,"Error al escribir el dato de 16 bits");
                 i2c_cmd_link_delete(cmd);
                 i2c_give_bus();
                 return false;
@@ -292,6 +319,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
                 i2c_master_write_byte(cmd, (data >> 8) & 0xFF, true) != ESP_OK ||
                 i2c_master_write_byte(cmd, data & 0xFF, true) != ESP_OK) {
                 ESP_LOGE(TAG, "Error al escribir el dato de 32 bits");
+                LOG_MESSAGE_E(TAG,"Error al escribir el dato de 32 bits");
                 i2c_cmd_link_delete(cmd);
                 i2c_give_bus();
                 return false;
@@ -303,6 +331,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
     // Terminar la transferencia I2C
     if (i2c_master_stop(cmd) != ESP_OK) {
         ESP_LOGE(TAG, "Error en el cierre de la transferencia con el Master");
+        LOG_MESSAGE_E(TAG,"Error en el cierre de la transferencia con el Master");
         success = false;
     }
 
@@ -312,6 +341,7 @@ static bool write_reg(uint8_t slave_addr, addr_size_t addr_size, uint16_t addr, 
         success = true;
     } else {
         ESP_LOGE(TAG, "Error en la transferencia I2C en write_reg: %s", esp_err_to_name(ret));
+        LOG_MESSAGE_E(TAG,"Error en la transferencia I2C en write_reg");
         success = false;
     }
 
@@ -330,6 +360,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
 
     if(!i2c_get_bus()){
         ESP_LOGE(TAG,"Error getting I2C Bus");
+        LOG_MESSAGE_E(TAG,"Error getting I2C Bus");
         return false;
     }
 
@@ -337,6 +368,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL) {
         ESP_LOGE(TAG, "Error al crear comando I2C");
+        LOG_MESSAGE_E(TAG,"Error al crear comando I2C");
         i2c_give_bus();
         return false;
     }
@@ -347,6 +379,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     // Escribir la dirección del dispositivo en el bus (modo escritura)
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo en modo escritura");
+        LOG_MESSAGE_E(TAG,"Error al escribir la dirección del dispositivo en modo escritura");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -356,6 +389,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     if (i2c_master_write_byte(cmd, (addr >> 8) & 0xFF, true) != ESP_OK || 
         i2c_master_write_byte(cmd, addr & 0xFF, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del registro");
+        LOG_MESSAGE_E(TAG,"Error al escribir la dirección del registro");
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return false;
@@ -365,6 +399,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     for (uint16_t i = 0; i < byte_count; i++) {
         if (i2c_master_write_byte(cmd, bytes[i], true) != ESP_OK) {
             ESP_LOGE(TAG, "Error al escribir el byte %d en el dispositivo", i);
+            LOG_MESSAGE_E(TAG,"Error al escribir un byte en el dispositivo");
             i2c_cmd_link_delete(cmd);
             i2c_give_bus();
             return false;
@@ -374,6 +409,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     // Terminar la transferencia I2C
     if (i2c_master_stop(cmd) != ESP_OK) {
         ESP_LOGE(TAG, "Error en el cierre de la transferencia con el Master");
+        LOG_MESSAGE_E(TAG,"Error en el cierre de la transferencia con el Master");
         success = false;
     } else {
         success = true;
@@ -383,6 +419,7 @@ static bool write_reg_bytes(uint8_t slave_addr, uint16_t addr, uint8_t *bytes, u
     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(I2C_MASTER_TIMEOUT_MS));
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Error en la transferencia I2C en write_reg_bytes: %s", esp_err_to_name(ret));
+        LOG_MESSAGE_E(TAG,"Error en la transferencia I2C en write_reg_bytes");
         success = false;
     }
 
@@ -420,12 +457,14 @@ bool i2c_read_addr16_data16(uint16_t addr, uint16_t *data)
 bool i2c_read_addr8_data32(uint16_t addr, uint32_t *data)
 {   
     DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ALERTA: El registro de dirección 8bits 32bits no es soportado"));
+    LOG_MESSAGE_E(TAG,"ALERTA: El registro de dirección 8bits 32bits no es soportado");
     return read_reg(0x29, addr, REG_SIZE_32BIT, (uint8_t *)data);
 }
 
 bool i2c_read_addr16_data32(uint16_t addr, uint32_t *data)
 {
     DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ALERTA: El registro de dirección 16bits 32bits no es soportado"));
+    LOG_MESSAGE_E(TAG,"ALERTA: El registro de dirección 16bits 32bits no es soportado");
     return read_reg(0x29, addr, REG_SIZE_32BIT, (uint8_t *)data);
 }
 

@@ -72,7 +72,9 @@
     "frozen_json_helper.h": "c",
     "cyclops_core.h": "c",
     "debug_helper.h": "c",
-    "frozen.h": "c"
+    "frozen.h": "c",
+    "mqtt_handler.h": "c",
+    "mqtt_server.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }

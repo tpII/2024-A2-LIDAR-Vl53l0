@@ -45,7 +45,7 @@ esp_err_t getInstruccionMessage(char *inst);
  *      - ESP_OK on success
  *      - ESP_FAIL on failure
  */
-esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle);
+esp_err_t sendMappingValue( uint16_t distance,  uint16_t angle);
 
 /**
  * @brief Send the battery charge percentage via MQTT
@@ -72,7 +72,7 @@ esp_err_t sendBatteryLevel(const uint8_t batteryLevel);
  *      - ESP_OK on success
  *      - ESP_FAIL on failure
  */
-esp_err_t sendErrorMesage(const char *TAG, const char *msg);
+esp_err_t sendErrorMesage( char *TAG,  char *msg);
 
 /**
  * @brief Send an informational message via MQTT
@@ -86,7 +86,7 @@ esp_err_t sendErrorMesage(const char *TAG, const char *msg);
  *      - ESP_OK on success
  *      - ESP_FAIL on failure
  */
-esp_err_t sendInfoMesage(const char *TAG, const char *msg);
+esp_err_t sendInfoMesage( char *TAG,  char *msg);
 
 /**
  * @brief Send a warning message via MQTT
@@ -100,7 +100,7 @@ esp_err_t sendInfoMesage(const char *TAG, const char *msg);
  *      - ESP_OK on success
  *      - ESP_FAIL on failure
  */
-esp_err_t sendWarningMesage(const char *TAG, const char *msg);
+esp_err_t sendWarningMesage( char *TAG,  char *msg);
 
 
 esp_err_t sendBarrier(void);

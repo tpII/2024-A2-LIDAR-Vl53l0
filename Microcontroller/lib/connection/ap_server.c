@@ -1,4 +1,5 @@
 #include "ap_server.h"
+#include "lights.h"
 
 static const char *TAG = "wifi softAP";
 static SemaphoreHandle_t client_connected_semaphore;
@@ -205,7 +206,9 @@ esp_err_t initialize_server(void)
 esp_err_t wait_for_client_connection() {
     ESP_LOGI(TAG, "Esperando a que un dispositivo se conecte...");
     // Bloquea hasta que el semáforo sea liberado por la conexión de un dispositivo
+    led_blink(300);
     xSemaphoreTake(client_connected_semaphore, portMAX_DELAY);
+    led_blink(300);
     ESP_LOGI(TAG, "¡Dispositivo conectado!");
     return ESP_OK;
 }
