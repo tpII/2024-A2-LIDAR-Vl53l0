@@ -13,14 +13,14 @@ esp_err_t start_heap_trace(void)
     esp_err_t err = heap_trace_init_standalone(trace_record, NUM_RECORDS);
     if (err != ESP_OK)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error initializing heap trace: %s", esp_err_to_name(err)));
+        ESP_LOGE(TAG, "Error initializing heap trace: %s", esp_err_to_name(err));
         return err;
     }
 
     err = heap_trace_start(HEAP_TRACE_LEAKS);
     if (err != ESP_OK)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error starting heap trace: %s", esp_err_to_name(err)));
+        ESP_LOGE(TAG, "Error starting heap trace: %s", esp_err_to_name(err));
         return err;
     }
 
@@ -33,7 +33,7 @@ void stop_heap_trace(void)
     esp_err_t err = heap_trace_stop();
     if (err != ESP_OK)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error stopping heap trace: %s", esp_err_to_name(err)));
+        ESP_LOGE(TAG, "Error stopping heap trace: %s", esp_err_to_name(err));
         return;
     }
 

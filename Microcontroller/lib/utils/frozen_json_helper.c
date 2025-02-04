@@ -56,7 +56,7 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     size = estimated_size + 1; // +1 para el null-terminator
     *msg = (char *)malloc(size);
     if (*msg == NULL) {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error allocating memory for JSON string"));
+        ESP_LOGE(TAG, "Error allocating memory for JSON string");
         return ESP_FAIL;
     }
 
@@ -107,14 +107,14 @@ esp_err_t deserialize_json_data(const char *data, char *msg, size_t msg_size)
 
 
     if (instruction == NULL) {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Instruction is missing in JSON"));
+        ESP_LOGE(TAG, "Instruction is missing in JSON");
         free(id);
         free(time);
         return ESP_ERR_INVALID_ARG;
     }
 
     if (strlen(instruction) >= msg_size) {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Message length exceeds buffer size"));
+        ESP_LOGE(TAG, "Message length exceeds buffer size");
         free(id);
         free(instruction);
         free(time);
@@ -149,6 +149,6 @@ void print_json_data(const char *json_str)
     }
     else
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Invalid JSON string"));
+        ESP_LOGE(TAG, "Invalid JSON string");
     }
 }

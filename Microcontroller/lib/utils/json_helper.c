@@ -48,7 +48,7 @@ esp_err_t create_json_dataX(char **msg, const char **keys, const char **values, 
     cJSON *root = cJSON_CreateObject();
     if (root == NULL)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error creating JSON object"));
+        ESP_LOGE(TAG, "Error creating JSON object");
         return ESP_FAIL;
     }
 
@@ -57,7 +57,7 @@ esp_err_t create_json_dataX(char **msg, const char **keys, const char **values, 
        if (!cJSON_AddStringToObject(root, keys[i], values[i]))
         //if (!cJSON_AddNumberToObject(root, keys[i],  values[i]))
         {
-            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error adding key-value to JSON"));
+            ESP_LOGE(TAG, "Error adding key-value to JSON");
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
             return ESP_FAIL;
         }
@@ -67,7 +67,7 @@ esp_err_t create_json_dataX(char **msg, const char **keys, const char **values, 
     
     if (*msg == NULL)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error converting JSON to string"));
+        ESP_LOGE(TAG, "Error converting JSON to string");
         return ESP_FAIL; // Error si no se puede generar el string JSON
     }
     cJSON_Delete(root);
@@ -96,7 +96,7 @@ esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t messa
     cJSON *json = cJSON_Parse(data);
     if (json == NULL)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE("JSON", "Error parsing JSON data"));
+        ESP_LOGE("JSON", "Error parsing JSON data");
         return ESP_FAIL;
     }
     // ESP_LOGW(TAG,"JSON: %s",cJSON_Print(json));
@@ -106,7 +106,7 @@ esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t messa
 
     if (instruction_json == NULL || time_json == NULL)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE("JSON", "Missing expected keys 'instruction' or 'time'"));
+        ESP_LOGE("JSON", "Missing expected keys 'instruction' or 'time'");
         cJSON_Delete(json); // Limpiar el objeto JSON
         return ESP_ERR_INVALID_ARG;
     }
@@ -115,7 +115,7 @@ esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t messa
     const char *instruction = cJSON_GetStringValue(instruction_json);
     if (instruction == NULL)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE("JSON", "Error getting value for 'instruction'"));
+        ESP_LOGE("JSON", "Error getting value for 'instruction'");
         cJSON_Delete(json); // Limpiar el objeto JSON
         return ESP_FAIL;
     }
@@ -124,7 +124,7 @@ esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t messa
     long long time = cJSON_GetNumberValue(time_json);
     if (time == 0 && cJSON_IsNumber(time_json) == 0) // Verificar si es número
     {
-        DEBUGING_ESP_LOG(ESP_LOGE("JSON", "Error getting value for 'time'"));
+        ESP_LOGE("JSON", "Error getting value for 'time'");
         cJSON_Delete(json); // Limpiar el objeto JSON
         return ESP_FAIL;
     }
@@ -135,7 +135,7 @@ esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t messa
     // Validar el tamaño del mensaje
     if (strlen(instruction) >= message_length)
     {
-        DEBUGING_ESP_LOG(ESP_LOGE("JSON", "Message length exceeds buffer size"));
+        ESP_LOGE("JSON", "Message length exceeds buffer size");
         cJSON_Delete(json);
         return ESP_ERR_INVALID_SIZE;
     }
@@ -167,6 +167,6 @@ void print_json_dataX(const char *json_str)
     }
     else
     {
-        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "JSON es NULL o no válido"));
+        ESP_LOGE(TAG, "JSON es NULL o no válido");
     }
 }
