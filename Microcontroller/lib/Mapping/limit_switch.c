@@ -38,6 +38,7 @@ esp_err_t interrupt_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "GPIO error. Failed to set direction.");
+        LOG_MESSAGE_E(TAG, "GPIO error. Failed to set direction.");
         return err;
     }
 
@@ -45,6 +46,7 @@ esp_err_t interrupt_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Parameter error. Failed to set interrupt trigger type.");
+        LOG_MESSAGE_E(TAG,"Parameter error. Failed to set interrupt trigger type.");
         return err;
     }
 
@@ -53,6 +55,7 @@ esp_err_t interrupt_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Parameter error. Failed to enable pull-up on GPIO.");
+        LOG_MESSAGE_E(TAG,"Parameter error. Failed to enable pull-up on GPIO.");
         return err;
     }
 
@@ -60,6 +63,7 @@ esp_err_t interrupt_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to install the GPIO driver's ISR handler service.");
+        LOG_MESSAGE_E(TAG,"Failed to install the GPIO driver's ISR handler service.");
         return err;
     }
 
@@ -67,6 +71,7 @@ esp_err_t interrupt_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to add ISR handler for the corresponding GPIO pin.");
+        LOG_MESSAGE_E(TAG,"Failed to add ISR handler for the corresponding GPIO pin.");
         return err;
     }
 

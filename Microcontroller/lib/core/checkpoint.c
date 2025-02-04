@@ -1,6 +1,7 @@
 #include "checkpoint.h"
 #include <setjmp.h>
 #include "esp_log.h"
+#include "debug_helper.h"
 
 static char *TAG = "CHECKPOINT";
 static jmp_buf checkpoint;
@@ -14,6 +15,7 @@ esp_err_t setCheckpoint()
     if (err)
     {
         ESP_LOGE(TAG, "Error setting checkpoint");
+        LOG_MESSAGE_E(TAG, "Error setting checkpoint");
         return ESP_FAIL;
     }
     return ESP_OK;
@@ -42,6 +44,7 @@ esp_err_t delete_semaphores()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to delete the semaphore controlling the I2C bus.");
+        LOG_MESSAGE_E(TAG, "Failed to delete the semaphore controlling the I2C bus.");
         return err;
     }
 
@@ -49,6 +52,7 @@ esp_err_t delete_semaphores()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to delete the semaphore to access the buffer.");
+        LOG_MESSAGE_E(TAG, "Failed to delete the semaphore to access the buffer.");
         return err;
     }
 
@@ -56,6 +60,7 @@ esp_err_t delete_semaphores()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to delete the semaphore ffor the limit switch.");
+        LOG_MESSAGE_E(TAG, "Failed to delete the semaphore ffor the limit switch.");
         return err;
     }
 
@@ -63,6 +68,7 @@ esp_err_t delete_semaphores()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to delete the semaphores used for the servo.");
+        LOG_MESSAGE_E(TAG,  "Failed to delete the semaphores used for the servo.");
         return err;
     }
 

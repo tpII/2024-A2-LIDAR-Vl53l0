@@ -578,13 +578,13 @@ static void configure_gpio()
  * in hardware standby. */
 static bool init_address(vl53l0x_idx_t idx)
 {
-    //set_hardware_standby(idx, false);
+    set_hardware_standby(idx, false);
     //i2c_set_slave_address(VL53L0X_DEFAULT_ADDRESS);
 
     /* The datasheet doesn't say how long we must wait to leave hw standby,
      * but using the same delay as vl6180x seems to work fine. */
     //__delay_cycles(400);
-    vTaskDelay(pdMS_TO_TICKS(800));
+    vTaskDelay(800/portTICK_PERIOD_MS);
 
     if (!device_is_booted()) {
         ESP_LOGE(TAG, "El dispisitivo NO está conectado");
@@ -605,7 +605,7 @@ static bool init_address(vl53l0x_idx_t idx)
 static bool init_addresses()
 {
     /* Puts all sensors in hardware standby */
-    //configure_gpio();
+    configure_gpio();
 
     /* Wake each sensor up one by one and set a unique address for each one */
     if (!init_address(VL53L0X_IDX_FIRST)) {
@@ -667,7 +667,7 @@ bool vl53l0x_init()
     return true;
 }
 
-bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
+esp_err_t vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
 {
     //i2c_set_slave_address(vl53l0x_infos[idx].addr);
     bool success = i2c_write_addr8_data8(0x80, 0x01);
@@ -677,36 +677,39 @@ bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
     success &= i2c_write_addr8_data8(0x00, 0x01);
     success &= i2c_write_addr8_data8(0xFF, 0x00);
     success &= i2c_write_addr8_data8(0x80, 0x00);
+    
     if (!success) {
-        return false;
+        return ESP_FAIL;
     }
 
     if (!i2c_write_addr8_data8(REG_SYSRANGE_START, 0x01)) {
-        return false;
+        return ESP_FAIL;
     }
 
     uint8_t sysrange_start = 0;
     do {
         success = i2c_read_addr8_data8(REG_SYSRANGE_START, &sysrange_start);
     } while (success && (sysrange_start & 0x01));
+    
     if (!success) {
-        return false;
+        return ESP_FAIL;
     }
 
     uint8_t interrupt_status = 0;
     do {
         success = i2c_read_addr8_data8(REG_RESULT_INTERRUPT_STATUS, &interrupt_status);
     } while (success && ((interrupt_status & 0x07) == 0));
+    
     if (!success) {
-        return false;
+        return ESP_FAIL;
     }
 
     if (!i2c_read_addr8_data16(REG_RESULT_RANGE_STATUS + 10, range)) {
-        return false;
+        return ESP_FAIL;
     }
 
     if (!i2c_write_addr8_data8(REG_SYSTEM_INTERRUPT_CLEAR, 0x01)) {
-        return false;
+        return ESP_FAIL;
     }
     
     /* 8190 or 8191 may be returned when obstacle is out of range. */
@@ -714,5 +717,40 @@ bool vl53l0x_read_range_single(vl53l0x_idx_t idx, uint16_t *range)
         *range = VL53L0X_OUT_OF_RANGE;
     }
 
-    return true;
+    return ESP_OK;
+}
+
+esp_err_t vl53l0x_reset() {
+
+    esp_err_t err;
+
+    err = gpio_set_level(GPIO_XSHUT_FIRST, 0); // Apagar
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error setting GPIO_XSHUT_FIRST to 0: %s", esp_err_to_name(err));
+        return ESP_FAIL;
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(30)); // Esperar 10ms
+    
+    err = gpio_set_level(GPIO_XSHUT_FIRST, 1); // Encender
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Error setting GPIO_XSHUT_FIRST to 1: %s", esp_err_to_name(err));
+        return ESP_FAIL;
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(30)); // Esperar a que el sensor esté listo
+
+    if (device_is_booted()) {
+        if( vl53l0x_init() ){
+            return ESP_OK;
+        }
+        ESP_LOGE(TAG, "Failed to restart and boot the VL53L0X");
+        return ESP_FAIL;
+    } 
+    else {
+        ESP_LOGE(TAG, "VL53L0X no se inició correctamente después del reinicio");
+        return ESP_FAIL;
+    }
 }

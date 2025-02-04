@@ -26,6 +26,7 @@ esp_err_t battery_sensor_init()
     if (CONFIG_SHUNT_RESISTOR_MILLI_OHM <= 0)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Invalid shunt resistor value: %d mOhm", CONFIG_SHUNT_RESISTOR_MILLI_OHM));
+        LOG_MESSAGE_E(TAG, "Invalid shunt resistor value");
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -34,6 +35,7 @@ esp_err_t battery_sensor_init()
     esp_err_t err = ina219_init(&dev);
     if (err != ESP_OK) {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "INA219 initialization failed: %s", esp_err_to_name(err)));
+        LOG_MESSAGE_E(TAG, "INA219 initialization failed");
         return err;
     }
 
@@ -59,6 +61,7 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
     if (battery_level == NULL)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Battery level pointer is NULL"));
+        LOG_MESSAGE_E(TAG,  "Battery level pointer is NULL");
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -69,18 +72,21 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
     if (ret != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Failed to read bus voltage"));
+        LOG_MESSAGE_E(TAG,  "Failed to read bus voltage");
         return ret;
     }
     ret = ina219_get_shunt_voltage(&dev, &shunt_voltage);
     if (ret != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Failed to read bus voltage"));
+        LOG_MESSAGE_E(TAG,  "Failed to read bus voltage");
         return ret;
     }
     ret = ina219_get_current(&dev, &current);
     if (ret != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Failed to read bus voltage"));
+        LOG_MESSAGE_E(TAG,"Failed to read bus voltage");
         return ret;
     }
 
@@ -90,6 +96,7 @@ esp_err_t battery_sensor_read(uint8_t *battery_level)
     if (bus_voltage < 6.0 || bus_voltage > 8.4)
     {
         DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Voltage out of expected range: %.2fV", bus_voltage));
+        LOG_MESSAGE_W(TAG, "Voltage out of expected range");
         *battery_level = 0; // Nivel de batería inválido
         return ESP_OK;
     }

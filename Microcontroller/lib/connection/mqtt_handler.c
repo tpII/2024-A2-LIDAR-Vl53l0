@@ -39,7 +39,7 @@
 static const char *TAG = "MQTT_HANDLER"; // Library Tag
 
 // Function Prototypes
-static esp_err_t sendControlMessage(const char *, const char *, const char *);
+static esp_err_t sendControlMessage(char *, char *, char *);
 
 /**
  * @brief Get the Instruction Message
@@ -91,27 +91,42 @@ esp_err_t getInstruccionMessage(char *msg)
  *          strings to avoid undefined behavior.
  *
  */
-static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, const char *msg)
+static esp_err_t sendControlMessage(char *ESP_TAG, char *msg_type, char *msg)
 {
+    const char *values[3];
+    char TAG_buffer[20], type_buffer[8], msg_buffer[50];
+    snprintf(TAG_buffer, sizeof(TAG_buffer), "%s", ESP_TAG);
+    snprintf(type_buffer, sizeof(type_buffer), "%s", msg_type);
+    snprintf(msg_buffer, sizeof(msg_buffer), "%s", msg);
+    values[0] = TAG_buffer;
+    values[1] = type_buffer;
+    values[2] = msg_buffer;
     const char *key[3] = {"tag", "type", "message"};
-    const char *values[3] = {ESP_TAG, msg_type, msg};
     char *json = NULL;
 
     esp_err_t err = create_json_data(&json, key, values, 3);
-    print_json_data(json);
 
     if (err != ESP_OK)
     {
+        if(json) free(json);
+        
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err)));
         return err;
+    }
+    else
+    {
+        print_json_data(json);
     }
 
     err = mqtt_publish(CONTROL_MESSAGE, json);
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err)));
+        free(json);
         return err;
     }
+
+    free(json);
 
     return ESP_OK;
 }
@@ -132,7 +147,7 @@ static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, c
  *
  * @see sendControlMessage
  */
-esp_err_t sendInfoMesage(const char *TAG, const char *msg)
+esp_err_t sendInfoMesage( char *TAG,  char *msg)
 {
     return sendControlMessage(TAG, "INFO", msg);
 }
@@ -154,7 +169,7 @@ esp_err_t sendInfoMesage(const char *TAG, const char *msg)
  * @see sendControlMessage
  */
 
-esp_err_t sendWarningMesage(const char *TAG, const char *msg)
+esp_err_t sendWarningMesage( char *TAG,  char *msg)
 {
     return sendControlMessage(TAG, "WARNING", msg);
 }
@@ -176,7 +191,7 @@ esp_err_t sendWarningMesage(const char *TAG, const char *msg)
  * @see sendControlMessage
  */
 
-esp_err_t sendErrorMesage(const char *TAG, const char *msg)
+esp_err_t sendErrorMesage( char *TAG,  char *msg)
 {
     return sendControlMessage(TAG, "ERROR", msg);
 }
@@ -238,6 +253,7 @@ esp_err_t sendMappingValue(uint16_t distance, uint16_t angle)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err)));
        // cJSON_Delete(json);
+        free(json);
         return err;
     }
 

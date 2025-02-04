@@ -29,6 +29,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include <stdint.h>
+#include "debug_helper.h"
 
 /**
  * @brief Static semaphore handle for managing I2C bus access.
@@ -83,6 +84,7 @@ esp_err_t i2c_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error in i2c_param_config: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG, "Error in i2c_param_config");
         // Seng Msg to User and Turn ON error led
 
         return err;
@@ -96,6 +98,7 @@ esp_err_t i2c_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error in i2c_driver_install: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG, "Error in i2c_driver_install");
         // Seng Msg to User and Turn ON error led
         return err;
     }
@@ -103,6 +106,7 @@ esp_err_t i2c_init()
     if (xSemaphoreGive(bus_semaphore) != pdTRUE)
     {
         ESP_LOGE(TAG, "Error Initializing I2C Bus Semaphore");
+        LOG_MESSAGE_E(TAG, "Error Initializing I2C Bus Semaphore");
         return ESP_FAIL;
     }
 
