@@ -64,7 +64,7 @@ export class MainComponent {
 
   // Agregar propiedades para el mando y la batería
   isControllerConnected = true; // Cambiar dinámicamente según el estado real
-  batteryLevel = 55; // Cambiar dinámicamente según el nivel de batería
+  batteryLevel = 50; // Cambiar dinámicamente según el nivel de batería
 
   // Velocidad actual
   speed: string = "Normal";
