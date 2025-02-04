@@ -25,6 +25,7 @@
 #include "esp_log.h"
 #include "instruction_buffer.h"
 #include "frozen_json_helper.h"
+#include "debug_helper.h"
 
 // Definitions
 #define INSTRUCTIONS_BUFFER_SIZE 10       // Maximum number of instructions to store in buffer
@@ -101,14 +102,14 @@ static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, c
 
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err)));
         return err;
     }
 
     err = mqtt_publish(CONTROL_MESSAGE, json);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err)));
         return err;
     }
 
@@ -224,7 +225,7 @@ esp_err_t sendMappingValue(uint16_t distance, uint16_t angle)
 
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err)));
         return err;
     }
     else 
@@ -235,7 +236,7 @@ esp_err_t sendMappingValue(uint16_t distance, uint16_t angle)
     err = mqtt_publish(MAPPING_VALUE, json);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err)));
        // cJSON_Delete(json);
         return err;
     }
@@ -262,7 +263,7 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
 
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error creating json data: %s", esp_err_to_name(err)));
         return err;
     }
 
@@ -270,13 +271,13 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
     err = mqtt_publish(BATTERY_VALUE, json);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err)));
        // cJSON_Delete(json); // Liberar memoria antes de salir
         return err;
     }
 
   // cJSON_Delete(json); // Liberar memoria al finalizar
-    ESP_LOGI(TAG, "Battery level published");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Battery level published"));
 
     free(json);
 
@@ -289,7 +290,7 @@ esp_err_t sendBarrier()
     err = mqtt_publish(BATTERY_VALUE, "BARRIER");
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error publishing control message: %s", esp_err_to_name(err)));
         return err;
     }
     return ESP_OK;

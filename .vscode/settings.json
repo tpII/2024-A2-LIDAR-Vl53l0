@@ -69,7 +69,10 @@
     "http_handler.h": "c",
     "stdio.h": "c",
     "json_helper.h": "c",
-    "frozen_json_helper.h": "c"
+    "frozen_json_helper.h": "c",
+    "cyclops_core.h": "c",
+    "debug_helper.h": "c",
+    "frozen.h": "c"
   },
   "java.configuration.updateBuildConfiguration": "interactive"
 }

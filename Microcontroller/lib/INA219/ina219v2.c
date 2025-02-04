@@ -1,6 +1,7 @@
 #include "ina219v2.h"
 #include "i2c.h"
 #include "esp_log.h"
+#include "debug_helper.h"
 
 #define TAG "INA219"
 
@@ -17,7 +18,7 @@ esp_err_t ina219_init(ina219_t *dev)
 
     if (i2c_init() != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR I2C INTI");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR I2C INTI"));
         return ESP_FAIL;
     }
 
@@ -28,28 +29,28 @@ esp_err_t ina219_init(ina219_t *dev)
 // Escribir en un registro
 static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t value)
 {
-    ESP_LOGI(TAG, "Enviando a dirección: 0x%02X, Registro: 0x%02X, MSB: 0x%02X, LSB: 0x%02X",
-             dev->i2c_addr, reg, (value >> 8) & 0xFF, value & 0xFF);
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Enviando a dirección: 0x%02X, Registro: 0x%02X, MSB: 0x%02X, LSB: 0x%02X",
+             dev->i2c_addr, reg, (value >> 8) & 0xFF, value & 0xFF));
 
-    ESP_LOGI(TAG, "Obteniendo bus");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Obteniendo bus"));
 
     if (!i2c_get_bus())
     {
-        ESP_LOGE(TAG, "BUS BUSY");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "BUS BUSY"));
         return ESP_FAIL; // No se pudo obtener el bus
     }
 
-    ESP_LOGI(TAG, "Bus obtenido");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Bus obtenido"));
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (!cmd)
     {
-        ESP_LOGE(TAG, "CMD NULL");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "CMD NULL"));
         i2c_give_bus();
         return ESP_ERR_NO_MEM;
     }
 
-    ESP_LOGI(TAG, "CMD CREADO");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "CMD CREADO"));
 
     esp_err_t ret = ESP_OK;
     uint8_t data[] = {reg, (value >> 8) & 0xFF, value & 0xFF};
@@ -57,7 +58,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ret = i2c_master_start(cmd);
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error en i2c_master_start: %s", esp_err_to_name(ret));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error en i2c_master_start: %s", esp_err_to_name(ret)));
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return ret;
@@ -66,7 +67,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ret = i2c_master_write_byte(cmd, (dev->i2c_addr << 1) | I2C_MASTER_WRITE, true);
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error enviando dirección: %s", esp_err_to_name(ret));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error enviando dirección: %s", esp_err_to_name(ret)));
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return ret;
@@ -76,7 +77,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ret = i2c_master_write(cmd, data, sizeof(data), true);
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error enviando datos: %s", esp_err_to_name(ret));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error enviando datos: %s", esp_err_to_name(ret)));
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return ret;
@@ -86,7 +87,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ret = i2c_master_stop(cmd);
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error en i2c_master_stop: %s", esp_err_to_name(ret));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error en i2c_master_stop: %s", esp_err_to_name(ret)));
         i2c_cmd_link_delete(cmd);
         i2c_give_bus();
         return ret;
@@ -96,7 +97,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(1000));
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error en i2c_master_cmd_begin: %s", esp_err_to_name(ret));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error en i2c_master_cmd_begin: %s", esp_err_to_name(ret)));
     }
     i2c_cmd_link_delete(cmd);
     i2c_give_bus();

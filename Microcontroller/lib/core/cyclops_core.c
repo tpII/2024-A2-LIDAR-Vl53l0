@@ -123,7 +123,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating Limit Switch cheking Task");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Limit Switch cheking Task"));
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
@@ -139,7 +139,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating Instruction HandlerTask");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Instruction HandlerTask"));
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
@@ -154,7 +154,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating  Receive Instruction Task");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating  Receive Instruction Task"));
         return ESP_FAIL;
     }
 
@@ -169,7 +169,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating Mapping Task");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Mapping Task"));
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
@@ -184,7 +184,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating Battery Task");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Battery Task"));
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
@@ -199,7 +199,7 @@ esp_err_t createTasks()
 
     if (task_created != pdPASS)
     {
-        ESP_LOGE(TAG, "Error Creating check RAM Task");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating check RAM Task"));
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
     return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
@@ -254,7 +254,7 @@ static void receiveInstruction(void *parameter)
         err = getHTTPInstruction();
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION"));
         }
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
@@ -270,11 +270,11 @@ static void instructionHandler(void *parameter)
         if (err == ESP_OK)
         {
             executeInstruction(inst);
-            ESP_LOGW(TAG, "INST Handled - %s", inst);
+            DEBUGING_ESP_LOG(ESP_LOGW(TAG, "INST Handled - %s", inst));
         }
         else if (err == ESP_ERR_TIMEOUT)
         {
-            ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION"));
         }
         memset(inst, 0, 20);
         vTaskDelay(50 / portTICK_PERIOD_MS);
@@ -316,24 +316,24 @@ static void executeInstruction(char *inst)
 
         if (mapping_pause() != ESP_OK)
         {
-            ESP_LOGE(TAG, "ERROR TRYING TO STOP SERVO");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR TRYING TO STOP SERVO"));
         }
         else
         {
             vTaskSuspend(mappingTaskHandler);
-            ESP_LOGE(TAG, "Mapping task suspended");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Mapping task suspended"));
         }
     }
     else if (strncmp(inst, "Play", 4) == 0)
     {
         if (mapping_restart() != ESP_OK)
         {
-            ESP_LOGE(TAG, "ERROR TRYING TO RESTART SERVO");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR TRYING TO RESTART SERVO"));
         }
         else
         {
             vTaskResume(mappingTaskHandler);
-            ESP_LOGE(TAG, "Mapping task resumed");
+            DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Mapping task resumed"));
         }
     }
 }

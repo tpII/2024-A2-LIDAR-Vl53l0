@@ -19,6 +19,7 @@
 #include "frozen_json_helper.h"
 #include "esp_log.h"
 #include "frozen.h"
+#include "debug_helper.h"
 
 #include <string.h>
 
@@ -55,7 +56,7 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     size = estimated_size + 1; // +1 para el null-terminator
     *msg = (char *)malloc(size);
     if (*msg == NULL) {
-        ESP_LOGE(TAG, "Error allocating memory for JSON string");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error allocating memory for JSON string"));
         return ESP_FAIL;
     }
 
@@ -67,7 +68,7 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
     }
     json_printf(&out_real, "}");
 
-    ESP_LOGI(TAG, "JSON created: %s", *msg); // Log para verificar salida
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "JSON created: %s", *msg)); // Log para verificar salida
 
     return ESP_OK;
 }
@@ -98,7 +99,7 @@ esp_err_t deserialize_json_data(const char *data, char *msg, size_t msg_size)
     char *time = NULL;
     bool read = false;
 
-    ESP_LOGE(TAG, "Received JSON: %s", data);
+    DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Received JSON: %s", data));
 
     int parsed = json_scanf(data, strlen(data), 
                             "{id:%Q, instruction:%Q, time:%Q, read:%B}", 
@@ -106,14 +107,14 @@ esp_err_t deserialize_json_data(const char *data, char *msg, size_t msg_size)
 
 
     if (instruction == NULL) {
-        ESP_LOGE(TAG, "Instruction is missing in JSON");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Instruction is missing in JSON"));
         free(id);
         free(time);
         return ESP_ERR_INVALID_ARG;
     }
 
     if (strlen(instruction) >= msg_size) {
-        ESP_LOGE(TAG, "Message length exceeds buffer size");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Message length exceeds buffer size"));
         free(id);
         free(instruction);
         free(time);
@@ -123,7 +124,7 @@ esp_err_t deserialize_json_data(const char *data, char *msg, size_t msg_size)
     strncpy(msg, instruction, msg_size - 1);
     msg[msg_size - 1] = '\0'; // Asegurar terminación nula
 
-    ESP_LOGI(TAG, "Final parsed values -> Instruction: %s, Time: %s", instruction, time);
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Final parsed values -> Instruction: %s, Time: %s", instruction, time));
 
     // Liberar memoria asignada dinámicamente
     free(id);
@@ -144,10 +145,10 @@ void print_json_data(const char *json_str)
 {
     if (json_str != NULL)
     {
-        ESP_LOGI(TAG, "JSON created: %s", json_str);
+        DEBUGING_ESP_LOG(ESP_LOGI(TAG, "JSON created: %s", json_str));
     }
     else
     {
-        ESP_LOGE(TAG, "Invalid JSON string");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Invalid JSON string"));
     }
 }

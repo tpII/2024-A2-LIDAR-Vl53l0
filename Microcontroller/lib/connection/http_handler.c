@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "instruction_buffer.h"
+#include "debug_helper.h"
+
 
 #define INST_MAX_SIZE 20
 static const char *TAG = "HTTP_HANDLER";
@@ -40,7 +42,7 @@ esp_err_t getHTTPInstruction(void)
     esp_http_client_handle_t client = esp_http_client_init(&config);
     if (!client)
     {
-        ESP_LOGE(TAG, "Failed to initialize HTTP client");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Failed to initialize HTTP client"));
         return ESP_FAIL;
     }
 
@@ -48,7 +50,7 @@ esp_err_t getHTTPInstruction(void)
     err = esp_http_client_perform(client);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR PERFORMING GET");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR PERFORMING GET %s",esp_err_to_name(err)));
 
         esp_http_client_cleanup(client);
         vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -65,19 +67,19 @@ static void decodeInstruction(int length, char *str)
     esp_err_t err = deserialize_json_data(str, msg, INST_MAX_SIZE);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERORR DECODING JSON");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERORR DECODING JSON"));
     }
     else
     {
-        ESP_LOGW(TAG, "INST: %s", msg);
+        DEBUGING_ESP_LOG(ESP_LOGW(TAG, "INST: %s", msg));
         if (strncmp(msg, "REBOOT", strlen("REBOOT")) == 0)
         {
-            ESP_LOGW(TAG, "Reiniciando el MCU...");
+            DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Reiniciando el MCU..."));
             esp_restart(); // Llamada para reiniciar el MCU
         }
         else if (strncmp(msg, "ABORT", strlen("ABORT")) == 0)
         {
-            ESP_LOGW(TAG, "Abortando...");
+            DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Abortando..."));
         }
         else
         {
