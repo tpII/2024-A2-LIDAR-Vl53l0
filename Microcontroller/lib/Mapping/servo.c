@@ -8,6 +8,8 @@
 #include "freertos/semphr.h"
 #include <string.h>
 #include <driver/gpio.h>
+#include "debug_helper.h"
+
 
 // Parámetros específicos para el servomotor de giro continuo
 #define SERVO_MIN_PULSEWIDTH_US 900   // Ancho de pulso mínimo (giro rápido en un sentido)
@@ -76,7 +78,7 @@ esp_err_t servo_initialize(void)
     
     
 
-    ESP_LOGI(TAG, "Creating timer and operator...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Creating timer and operator..."));
     mcpwm_timer_config_t timer_config = {
         .group_id = 0,
         .clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT,
@@ -102,7 +104,7 @@ esp_err_t servo_initialize(void)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Connecting timer and operator...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Connecting timer and operator..."));
     if (mcpwm_operator_connect_timer(oper, timer) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Connecting Timer and Operator");
@@ -113,7 +115,7 @@ esp_err_t servo_initialize(void)
         ESP_LOGI(TAG, "Timer and Operator connected succesfully");
     }
 
-    ESP_LOGI(TAG, "Creating comparator and generator from the operator");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Creating comparator and generator from the operator"));
     mcpwm_comparator_config_t comparator_config = {
         .flags.update_cmp_on_tez = true,
     };
@@ -135,7 +137,7 @@ esp_err_t servo_initialize(void)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Set Generator action on Timer and Compare event");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Set Generator action on Timer and Compare event"));
 
     if (mcpwm_generator_set_action_on_timer_event(generator, MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)) != ESP_OK ||
         mcpwm_generator_set_action_on_compare_event(generator, MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, comparator, MCPWM_GEN_ACTION_LOW)) != ESP_OK)
@@ -144,7 +146,7 @@ esp_err_t servo_initialize(void)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Enabling and start timer...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Enabling and start timer..."));
     if (mcpwm_timer_enable(timer) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Enabling Timer");
@@ -157,14 +159,14 @@ esp_err_t servo_initialize(void)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Initializing Servo Interruption");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing Servo Interruption"));
     if (interrupt_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Initializing Servo Interruption");
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Servomotor inicializado correctamente");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Servomotor inicializado correctamente"));
     return ESP_OK;
 }
 
@@ -187,7 +189,7 @@ static esp_err_t servo_set_speed_ISR(uint32_t duty)
         ESP_LOGE(TAG, "Duty fuera del rango permitido");
         return ESP_ERR_INVALID_ARG;
     }
-    ESP_LOGW(TAG, "DUTY IN RANGE, %lu", duty);
+    DEBUGING_ESP_LOG(ESP_LOGW(TAG, "DUTY IN RANGE, %lu", duty));
 
     if (mcpwm_comparator_set_compare_value(comparator, duty) != ESP_OK)
     {
@@ -281,7 +283,7 @@ void servo_invert()
     {
         ESP_LOGE(TAG, "Error: Trying to invert servo orientation, rebooting servo....");
     }
-    ESP_LOGW(TAG, "INVERT END");
+    DEBUGING_ESP_LOG(ESP_LOGW(TAG, "INVERT END"));
 }
 
 int16_t readAngle()
@@ -308,7 +310,7 @@ int16_t readAngle()
     // Calcular velocidad escalada y ángulo
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
-    ESP_LOGW(TAG, "Angle = %" PRIi16, angle);
+    DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Angle = %" PRIi16, angle));
     //return ((((angle + 360 - 90) % 360) + 360) % 360); // Garantiza valores positivos
     return ((((angle - 90) % 360) + 360) % 360);
 }
@@ -383,7 +385,7 @@ void servo_set_speed(SERVO_DIRECTION dir)
                 break;
             }
         }
-        ESP_LOGE(TAG,"VELOCIDAD ACTUAL: %lu",current_duty);
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG,"VELOCIDAD ACTUAL: %lu",current_duty));
         xSemaphoreGive(current_duty_semaphore);
     }
     if (xSemaphoreTake(speed_change_semaphore, portMAX_DELAY) == pdTRUE)

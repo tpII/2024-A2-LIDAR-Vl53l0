@@ -2,6 +2,8 @@
 #include "servo.h"
 #include "vl53l0x.h"
 #include "esp_log.h"
+#include "debug_helper.h"
+
 
 #define MIN_DISTANCE 150
 
@@ -12,9 +14,9 @@ esp_err_t mapping_init()
 {
 
     esp_err_t err = ESP_OK;
-    ESP_LOGI(TAG, "Initializing Mapping");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing Mapping"));
 
-    ESP_LOGI(TAG, "Initializing GPIO...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing GPIO..."));
     err = gpio_init();
     if (err != ESP_OK)
     {
@@ -22,7 +24,7 @@ esp_err_t mapping_init()
         return err;
     }
 
-    ESP_LOGI(TAG, "Initializing I2C...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing I2C..."));
     err = i2c_init();
     if (err != ESP_OK)
     {
@@ -30,14 +32,14 @@ esp_err_t mapping_init()
         return ESP_FAIL;
     }
     
-    ESP_LOGI(TAG, "Initializing LiDAR...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing LiDAR..."));
     if (!vl53l0x_init())
     {
         ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Initializing ServoMotor...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing ServoMotor..."));
     err = servo_initialize();
     if (err != ESP_OK)
     {

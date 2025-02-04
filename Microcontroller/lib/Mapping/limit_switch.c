@@ -4,6 +4,8 @@
 #include "esp_timer.h" // Para obtener el tiempo actual en microsegundos
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
+#include "debug_helper.h"
+
 
 const char *TAG = "Servo Interruptions";
 static volatile bool limit_switch_triggered = false; // Variable para el estado de la interrupción
@@ -78,10 +80,10 @@ void check_limit_switch()
     {
         if (limit_switch_triggered)
         {
-            ESP_LOGW(TAG, "Limit switch triggered! Servo has reached the target position.");
+            DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Limit switch triggered! Servo has reached the target position."));
             servo_invert();
             limit_switch_triggered = false; // Restablece el estado de la interrupción
-            ESP_LOGW(TAG, "#");
+            DEBUGING_ESP_LOG(ESP_LOGW(TAG, "#"));
         }
         xSemaphoreGive(flag_semaphore);
     }

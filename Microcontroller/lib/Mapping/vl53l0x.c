@@ -1,6 +1,8 @@
 #include "vl53l0x.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "debug_helper.h"
+
 
 #define REG_IDENTIFICATION_MODEL_ID (0xC0)
 #define REG_VHV_CONFIG_PAD_SCL_SDA_EXTSUP_HV (0x89)
@@ -86,7 +88,7 @@ static bool device_is_booted()
         ESP_LOGE(TAG, "Error reading the MODEL ID");
         return false;
     }
-    ESP_LOGI(TAG, "REG_IDENTIFICATION_MODEL_ID read: %x", device_id);
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "REG_IDENTIFICATION_MODEL_ID read: %x", device_id));
     return device_id == VL53L0X_EXPECTED_DEVICE_ID;
 }
 
@@ -552,12 +554,12 @@ static void configure_gpio()
 {
     esp_err_t err = gpio_init();
     if (err != ESP_OK){
-        ESP_LOGI(TAG, "Fallo en gpio_init(): %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Fallo en gpio_init(): %s", esp_err_to_name(err));
     }
 
     err = gpio_set_output(GPIO_XSHUT_FIRST, false);
     if (err != ESP_OK){
-        ESP_LOGI(TAG, "Fallo en gpio_set_output(): %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Fallo en gpio_set_output(): %s", esp_err_to_name(err));
     }
 
     // err = gpio_set_output(GPIO_XSHUT_SECOND, false);

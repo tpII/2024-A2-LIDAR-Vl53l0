@@ -1,5 +1,7 @@
 #include "i2c_vl53l0x.h"
 #include "esp_log.h"
+#include "debug_helper.h"
+
 
 #define DEFAULT_SLAVE_ADDRESS (0x29)
 
@@ -30,7 +32,9 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         ESP_LOGE(TAG,"Error getting I2C Bus");
         return false;
     }
-    //ESP_LOGI(TAG, "Crear un comando I2C");
+    
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Crear un comando I2C"));
+    
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     if (cmd == NULL) {
         ESP_LOGE(TAG, "Error al crear comando I2C");
@@ -38,10 +42,10 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         return false;
     }
 
-    //ESP_LOGI(TAG, "Iniciar la transferencia I2C");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciar la transferencia I2C"));
     i2c_master_start(cmd);
 
-    //ESP_LOGI(TAG, "Escribir la dirección del dispositivo en el bus (modo escritura)");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Escribir la dirección del dispositivo en el bus (modo escritura)"));
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo");
         i2c_cmd_link_delete(cmd);
@@ -49,7 +53,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         return false;
     }
 
-    //ESP_LOGI(TAG, "Escribir el registro que queremos leer");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Escribir el registro que queremos leer"));
     if (i2c_master_write_byte(cmd, addr, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir el registro");
         i2c_cmd_link_delete(cmd);
@@ -57,7 +61,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         return false;
     }
 
-    //ESP_LOGI(TAG, "Enviar el comando de repetición para leer (modo lectura)");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Enviar el comando de repetición para leer (modo lectura)"));
     i2c_master_start(cmd);
     if (i2c_master_write_byte(cmd, (slave_addr << 1) | I2C_MASTER_READ, true) != ESP_OK) {
         ESP_LOGE(TAG, "Error al escribir la dirección del dispositivo en modo lectura");
@@ -66,7 +70,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         return false;
     }
 
-    //ESP_LOGI(TAG, "Leer los datos del registro");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Leer los datos del registro"));
     switch (reg_size) {
         case REG_SIZE_8BIT:
             if (i2c_master_read_byte(cmd, data, I2C_MASTER_LAST_NACK) != ESP_OK) {
@@ -95,14 +99,14 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
             break;
     }
 
-    //ESP_LOGI(TAG, "Terminar la transferencia I2C");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Terminar la transferencia I2C"));
     if (i2c_master_stop(cmd) != ESP_OK){
         ESP_LOGE(TAG, "Error en el cierre de la transferencia con el Master");
         i2c_give_bus();
         return false;
     }
 
-    //ESP_LOGI(TAG, "Enviar el comando I2C y verificar el éxito");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Enviar el comando I2C y verificar el éxito"));
     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(1000));
     if (ret == ESP_OK) {
         success = true;
@@ -111,7 +115,7 @@ static bool read_reg(uint8_t slave_addr, uint16_t addr, reg_size_t reg_size, uin
         success = false;
     } 
 
-    //ESP_LOGI(TAG, "Liberar el comando I2C");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Liberar el comando I2C"));
     i2c_cmd_link_delete(cmd);
 
     if(!i2c_give_bus()){
@@ -415,13 +419,13 @@ bool i2c_read_addr16_data16(uint16_t addr, uint16_t *data)
 
 bool i2c_read_addr8_data32(uint16_t addr, uint32_t *data)
 {   
-    //ESP_LOGE(TAG, "ALERTA: El registro de dirección 8bits 32bits no es soportado");
+    DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ALERTA: El registro de dirección 8bits 32bits no es soportado"));
     return read_reg(0x29, addr, REG_SIZE_32BIT, (uint8_t *)data);
 }
 
 bool i2c_read_addr16_data32(uint16_t addr, uint32_t *data)
 {
-    //ESP_LOGE(TAG, "ALERTA: El registro de dirección 16bits 32bits no es soportado");
+    DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ALERTA: El registro de dirección 16bits 32bits no es soportado"));
     return read_reg(0x29, addr, REG_SIZE_32BIT, (uint8_t *)data);
 }
 
