@@ -11,6 +11,7 @@
 #include "mqtt_server.h"
 #include "mapping.h"
 #include "heap_trace_helper.h"
+#include "debug_helper.h"
 
 static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
@@ -40,68 +41,68 @@ esp_err_t system_init()
     //     return ESP_FAIL;
     // }
 
-    ESP_LOGI(TAG, "Iniciando Server Service...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Server Service..."));
     err = initialize_server();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR SETTING UP SERVER:  %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP SERVER:  %s", esp_err_to_name(err)));
         return ESP_FAIL;
     }
-    ESP_LOGI(TAG, "Server Service Iniciado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Server Service Iniciado!"));
 
-    ESP_LOGI(TAG, "Esperando conexión del cliente...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Esperando conexión del cliente..."));
     err = wait_for_client_connection();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR - WAITING FOR CLIENT: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR - WAITING FOR CLIENT: %s", esp_err_to_name(err)));
         return ESP_FAIL;
     }
-    ESP_LOGI(TAG, "Cliente Conectado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Cliente Conectado!"));
 
-    ESP_LOGI(TAG, "Iniciando MQTT Service...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando MQTT Service..."));
     err = mqtt_start();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR SETTING UP MQTT SERVER: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP MQTT SERVER: %s", esp_err_to_name(err)));
         return ESP_FAIL;
     }
-    ESP_LOGI(TAG, "MQTT Service Iniciado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "MQTT Service Iniciado!"));
 
     // ENVIO BIENVENIDA
     // err = sendBarrier();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error al enviar barrera");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error al enviar barrera"));
         return 1;
     }
 
-    ESP_LOGI(TAG, "Iniciando Luces Service...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Luces Service..."));
     err = lights_init();
     if (err != ESP_OK)
     {
-        ESP_LOGW(TAG, "Error Setting Up Lights: %s", esp_err_to_name(err));
+        DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Error Setting Up Lights: %s", esp_err_to_name(err)));
     }
-    ESP_LOGI(TAG, "Luces Service Iniciado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Luces Service Iniciado!"));
 
-    ESP_LOGI(TAG, "Iniciando Motores...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Motores..."));
     motors_setup();
-    ESP_LOGI(TAG, "Motores Iniciados!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Motores Iniciados!"));
 
-    ESP_LOGI(TAG, "Iniciando Mapping Service...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Mapping Service..."));
     err = mapping_init();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR SETTING UP MAPPING");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP MAPPING"));
     }
-    ESP_LOGI(TAG, "Mapping Service Iniciado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Mapping Service Iniciado!"));
 
-    ESP_LOGI(TAG, "Iniciando Battery Service...");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Battery Service..."));
     err = battery_sensor_init();
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR");
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR SETTING UP BATTERY SENSOR"));
     }
-    ESP_LOGI(TAG, "Battery Service Iniciado!");
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Battery Service Iniciado!"));
 
     return err;
 }
