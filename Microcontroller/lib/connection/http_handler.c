@@ -1,5 +1,5 @@
 #include "http_handler.h"
-#include "json_helper.h"
+#include "frozen_json_helper.h"
 #include "esp_log.h"
 #include "esp_http_client.h"
 #include <string.h>
@@ -18,9 +18,8 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     switch (evt->event_id)
     {
     case HTTP_EVENT_ON_DATA:
-        printf("HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
+        // printf("HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
         decodeInstruction(evt->data_len, (char *)evt->data);
-
         break;
 
     default:
@@ -29,7 +28,7 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-esp_err_t getHTTPInstruction(char *inst, size_t inst_size)
+esp_err_t getHTTPInstruction(void)
 {
     esp_err_t err;
 
@@ -50,16 +49,20 @@ esp_err_t getHTTPInstruction(char *inst, size_t inst_size)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR PERFORMING GET");
+
+        esp_http_client_cleanup(client);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         return ESP_FAIL;
     }
     esp_http_client_cleanup(client);
-    return ESP_FAIL;
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    return ESP_OK;
 }
 
 static void decodeInstruction(int length, char *str)
 {
     char msg[INST_MAX_SIZE] = "";
-    esp_err_t err = deserealize_json_data(str, msg, INST_MAX_SIZE);
+    esp_err_t err = deserialize_json_data(str, msg, INST_MAX_SIZE);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERORR DECODING JSON");

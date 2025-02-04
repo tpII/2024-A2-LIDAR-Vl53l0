@@ -67,6 +67,7 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
     esp_err_t err = getValue(distance);
     if( err != ESP_OK){
         ESP_LOGW(TAG,"ERROR MAPPING: %s",esp_err_to_name(err));
+        //LLAMAR RUTINA DE REINICIO LIDAR
         return err;
     }
     return ESP_OK;     

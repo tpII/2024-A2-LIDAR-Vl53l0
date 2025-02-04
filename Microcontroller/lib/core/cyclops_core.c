@@ -10,6 +10,7 @@
 #include "lights.h"
 #include "mqtt_server.h"
 #include "mapping.h"
+#include "heap_trace_helper.h"
 
 static const char *TAG = "CYCLOPS_CORE";
 TaskHandle_t servoInterruptionTaskHandler = NULL;
@@ -30,6 +31,14 @@ static void checkRAM(void *);
 esp_err_t system_init()
 {
     esp_err_t err = ESP_OK;
+
+
+    // err = start_heap_trace();
+    // if (err != ESP_OK)
+    // {
+    //     ESP_LOGE(TAG, "ERROR INICIALIZANDO TRACER");
+    //     return ESP_FAIL;
+    // }
 
     ESP_LOGI(TAG, "Iniciando Server Service...");
     err = initialize_server();
@@ -59,7 +68,7 @@ esp_err_t system_init()
     ESP_LOGI(TAG, "MQTT Service Iniciado!");
 
     // ENVIO BIENVENIDA
-    //err = sendBarrier();
+    // err = sendBarrier();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error al enviar barrera");
@@ -99,9 +108,9 @@ esp_err_t system_init()
 
 esp_err_t createTasks()
 {
-    // BACKGROUND TASKs
-
-    BaseType_t task_created = xTaskCreatePinnedToCore(
+    // // BACKGROUND TASKs
+    BaseType_t task_created;
+    task_created = xTaskCreatePinnedToCore(
         servoInterruptionTask,         // Función de la tarea
         "ServoInterruptionTask",       // Nombre de la tarea
         4096,                          // Tamaño de la pila
@@ -117,10 +126,10 @@ esp_err_t createTasks()
         return ESP_FAIL; // Retorna error si la tarea no se pudo crear
     }
 
-    // MAIN TASKs
+    // // MAIN TASKs
     task_created = xTaskCreatePinnedToCore(
         instructionHandler,
-        "InstructionsHadlerTask",
+        "InstructionsHandlerTask",
         4096,
         NULL,
         2,
@@ -238,24 +247,14 @@ static void servoInterruptionTask(void *parameter)
 
 static void receiveInstruction(void *parameter)
 {
-    static char inst[20];
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getHTTPInstruction(inst, sizeof(inst));
-        if (err == ESP_OK)
-        {
-            if (saveInstruction(inst) != ESP_OK)
-            {
-                ESP_LOGE(TAG, "Failed to save instruction");
-            }
-            ESP_LOGW(TAG, "INST RECEIVED - %s", inst);
-        }
-        else if (err == ESP_ERR_TIMEOUT)
+        err = getHTTPInstruction();
+        if (err != ESP_OK)
         {
             ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION");
         }
-        memset(inst, 0, sizeof(inst));
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
@@ -353,8 +352,9 @@ static void batteryTask(void *parameter)
         else
         {
             ESP_LOGW(TAG, "Battery Level: %u", level);
-            if(sendBatteryLevel(level) != ESP_OK){
-                ESP_LOGE(TAG,"ERROR SENDING BATTERY LEVEL");
+            if (sendBatteryLevel(level) != ESP_OK)
+            {
+                ESP_LOGE(TAG, "ERROR SENDING BATTERY LEVEL");
             }
         }
         vTaskDelay(5000 / portTICK_PERIOD_MS);
@@ -373,21 +373,33 @@ static void mappingTask(void *parameter)
         {
             ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE");
         }
-        else{
+        else
+        {
             ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
-            sendMappingValue(distance,angle);
+            sendMappingValue(distance, angle);
         }
         vTaskDelay(4 / portTICK_PERIOD_MS);
     }
 }
 
+
 static void checkRAM(void *parameter)
 {
-
+    uint16_t percent;
+    bool flag = false;
     while (1)
     {
+        percent = (esp_get_free_heap_size() * 100) / 327680;
         ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
-        ESP_LOGI(TAG, "Memoria libre en el heap: %lu %% **************************************", (esp_get_free_heap_size()*100)/327680);
+        ESP_LOGI(TAG, "Memoria libre en el heap: %d %% **************************************", percent);
+        if (percent <= 20 && !flag)
+        {
+            stop_heap_trace();
+            // vTaskDelay(50 / portTICK_PERIOD_MS);
+            // abort_tasks();
+            flag = !flag;
+        }
+
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

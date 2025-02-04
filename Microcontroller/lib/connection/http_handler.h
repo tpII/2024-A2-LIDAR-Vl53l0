@@ -3,6 +3,6 @@
 
 #include "esp_err.h"
 
-esp_err_t getHTTPInstruction(char *, size_t);
+esp_err_t getHTTPInstruction(void);
 
 #endif

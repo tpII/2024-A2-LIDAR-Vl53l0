@@ -22,9 +22,9 @@
 
 #include "mqtt_handler.h"
 #include "mqtt_server.h"
-#include "json_helper.h"
 #include "esp_log.h"
 #include "instruction_buffer.h"
+#include "frozen_json_helper.h"
 
 // Definitions
 #define INSTRUCTIONS_BUFFER_SIZE 10       // Maximum number of instructions to store in buffer
@@ -94,7 +94,7 @@ static esp_err_t sendControlMessage(const char *ESP_TAG, const char *msg_type, c
 {
     const char *key[3] = {"tag", "type", "message"};
     const char *values[3] = {ESP_TAG, msg_type, msg};
-    cJSON *json = NULL;
+    char *json = NULL;
 
     esp_err_t err = create_json_data(&json, key, values, 3);
     print_json_data(json);
@@ -209,7 +209,7 @@ esp_err_t sendErrorMesage(const char *TAG, const char *msg)
  *          of 6 characters.
  */
 
-esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
+esp_err_t sendMappingValue(uint16_t distance, uint16_t angle)
 {
     const char *values[2];
     char buffer1[6], buffer2[6];
@@ -232,17 +232,17 @@ esp_err_t sendMappingValue(const uint16_t distance, const uint16_t angle)
         print_json_data(json);
     }
 
-    esp_err_t err2 = mqtt_publish(MAPPING_VALUE, json);
-    if (err2 != ESP_OK)
+    err = mqtt_publish(MAPPING_VALUE, json);
+    if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error publishing Control Message: %s", esp_err_to_name(err));
        // cJSON_Delete(json);
-        free(json);
         return err;
     }
 
-  //  cJSON_Delete(json);
     free(json);
+
+  //  cJSON_Delete(json);
     return ESP_OK;
 }
 
@@ -254,7 +254,7 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
     values[0] = buffer;                                   // Asignar al índice válido (0)
 
     const char *keys[1] = {"level"};
-    cJSON *json = NULL;
+    char *json = NULL;
 
     // Crear el JSON
     esp_err_t err = create_json_data(&json, keys, values, 1);
@@ -276,7 +276,9 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
     }
 
   // cJSON_Delete(json); // Liberar memoria al finalizar
-   ESP_LOGI(TAG, "Battery level published");
+    ESP_LOGI(TAG, "Battery level published");
+
+    free(json);
 
     return ESP_OK;
 }

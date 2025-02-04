@@ -42,7 +42,7 @@ static const char *TAG = "JSON_HELPER";
  * - `ESP_OK`: If the JSON string was successfully created.
  * - `ESP_FAIL`: If there was an error creating the JSON object or adding key-value pairs.
  */
-esp_err_t create_json_data(char **msg, const char **keys, const char **values, const size_t lenght)
+esp_err_t create_json_dataX(char **msg, const char **keys, const char **values, const size_t lenght)
 {
     cJSON *root = cJSON_CreateObject();
     if (root == NULL)
@@ -53,8 +53,8 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
 
     for (size_t i = 0; i < lenght; i++)
     {
-    //    if (!cJSON_AddStringToObject(root, keys[i], values[i]))
-        if (!cJSON_AddNumberToObject(root, keys[i],  values[i]);)
+       if (!cJSON_AddStringToObject(root, keys[i], values[i]))
+        //if (!cJSON_AddNumberToObject(root, keys[i],  values[i]))
         {
             ESP_LOGE(TAG, "Error adding key-value to JSON");
             cJSON_Delete(root); // Limpiar memoria si hay error al añadir elementos
@@ -89,7 +89,7 @@ esp_err_t create_json_data(char **msg, const char **keys, const char **values, c
  * - `ESP_ERR_INVALID_SIZE`: If the extracted instruction exceeds the buffer size.
  * - `ESP_FAIL`: If parsing fails or the data cannot be retrieved.
  */
-esp_err_t deserealize_json_data(const char *data, char *msg, const size_t message_length)
+esp_err_t deserealize_json_dataX(const char *data, char *msg, const size_t message_length)
 {
 
     cJSON *json = cJSON_Parse(data);
@@ -157,7 +157,7 @@ esp_err_t deserealize_json_data(const char *data, char *msg, const size_t messag
  *
  * @note This function is mainly use for debug
  */
-void print_json_data(const char *json_str)
+void print_json_dataX(const char *json_str)
 {
     if (json_str != NULL)
     {

@@ -20,9 +20,9 @@
 #include "mqtt_server.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
-#include "json_helper.h"
 #include "instruction_buffer.h"
 #include "esp_system.h"
+
 
 // Constants and Global Variables
 #define NUM_TOPICS 5 ///< Number of topics to subscribe to
@@ -298,7 +298,7 @@ esp_err_t mqtt_disconnect()
  * @param[in] data Pointer to the received message
  * @param[in] length Length of the message
  */
-static void instruction_handler(char *str, size_t length)
+/*static void instruction_handler(char *str, size_t length)
 {
     ESP_LOGW(TAG, "DATA RECEIVE %s", str);
     memset(inst, 0, sizeof(inst));
@@ -336,4 +336,4 @@ static void instruction_handler(char *str, size_t length)
             ESP_LOGW(TAG, "SAVED");
         }
     }
-}
+}*/

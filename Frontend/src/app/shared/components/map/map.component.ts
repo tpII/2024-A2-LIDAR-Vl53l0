@@ -105,7 +105,7 @@ export class MapComponent implements OnInit {
           .append('circle')
           .attr('cx', x)
           .attr('cy', y)
-          .attr('r', 1)
+          .attr('r', 2)
           .attr('fill', 'black');
         console.log("NP: ",newPoint);
        //   this.pointsMap.set(key, newPoint);

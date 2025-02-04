@@ -53,11 +53,16 @@
 #include "motors.h"
 #include "mqtt_handler.h"
 
+#include "esp_timer.h"
+#include "heap_trace_helper.h"
+
 static const char *TAG = "MAIN";
 
 int app_main(void)
 {
         esp_err_t err;
+
+        heap_trace_start(HEAP_TRACE_ALL);
 
         ESP_LOGI(TAG, "Iniciando Sistemas...");
         err = system_init();
@@ -68,7 +73,7 @@ int app_main(void)
         }
         ESP_LOGI(TAG, "Sistemas Iniciado!");
         // GENERO PUNTO DE RETORNO
-        
+
         ESP_LOGI(TAG, "Iniciando Tareas...");
         err = createTasks();
         if (err != ESP_OK)
@@ -77,6 +82,17 @@ int app_main(void)
                 return 1;
         }
         ESP_LOGI(TAG, "Tareas Iniciadas!");
-        
+        /*
+        uint64_t time_now = esp_timer_get_time();
+        while(1){
+                saveInstruction("Forward");
+                vTaskDelay(50 / portTICK_PERIOD_MS);
+
+                if ( (esp_timer_get_time() - time_now) > 120000000 ){
+                        ESP_LOGI(TAG, "Pasó 1 minuto $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                        heap_caps_print_heap_info(MALLOC_CAP_8BIT);
+                }
+        }*/
+
         return 0;
 }

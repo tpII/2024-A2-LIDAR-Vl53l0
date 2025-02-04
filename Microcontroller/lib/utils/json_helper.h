@@ -34,7 +34,7 @@
  * - `ESP_OK`: If the JSON string was successfully created.
  * - `ESP_FAIL`: If there was an error creating the JSON object or adding key-value pairs.
  */
-esp_err_t create_json_data(char **, const char **, const char **, const size_t);
+esp_err_t create_json_dataX(char **, const char **, const char **, const size_t);
 
 /**
  * @brief Deserializes a JSON string and extracts specific data.
@@ -52,7 +52,7 @@ esp_err_t create_json_data(char **, const char **, const char **, const size_t);
  * - `ESP_ERR_INVALID_SIZE`: If the extracted instruction exceeds the buffer size.
  * - `ESP_FAIL`: If parsing fails or the data cannot be retrieved.
  */
-esp_err_t deserealize_json_data(const char *,char *, const size_t);
+esp_err_t deserealize_json_dataX(const char *,char *, const size_t);
 
 /**
  * @brief Prints a JSON string to the log.
@@ -62,6 +62,6 @@ esp_err_t deserealize_json_data(const char *,char *, const size_t);
  * 
  * @param[in] json_str The JSON string to print.
  */
-void print_json_data(const char *);
+void print_json_dataX(const char *);
 
 #endif
