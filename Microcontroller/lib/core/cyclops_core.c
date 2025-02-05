@@ -336,7 +336,7 @@ static void executeInstruction(char *inst)
         {
             vTaskSuspend(mappingTaskHandler);
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Mapping task suspended"));
-            LOG_MESSAGE_E(TAG, "Mapping task suspended");
+            LOG_MESSAGE_W(TAG, "Mapping task suspended");
         }
     }
     else if (strncmp(inst, "Play", 4) == 0)
@@ -345,11 +345,13 @@ static void executeInstruction(char *inst)
         if (mapping_restart() != ESP_OK)
         {
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR TRYING TO RESTART SERVO"));
+            LOG_MESSAGE_E(TAG, "ERROR TRYING TO RESTART SERVO");
         }
         else
         {
             vTaskResume(mappingTaskHandler);
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Mapping task resumed"));
+            LOG_MESSAGE_I(TAG, "Mapping task resumed");
         }
     }
 }

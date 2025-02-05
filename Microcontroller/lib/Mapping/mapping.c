@@ -21,6 +21,7 @@ esp_err_t mapping_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error in gpio_init: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG, "Error in gpio_init");
         return err;
     }
 
@@ -29,6 +30,7 @@ esp_err_t mapping_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error initializing I2C");
+        LOG_MESSAGE_E(TAG, "Error initializing I2C");
         return ESP_FAIL;
     }
     
@@ -36,6 +38,7 @@ esp_err_t mapping_init()
     if (!vl53l0x_init())
     {
         ESP_LOGE(TAG, "Error initializing LiDAR(VL53L0X)");
+        LOG_MESSAGE_E(TAG, "Error initializing LiDAR(VL53L0X)");
         return ESP_FAIL;
     }
 
@@ -44,12 +47,14 @@ esp_err_t mapping_init()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error initializing Servo");
+        LOG_MESSAGE_E(TAG, "Error initializing Servo");
         return ESP_FAIL;
     }
     err = servo_start();
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error Starting Servo");
+        LOG_MESSAGE_E(TAG, "Error Starting Servo");
         return ESP_FAIL;
     }
 
@@ -62,6 +67,7 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
     if (angle == NULL || distance == NULL)
     {
         ESP_LOGE(TAG, "NULL pointer passed to getMappingValue.");
+        LOG_MESSAGE_E(TAG, "NULL pointer passed to getMappingValue.");
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -78,6 +84,7 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
         if (err2 != ESP_OK)
         {
             ESP_LOGE(TAG, "Error restarting the LiDAR: %s", esp_err_to_name(err2));
+            LOG_MESSAGE_E(TAG,"Error restarting the LiDAR");
             return ESP_FAIL;
         }
         vTaskDelay(20 / portTICK_PERIOD_MS);
@@ -151,6 +158,7 @@ static esp_err_t getValue(uint16_t *distance)
         {
             // Si la lectura no es exitosa o el valor está fuera de rango
             ESP_LOGE(TAG, "Error reading: %s", esp_err_to_name(success));
+            LOG_MESSAGE_W(TAG,"Error reading");
             return ESP_FAIL;
         }
         else
@@ -160,10 +168,12 @@ static esp_err_t getValue(uint16_t *distance)
             }
             else{
                 ESP_LOGE(TAG, "Invalid value: %d", val);
+                LOG_MESSAGE_E(TAG,"Invalid value");
             }
         }
 #else
         ESP_LOGE(TAG, "ERROR VL53L0X NOT DEFINED");
+        LOG_MESSAGE_E(TAG,"ERROR VL53L0X NOT DEFINED");
         return ESP_FAIL; // Si VL53L0X no está definido, retornar error
 #endif
 
@@ -178,6 +188,7 @@ esp_err_t mapping_pause()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR STOPING SERVO");
+        LOG_MESSAGE_E(TAG,"ERROR STOPPING SERVO");
         return ESP_FAIL;
     }
     return ESP_OK;
@@ -196,6 +207,7 @@ esp_err_t mapping_restart()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR RESTARTING SERVO");
+        LOG_MESSAGE_E(TAG,"ERROR RESTARTING SERVO");
         return ESP_FAIL;
     }
     return ESP_OK;

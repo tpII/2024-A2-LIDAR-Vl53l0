@@ -43,6 +43,7 @@ esp_err_t getHTTPInstruction(void)
     if (!client)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Failed to initialize HTTP client"));
+        LOG_MESSAGE_E(TAG, "Failed to initialize HTTP client");
         return ESP_FAIL;
     }
 
@@ -51,6 +52,7 @@ esp_err_t getHTTPInstruction(void)
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR PERFORMING GET %s",esp_err_to_name(err)));
+        LOG_MESSAGE_E(TAG, "ERROR PERFORMING GET");
 
         esp_http_client_cleanup(client);
         vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -68,6 +70,8 @@ static void decodeInstruction(int length, char *str)
     if (err != ESP_OK)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERORR DECODING JSON"));
+        LOG_MESSAGE_E(TAG, "ERORR DECODING JSON");
+
     }
     else
     {
@@ -75,11 +79,13 @@ static void decodeInstruction(int length, char *str)
         if (strncmp(msg, "REBOOT", strlen("REBOOT")) == 0)
         {
             DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Reiniciando el MCU..."));
+            LOG_MESSAGE_W(TAG, "Reiniciando el MCU...");
             esp_restart(); // Llamada para reiniciar el MCU
         }
         else if (strncmp(msg, "ABORT", strlen("ABORT")) == 0)
         {
             DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Abortando..."));
+            LOG_MESSAGE_W(TAG, "Abortando...");
         }
         else
         {
