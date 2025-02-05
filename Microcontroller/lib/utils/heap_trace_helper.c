@@ -14,6 +14,7 @@ esp_err_t start_heap_trace(void)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error initializing heap trace: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error initializing heap trace");
         return err;
     }
 
@@ -21,6 +22,7 @@ esp_err_t start_heap_trace(void)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error starting heap trace: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error starting heap trace");
         return err;
     }
 
@@ -34,6 +36,7 @@ void stop_heap_trace(void)
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error stopping heap trace: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error stopping heap trace");
         return;
     }
 
