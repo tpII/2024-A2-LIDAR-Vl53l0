@@ -200,5 +200,6 @@ Testeo desplazamiento de auto en mapeo.
 
 23 de Enero
 Modifico para que reciba lista de puntos desde el backend
+Se testeo el ESP32 y funciona
 
 
