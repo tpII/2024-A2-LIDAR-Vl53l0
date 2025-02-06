@@ -1,5 +1,7 @@
 package cyclops.backend.Configuration;
 
+import java.net.InetAddress;
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,9 @@ import cyclops.backend.services.MappingValueService;
 import cyclops.backend.services.MessageService;
 import cyclops.backend.services.ReferencePointService;
 import jakarta.annotation.PreDestroy;
+
+import java.net.UnknownHostException;
+
 
 @Configuration
 public class MqttConfig {
@@ -67,6 +72,8 @@ public class MqttConfig {
         System.out.println("Esperando a que la IP del host sea " + BACKEND_IP + "...");
         while (!NetworkUtils.isMyIp(BACKEND_IP)) {
             try {
+                InetAddress ip = InetAddress.getByName("host.docker.internal");
+            System.out.println("IP real de la PC detectada desde Docker: " + ip.getHostAddress());
                 System.out.println(
                         "La IP actual no es " + BACKEND_IP + ", reintentando en " + RETRY_INTERVAL_MS + "ms...");
                 Thread.sleep(RETRY_INTERVAL_MS);
@@ -74,7 +81,10 @@ public class MqttConfig {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException("Interrupción durante la espera de la IP correcta", e);
             }
-        }
+            catch (UnknownHostException e) {
+                System.err.println("Error: No se pudo obtener la IP de la PC. Asegúrate de que host.docker.internal está disponible.");
+            }
+            }
         System.out.println("La IP del host ahora es " + BACKEND_IP + ". Continuando...");
     }
 
