@@ -225,12 +225,12 @@ esp_err_t sendErrorMesage( char *TAG,  char *msg)
  *          of 6 characters.
  */
 
-esp_err_t sendMappingValue(uint16_t distance, uint16_t angle)
+esp_err_t sendMappingValue(uint16_t distance, int16_t angle)
 {
     const char *values[2];
-    char buffer1[6], buffer2[6];
+    char buffer1[6], buffer2[7];
     snprintf(buffer1, sizeof(buffer1), "%d", distance);
-    snprintf(buffer2, sizeof(buffer2), "%d", angle);
+    snprintf(buffer2, sizeof(buffer2), "%i", angle);
     values[0] = buffer1;
     values[1] = buffer2;
     const char *keys[2] = {"distance", "angle"};

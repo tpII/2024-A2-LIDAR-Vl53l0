@@ -45,7 +45,7 @@ esp_err_t getInstruccionMessage(char *inst);
  *      - ESP_OK on success
  *      - ESP_FAIL on failure
  */
-esp_err_t sendMappingValue( uint16_t distance,  uint16_t angle);
+esp_err_t sendMappingValue( uint16_t distance,  int16_t angle);
 
 /**
  * @brief Send the battery charge percentage via MQTT

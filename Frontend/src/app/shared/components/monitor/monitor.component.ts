@@ -56,17 +56,16 @@ export class MonitorComponent {
    * @note The subscription continues until the component is destroyed or the observable is completed.
    */
   ngOnInit(): void {
-    /*this.subscription = interval(1000)
+    this.subscription = interval(1000)
       .pipe(switchMap(() => this.messageService.getLastMessage()))
       .subscribe({
         next: (message) => {
           this.addMessage(message);
-          console.log('Lm: ', message);
         },
         error: (err) => {
           console.error('Error al obtener el ultimo mensage', err);
         },
-      });*/
+      });
   }
     
 

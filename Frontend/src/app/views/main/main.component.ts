@@ -87,7 +87,6 @@ export class MainComponent {
    */
   toggleSidebar(): void {
     this.isSideNavExpanded = !this.isSideNavExpanded;
-    console.log('Sidebar expanded:', this.isSideNavExpanded);
   }
 
   /**
@@ -115,10 +114,8 @@ export class MainComponent {
    */
   onGamepadStatusChange(isConnected: boolean): void {
     if (isConnected) {
-      console.log('Gamepad connected!');
       this.isControllerConnected = false;
     } else {
-      console.log('Gamepad disconnected!');
       this.isControllerConnected = true;
     }
   }
@@ -136,7 +133,6 @@ export class MainComponent {
   onButtonClick(event: Event, button: any): void {
     // Detiene la propagación del evento para evitar que afecte al sidenav
     event.stopPropagation();
-    console.log('Botón presionado:', button.label);
 
     switch (button.label) {
       case 'PAUSAR':
@@ -144,14 +140,12 @@ export class MainComponent {
         button.label = 'REANUDAR';
         this.mapComponent.setup_mapping(false);
         this.monitorComponent.togglePause(false);
-        this.sendInstruction("Pause");
         break;
       case 'REANUDAR':
         button.icon = 'pause';
         button.label = 'PAUSAR';
         this.mapComponent.setup_mapping(true);
         this.monitorComponent.togglePause(true);
-        this.sendInstruction("Play");
         break;
       case 'Lento':
         this.openModal();
@@ -181,10 +175,12 @@ export class MainComponent {
       case 'REINICIAR':
         // Funcion para reinicar
         this.resetProcess();
+        this.sendInstruction("REBOOT");
         break;
       case 'RESTABLECER':
         // Funcion para restablecer
         this.defaultConfig();
+        this.sendInstruction("REBOOT");
         break;
       default:
         break;
@@ -201,8 +197,10 @@ export class MainComponent {
  */
   sendInstruction(inst: string): void {
     //const instruction = { speed: speed };
-
-    this.InstructionsService.createInstruction(inst).subscribe({
+    const json = {
+      instruction: inst,
+    };
+    this.InstructionsService.createInstruction(json).subscribe({
       next: (response) => {
         console.log('Instrucción creada:', response);
       },
@@ -300,7 +298,6 @@ export class MainComponent {
       playButton.icon = 'pause';
       playButton.label = 'PAUSAR';
       this.mapComponent.setup_mapping(true);
-      this.sendInstruction("Play");
     }
 
     //this.sendInstruction("MEDIUM");
@@ -347,12 +344,10 @@ export class MainComponent {
   getBatteryValue(): void {
     this.batteryService.getBatteryValue().subscribe({
       next: (data) => {
-        console.log("BL: ",data);
         if (data !== null) { 
           const level = data.level;
           if (typeof level === 'number') {
             this.batteryLevel = level;
-            console.log("Bat level: ",this.batteryLevel);
           } else {
             console.warn('Valor de batería inesperado:', level);
           }

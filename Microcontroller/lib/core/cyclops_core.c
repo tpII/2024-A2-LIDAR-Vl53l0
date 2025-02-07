@@ -41,6 +41,18 @@ esp_err_t system_init()
     //     return ESP_FAIL;
     // }
 
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Luces Service..."));
+    LOG_MESSAGE_I(TAG, "Iniciando Luces Service...");
+    err = lights_init();
+    if (err != ESP_OK)
+    {
+        DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Error Setting Up Lights: %s", esp_err_to_name(err)));
+        LOG_MESSAGE_W(TAG, "Error Setting Up Lights");
+    }
+    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Luces Service Iniciado!"));
+    LOG_MESSAGE_I(TAG, "Luces Service Iniciado!");
+
+
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Server Service..."));
     err = initialize_server();
     if (err != ESP_OK)
@@ -68,17 +80,7 @@ esp_err_t system_init()
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "MQTT Service Iniciado!"));
 
-    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Luces Service..."));
-    LOG_MESSAGE_I(TAG, "Iniciando Luces Service...");
-    err = lights_init();
-    if (err != ESP_OK)
-    {
-        DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Error Setting Up Lights: %s", esp_err_to_name(err)));
-        LOG_MESSAGE_W(TAG, "Error Setting Up Lights");
-    }
-    DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Luces Service Iniciado!"));
-    LOG_MESSAGE_I(TAG, "Luces Service Iniciado!");
-
+    
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Iniciando Motores..."));
     LOG_MESSAGE_I(TAG, "Iniciando Motores...");
     motors_setup();
@@ -131,6 +133,7 @@ esp_err_t createTasks()
     }
 
     // // MAIN TASKs
+    
     task_created = xTaskCreatePinnedToCore(
         instructionHandler,
         "InstructionsHandlerTask",
@@ -260,7 +263,7 @@ static void receiveInstruction(void *parameter)
             DEBUGING_ESP_LOG(ESP_LOGE(TAG, "ERROR GETTING INSTRUCTION"));
             LOG_MESSAGE_E(TAG, "ERROR GETTING INSTRUCTION");
         }
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(300 / portTICK_PERIOD_MS);
     }
 }
 
@@ -388,16 +391,33 @@ static void mappingTask(void *parameter)
     while (1)
     {
         err = getMappingValue(&angle, &distance);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE");
-            LOG_MESSAGE_E(TAG, "FAIL TO GET MAPPING VALUE");
+        // if (err != ESP_OK)
+        // {
+        //     ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE");
+        //     LOG_MESSAGE_E(TAG, "FAIL TO GET MAPPING VALUE");
+        // }
+        // else
+        // {
+        //     ESP_LOGW(TAG, "Dist: %u - Ang: %i", distance, angle);
+        //     sendMappingValue(distance, angle);
+        // }
+
+        switch(err){
+            case ESP_FAIL:
+            case ESP_ERR_INVALID_ARG:
+                ESP_LOGE(TAG, "FAIL TO GET MAPPING VALUE: %s", esp_err_to_name(err));
+                LOG_MESSAGE_E(TAG, "FAIL TO GET MAPPING VALUE");
+                break;
+            case ESP_ERR_INVALID_RESPONSE:
+                break;
+            default:
+                ESP_LOGW(TAG, "Dist: %u - Ang: %i", distance, angle);
+                sendMappingValue(distance, angle);
+                break;
         }
-        else
-        {
-            ESP_LOGW(TAG, "Dist: %u - Ang: %u", distance, angle);
-            sendMappingValue(distance, angle);
-        }
+
+        angle = 0;
+        distance = 0;
         vTaskDelay(4 / portTICK_PERIOD_MS);
     }
 }
@@ -410,7 +430,7 @@ static void checkRAM(void *parameter)
     while (1)
     {
         percent = (esp_get_free_heap_size() * 100) / 327680;
-        ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
+        //ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
         ESP_LOGI(TAG, "Memoria libre en el heap: %d %% **************************************", percent);
         if (percent <= 20 && !flag)
         {

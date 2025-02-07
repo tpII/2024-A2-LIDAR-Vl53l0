@@ -23,6 +23,7 @@
 #define CONVERSION_FACTOR 1000000
 #define BASE_SPEED 545.45
 #define DIFFERENTIAL 600
+#define W_5V 0.00055  // grados/µs
 
 // TIMER VARIABLES
 static const char *TAG = "SERVOMOTOR";
@@ -40,6 +41,7 @@ static volatile uint32_t next_speed = 0;
 static volatile bool change_speed_flag = false;
 static volatile uint64_t partialTimeBase = 0;
 static volatile uint64_t pauseTimeBase = 0;
+
 // static portMUX_TYPE limit_mux = portMUX_INITIALIZER_UNLOCKED;
 static SemaphoreHandle_t limit_semaphore;
 
@@ -301,6 +303,10 @@ int16_t readAngle()
         xSemaphoreGive(limit_semaphore);
     }
 
+    if(time_reference == 0){
+        return -1;
+    }
+
     if (xSemaphoreTake(current_duty_semaphore, portMAX_DELAY) == pdTRUE)
     {
         duty = current_duty;
@@ -310,9 +316,11 @@ int16_t readAngle()
     // Calcular velocidad escalada y ángulo
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
+    ESP_LOGE(TAG, "Angle = %" PRIi16, angle);
+
     DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Angle = %" PRIi16, angle));
-    //return ((((angle + 360 - 90) % 360) + 360) % 360); // Garantiza valores positivos
-    return ((((angle - 90) % 360) + 360) % 360);
+
+    return (angle);
 }
 
 void servo_set_speed(SERVO_DIRECTION dir)

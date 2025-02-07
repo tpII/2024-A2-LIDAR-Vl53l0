@@ -22,7 +22,7 @@ export class MappingValueService {
 
   getMappingValues(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUri + "/values").pipe(
-      tap((response) => console.log('Mapping values received:', response)), // Agrega log para imprimir la respuesta
+     // tap((response) => console.log('Mapping values received:', response)), // Agrega log para imprimir la respuesta
       catchError((error) => {
         console.error('Error fetching the list of mapping values:', error);
         return of([]); // Devuelve un array vacío como fallback

@@ -38,13 +38,13 @@ void motors_command(DIRECTIONS D){
         gpio_set_level(MOTOR2.PIN1, 0);
         gpio_set_level(MOTOR2.PIN2, 1);
         break;
-    case ROTATE_LEFT:
+    case ROTATE_RIGHT:
         gpio_set_level(MOTOR1.PIN1, 1);
         gpio_set_level(MOTOR1.PIN2, 0);
         gpio_set_level(MOTOR2.PIN1, 0);
         gpio_set_level(MOTOR2.PIN2, 0);
         break;
-    case ROTATE_RIGHT:
+    case ROTATE_LEFT:
         gpio_set_level(MOTOR1.PIN1, 0);
         gpio_set_level(MOTOR1.PIN2, 0);
         gpio_set_level(MOTOR2.PIN1, 1);

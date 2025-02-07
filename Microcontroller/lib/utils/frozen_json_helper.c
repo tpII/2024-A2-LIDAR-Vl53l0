@@ -101,9 +101,9 @@ esp_err_t deserialize_json_data(const char *data, char *msg, size_t msg_size)
 
     DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Received JSON: %s", data));
 
-    int parsed = json_scanf(data, strlen(data), 
-                            "{id:%Q, instruction:%Q, time:%Q, read:%B}", 
-                            &id, &instruction, &time, &read);
+    json_scanf(data, strlen(data), 
+               "{id:%Q, instruction:%Q, time:%Q, read:%B}", 
+                &id, &instruction, &time, &read);
 
 
     if (instruction == NULL) {

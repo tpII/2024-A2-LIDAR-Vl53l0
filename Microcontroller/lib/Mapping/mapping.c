@@ -4,7 +4,6 @@
 #include "esp_log.h"
 #include "debug_helper.h"
 
-
 #define MIN_DISTANCE 100
 
 static const char *TAG = "MAPPING";
@@ -31,7 +30,7 @@ esp_err_t mapping_init()
         ESP_LOGE(TAG, "Error initializing I2C");
         return ESP_FAIL;
     }
-    
+
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Initializing LiDAR..."));
     if (!vl53l0x_init())
     {
@@ -66,11 +65,16 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
     }
 
     *angle = readAngle();
+    if (*angle == -1)
+        return ESP_ERR_INVALID_RESPONSE;
     esp_err_t err = getValue(distance);
-    if( err != ESP_OK){
-        ESP_LOGW(TAG,"ERROR MAPPING: %s",esp_err_to_name(err));
-        LOG_MESSAGE_W(TAG,"ERROR MAPPING");
-        
+    // esp_err_t err = ESP_OK;
+    //*distance = 500;
+    if (err == ESP_FAIL)
+    {
+        ESP_LOGW(TAG, "ERROR MAPPING: %s", esp_err_to_name(err));
+        LOG_MESSAGE_W(TAG, "ERROR MAPPING");
+
         // //LLAMAR RUTINA DE REINICIO LIDAR
         ESP_LOGW(TAG, "Reiniciando LiDAR...");
         LOG_MESSAGE_E(TAG, "Reiniciando LiDAR...");
@@ -84,21 +88,22 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
 
         return err;
     }
-    return ESP_OK;     
+    return err;
 }
 
 // static esp_err_t getValue(uint16_t *distance)
 // {
-//     bool success = false;
+//     esp_err_t success;
 //     uint16_t val = 0;
-//     uint16_t values[10];
+//     uint8_t N = 3;
+//     uint16_t values[N];
 //     uint8_t valid_readings = 0; // Contador para lecturas válidas
 
-//     for (uint8_t i = 0; i < 10; i++)
+//     for (uint8_t i = 0; i < N; i++)
 //     {
 // #ifndef VL53L0X
 //         success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &val);
-//         if (success && (val < VL53L0X_OUT_OF_RANGE || val >= MIN_DISTANCE))
+//         if ((success == ESP_OK) && (val < VL53L0X_OUT_OF_RANGE && val >= MIN_DISTANCE))
 //         {
 //             values[i] = val;  // Almacenar el valor si es válido
 //             valid_readings++; // Incrementar el contador de lecturas válidas
@@ -115,10 +120,11 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
 //     }
 //     // Ordenar las mediciones de menor a mayor
 //     // Verificar si se obtuvieron suficientes lecturas válidas
-//     if (valid_readings < 6)
+//     if (valid_readings < N/2)
 //     {
 //         ESP_LOGE(TAG, "Not enough valid readings. Only %d valid readings.", valid_readings);
-//         return ESP_ERR_INVALID_ARG; // Retornar error si no se obtuvieron suficientes mediciones válidas
+//         //return ESP_ERR_INVALID_ARG; // Retornar error si no se obtuvieron suficientes mediciones válidas
+//         return ESP_OK;
 //     }
 
 //     // Ordenar las mediciones de menor a mayor
@@ -140,31 +146,36 @@ esp_err_t getMappingValue(int16_t *angle, uint16_t *distance)
 //     *distance = values[valid_readings / 2];
 //     return ESP_OK; // Índice 5 es la mediana en un arreglo de 10 elementos
 // }
+
 static esp_err_t getValue(uint16_t *distance)
 {
     esp_err_t success;
     uint16_t val = 0;
 
 #ifndef VL53L0X
-        success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &val);
-        if (success != ESP_OK)
+    success = vl53l0x_read_range_single(VL53L0X_IDX_FIRST, &val);
+    if (success != ESP_OK)
+    {
+        // Si la lectura no es exitosa o el valor está fuera de rango
+        ESP_LOGE(TAG, "Error reading: %s", esp_err_to_name(success));
+        return ESP_FAIL;
+    }
+    else
+    {
+        val -= 38; // Calibración del valor obtenido
+        if (val < VL53L0X_OUT_OF_RANGE && val >= MIN_DISTANCE)
         {
-            // Si la lectura no es exitosa o el valor está fuera de rango
-            ESP_LOGE(TAG, "Error reading: %s", esp_err_to_name(success));
-            return ESP_FAIL;
+            *distance = val;
         }
         else
         {
-            if(val < VL53L0X_OUT_OF_RANGE && val >= MIN_DISTANCE){
-                *distance = val;
-            }
-            else{
-                ESP_LOGE(TAG, "Invalid value: %d", val);
-            }
+            ESP_LOGE(TAG, "Invalid value: %d", val);
+            return ESP_ERR_INVALID_RESPONSE;
         }
+    }
 #else
-        ESP_LOGE(TAG, "ERROR VL53L0X NOT DEFINED");
-        return ESP_FAIL; // Si VL53L0X no está definido, retornar error
+    ESP_LOGE(TAG, "ERROR VL53L0X NOT DEFINED");
+    return ESP_FAIL; // Si VL53L0X no está definido, retornar error
 #endif
 
     return ESP_OK; // Índice 5 es la mediana en un arreglo de 10 elementos

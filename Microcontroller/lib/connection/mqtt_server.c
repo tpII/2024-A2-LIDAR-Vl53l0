@@ -273,7 +273,7 @@ esp_err_t mqtt_disconnect()
 {
     if (mqtt_client == NULL)
     {
-        DEBUGING_ESP_LOG((ESP_LOGE(TAG, "MQTT client not initialized")));
+        DEBUGING_ESP_LOG(ESP_LOGE(TAG, "MQTT client not initialized"));
         return ESP_FAIL;
     }
 
