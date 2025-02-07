@@ -61,6 +61,7 @@ esp_err_t servo_initialize(void)
     if(limit_semaphore == NULL)
     {
         ESP_LOGE(TAG,"ERROR: limit_semaphore is NULL");
+        LOG_MESSAGE_E(TAG,"ERROR: limit_semaphore is NULL");
         return ESP_FAIL;
     }
     current_duty_semaphore = xSemaphoreCreateBinary();
@@ -68,6 +69,7 @@ esp_err_t servo_initialize(void)
     if(current_duty_semaphore == NULL)
     {
         ESP_LOGE(TAG,"ERROR: current_duty_semaphore is NULL");
+        LOG_MESSAGE_E(TAG,"ERROR: current_duty_semaphore is NULL");
         return ESP_FAIL;
     }
     speed_change_semaphore = xSemaphoreCreateBinary();
@@ -75,6 +77,7 @@ esp_err_t servo_initialize(void)
     if(speed_change_semaphore == NULL)
     {
         ESP_LOGE(TAG,"ERROR: speed_change_semaphore is NULL");
+        LOG_MESSAGE_E(TAG,"ERROR: speed_change_semaphore is NULL");
         return ESP_FAIL;
     }
     
@@ -92,6 +95,7 @@ esp_err_t servo_initialize(void)
     if (mcpwm_new_timer(&timer_config, &timer) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Creating Timer");
+        LOG_MESSAGE_E(TAG,"ERROR Creating Timer");
         return ESP_FAIL;
     }
 
@@ -103,6 +107,7 @@ esp_err_t servo_initialize(void)
     if (mcpwm_new_operator(&operator_config, &oper) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Creating Operator");
+        LOG_MESSAGE_E(TAG,"ERROR Creating Operator");
         return ESP_FAIL;
     }
 
@@ -110,6 +115,7 @@ esp_err_t servo_initialize(void)
     if (mcpwm_operator_connect_timer(oper, timer) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Connecting Timer and Operator");
+        LOG_MESSAGE_E(TAG,"ERROR Connecting Timer and Operator");
         return ESP_FAIL;
     }
     else
@@ -125,6 +131,7 @@ esp_err_t servo_initialize(void)
     if (mcpwm_new_comparator(oper, &comparator_config, &comparator) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Creating Comparator");
+        LOG_MESSAGE_E(TAG,"ERROR Creating Comparator");
         return ESP_FAIL;
     }
 
@@ -136,6 +143,7 @@ esp_err_t servo_initialize(void)
     if (mcpwm_new_generator(oper, &generator_config, &generator) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Creating Generator");
+        LOG_MESSAGE_E(TAG,"ERROR Creating Generator");
         return ESP_FAIL;
     }
 
@@ -145,6 +153,7 @@ esp_err_t servo_initialize(void)
         mcpwm_generator_set_action_on_compare_event(generator, MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, comparator, MCPWM_GEN_ACTION_LOW)) != ESP_OK)
     {
         ESP_LOGE(TAG, "Error al configurar los eventos de generador");
+        LOG_MESSAGE_E(TAG,"Error al configurar los eventos de generador");
         return ESP_FAIL;
     }
 
@@ -152,12 +161,14 @@ esp_err_t servo_initialize(void)
     if (mcpwm_timer_enable(timer) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Enabling Timer");
+        LOG_MESSAGE_E(TAG,"ERROR Enabling Timer");
         return ESP_FAIL;
     }
 
     if (mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP) != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Starting Timer");
+        LOG_MESSAGE_E(TAG,"ERROR Starting Timer");
         return ESP_FAIL;
     }
 
@@ -165,6 +176,7 @@ esp_err_t servo_initialize(void)
     if (interrupt_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "ERROR Initializing Servo Interruption");
+        LOG_MESSAGE_E(TAG,"ERROR Initializing Servo Interruption");
         return ESP_FAIL;
     }
 
@@ -189,6 +201,7 @@ static esp_err_t servo_set_speed_ISR(uint32_t duty)
     if (duty < SERVO_MIN_PULSEWIDTH_US || duty > SERVO_MAX_PULSEWIDTH_US)
     {
         ESP_LOGE(TAG, "Duty fuera del rango permitido");
+        LOG_MESSAGE_E(TAG,"Duty fuera del rango permitido");
         return ESP_ERR_INVALID_ARG;
     }
     DEBUGING_ESP_LOG(ESP_LOGW(TAG, "DUTY IN RANGE, %lu", duty));
@@ -196,6 +209,7 @@ static esp_err_t servo_set_speed_ISR(uint32_t duty)
     if (mcpwm_comparator_set_compare_value(comparator, duty) != ESP_OK)
     {
         ESP_LOGE(TAG, "Error al ajustar la velocidad");
+        LOG_MESSAGE_E(TAG,"Error al ajustar la velocidad");
         return ESP_FAIL;
     }
     // SE PUEDE QUITAR AL MODIFICAR LA RUTINA DE INICIO.
@@ -225,6 +239,7 @@ void servo_invert()
         if (current_duty == SERVO_STOP)
         {
             ESP_LOGW(TAG, "Error: Trying to invert orientation while servo is stopped");
+            LOG_MESSAGE_W(TAG,"Error: Trying to invert orientation while servo is stopped");
         }
         else if (current_duty > SERVO_STOP)
         {
@@ -284,6 +299,7 @@ void servo_invert()
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error: Trying to invert servo orientation, rebooting servo....");
+        LOG_MESSAGE_E(TAG,"Error: Trying to invert servo orientation, rebooting servo....");
     }
     DEBUGING_ESP_LOG(ESP_LOGW(TAG, "INVERT END"));
 }
@@ -409,6 +425,7 @@ esp_err_t servo_pause(){
     if(xSemaphoreTake(limit_semaphore,portMAX_DELAY) == pdTRUE){
         if(servo_stop() != ESP_OK){
             ESP_LOGE(TAG,"FAIL TO PAUSE SERVO");
+            LOG_MESSAGE_E(TAG,"FAIL TO PAUSE SERVO");
             xSemaphoreGive(limit_semaphore);
             return ESP_FAIL;
         }
@@ -426,6 +443,7 @@ esp_err_t servo_restart(){
         auxTime = esp_timer_get_time() - pauseTimeBase;
         if(servo_start() != ESP_OK){
             ESP_LOGE(TAG,"FAIL TO RESTART SERVO");
+            LOG_MESSAGE_E(TAG,"FAIL TO RESTART SERVO");
             xSemaphoreGive(limit_semaphore);
             return ESP_FAIL;
         }

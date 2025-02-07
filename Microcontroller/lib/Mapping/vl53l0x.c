@@ -86,6 +86,7 @@ static bool device_is_booted()
     uint8_t device_id = 0;
     if (!i2c_read_addr8_data8(REG_IDENTIFICATION_MODEL_ID, &device_id)) {
         ESP_LOGE(TAG, "Error reading the MODEL ID");
+        LOG_MESSAGE_E(TAG,"Error reading the MODEL ID");
         return false;
     }
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "REG_IDENTIFICATION_MODEL_ID read: %x", device_id));
@@ -540,6 +541,7 @@ static void set_hardware_standby(vl53l0x_idx_t idx, bool enable)
     esp_err_t err = gpio_set_output(vl53l0x_infos[idx].xshut_gpio, !enable);
     if (err != ESP_OK){
         ESP_LOGE(TAG, "Error en el set_hardware_standby: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error en el set_hardware_standby");
     }
 }
 
@@ -555,11 +557,13 @@ static void configure_gpio()
     esp_err_t err = gpio_init();
     if (err != ESP_OK){
         ESP_LOGE(TAG, "Fallo en gpio_init(): %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Fallo en gpio_init()");
     }
 
     err = gpio_set_output(GPIO_XSHUT_FIRST, false);
     if (err != ESP_OK){
         ESP_LOGE(TAG, "Fallo en gpio_set_output(): %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Fallo en gpio_set_output()");
     }
 
     // err = gpio_set_output(GPIO_XSHUT_SECOND, false);
@@ -588,11 +592,13 @@ static bool init_address(vl53l0x_idx_t idx)
 
     if (!device_is_booted()) {
         ESP_LOGE(TAG, "El dispisitivo NO está conectado");
+        LOG_MESSAGE_E(TAG,"El dispisitivo NO está conectado");
         return false;
     }
 
     if (!configure_address(vl53l0x_infos[idx].addr)) {
         ESP_LOGE(TAG, "No se ha podido asignar la dirección correctamente: %d", vl53l0x_infos[idx].addr);
+        LOG_MESSAGE_E(TAG,"No se ha podido asignar la dirección correctamente");
         return false;
     }
     return true;
@@ -610,6 +616,7 @@ static bool init_addresses()
     /* Wake each sensor up one by one and set a unique address for each one */
     if (!init_address(VL53L0X_IDX_FIRST)) {
         ESP_LOGE(TAG, "Fallo en init_address");
+        LOG_MESSAGE_E(TAG,"Fallo en init_address");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -631,14 +638,17 @@ static bool init_config(vl53l0x_idx_t idx)
     //i2c_set_slave_address(vl53l0x_infos[idx].addr);
     if (!data_init()) {
         ESP_LOGE(TAG, "Fallo en data_init");
+        LOG_MESSAGE_E(TAG,"Fallo en data_init");
         return false;
     }
     if (!static_init()) {
         ESP_LOGE(TAG, "Fallo en static_init");
+        LOG_MESSAGE_E(TAG,"Fallo en static_init");
         return false;
     }
     if (!perform_ref_calibration()) {
         ESP_LOGE(TAG, "Fallo en perform_ref_calibration");
+        LOG_MESSAGE_E(TAG,"Fallo en perform_ref_calibration");
         return false;
     }
     return true;
@@ -648,10 +658,12 @@ bool vl53l0x_init()
 {
     if (!init_addresses()) {
         ESP_LOGE(TAG, "Fallo en init_addresses");
+        LOG_MESSAGE_E(TAG,"Fallo en init_addresses");
         return false;
     }
     if (!init_config(VL53L0X_IDX_FIRST)) {
         ESP_LOGE(TAG, "Fallo en init_config");
+        LOG_MESSAGE_E(TAG,"Fallo en init_config");
         return false;
     }
 #ifdef VL53L0X_SECOND
@@ -728,6 +740,7 @@ esp_err_t vl53l0x_reset() {
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error setting GPIO_XSHUT_FIRST to 0: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error setting GPIO_XSHUT_FIRST to 0");
         return ESP_FAIL;
     }
 
@@ -737,6 +750,7 @@ esp_err_t vl53l0x_reset() {
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error setting GPIO_XSHUT_FIRST to 1: %s", esp_err_to_name(err));
+        LOG_MESSAGE_E(TAG,"Error setting GPIO_XSHUT_FIRST to 1");
         return ESP_FAIL;
     }
 
@@ -747,10 +761,12 @@ esp_err_t vl53l0x_reset() {
             return ESP_OK;
         }
         ESP_LOGE(TAG, "Failed to restart and boot the VL53L0X");
+        LOG_MESSAGE_E(TAG,"Failed to restart and boot the VL53L0X");
         return ESP_FAIL;
     } 
     else {
         ESP_LOGE(TAG, "VL53L0X no se inició correctamente después del reinicio");
+        LOG_MESSAGE_E(TAG,"VL53L0X no se inició correctamente después del reinicio");
         return ESP_FAIL;
     }
 }

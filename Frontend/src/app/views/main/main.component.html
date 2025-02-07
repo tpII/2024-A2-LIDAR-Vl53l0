@@ -16,8 +16,13 @@
           <div class="status-item collapsed" [ngClass]="{alert: isControllerConnected}">
             <mat-icon class="status-icon" [ngClass]="{alert: isControllerConnected}">gamepad</mat-icon>
           </div>
-          <div class="status-item collapsed alert">
-            <mat-icon class="status-icon">battery_alert</mat-icon>
+          <div class="status-item collapsed" [ngClass]="{
+            'alert': batteryLevel < 40,
+            'warn': batteryLevel < 60 && batteryLevel >= 40
+          }">
+            <mat-icon class="status-icon" *ngIf="batteryLevel >= 60">battery_full</mat-icon>
+            <mat-icon class="status-icon" *ngIf="batteryLevel < 60 && batteryLevel >= 40">battery_4_bar</mat-icon>
+            <mat-icon class="status-icon" *ngIf="batteryLevel < 40">battery_alert</mat-icon>
           </div>
         </div>
 
@@ -33,7 +38,7 @@
             'warn': batteryLevel < 60 && batteryLevel >= 40
           }">
             <mat-icon class="status-icon" *ngIf="batteryLevel >= 60">battery_full</mat-icon>
-            <mat-icon class="status-icon" *ngIf="batteryLevel < 60 && batteryLevel >= 40">battery_std</mat-icon>
+            <mat-icon class="status-icon" *ngIf="batteryLevel < 60 && batteryLevel >= 40">battery_4_bar</mat-icon>
             <mat-icon class="status-icon" *ngIf="batteryLevel < 40">battery_alert</mat-icon>
             
             

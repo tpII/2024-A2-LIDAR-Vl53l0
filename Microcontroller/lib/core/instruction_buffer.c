@@ -19,6 +19,8 @@
 #include "freertos/semphr.h"
 #include <string.h>
 #include "esp_log.h"
+#include "debug_helper.h"
+
 
 #define INSTRUCTIONS_BUFFER_SIZE 10 ///< Number of instructions the buffer can hold.
 #define INSTRUCTION_MAX_LENGTH 40   ///< Maximum length of each instruction.
@@ -49,6 +51,7 @@ esp_err_t initBuffer()
         if (buffer_access == NULL)
         {
             ESP_LOGE(TAG, "Error creating Semaphore");
+            LOG_MESSAGE_E(TAG, "Error creating Semaphore");
             return ESP_FAIL;
         }
         ESP_LOGW(TAG, "Semaphore initialized");

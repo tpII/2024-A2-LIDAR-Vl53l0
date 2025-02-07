@@ -1,13 +1,17 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dialog-content',
   styleUrls: ['dialog-content.component.scss'],
   template: `
-      <h2 mat-dialog-title>Función no implementada!</h2>
-      <button mat-button (click)="close()">Cerrar</button>
-  `
+    <h2 mat-dialog-title>Función no implementada!</h2>
+    <button mat-button (click)="close()">Cerrar</button>
+  `,
 })
 export class DialogContentComponent {
   constructor(
@@ -20,7 +24,6 @@ export class DialogContentComponent {
   }
 }
 
-
 import { ElementRef, ViewChild, TemplateRef } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,31 +33,44 @@ import { GamepadComponent } from '../../shared/components/gamepad/gamepad.compon
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { InstructionsService } from '../../core/services/instructions.service';
-import { MonitorComponent } from "../../shared/components/monitor/monitor.component";
-import { MapComponent } from "../../shared/components/map/map.component";
+import { MonitorComponent } from '../../shared/components/monitor/monitor.component';
+import { MapComponent } from '../../shared/components/map/map.component';
 import { BatteryValueService } from '../../core/services/battery-value.service';
-
+import { inject } from '@angular/core';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
 /**
  * @component MainComponent
- * @description Main component that integrates other components, such as Sidebar, Map and Monitor. 
- * It also includes buttons for user interaction. When pressed, these buttons trigger specific 
+ * @description Main component that integrates other components, such as Sidebar, Map and Monitor.
+ * It also includes buttons for user interaction. When pressed, these buttons trigger specific
  * actions and send instructions to the backend for processing.
  *
-*/
+ */
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [MatSidenavModule, MatIconModule, AngularSplitModule, CommonModule, GamepadComponent, MatMenuModule, MonitorComponent, MapComponent] ,
+  imports: [
+    MatDialogModule,
+    MatSidenavModule,
+    MatIconModule,
+    AngularSplitModule,
+    CommonModule,
+    GamepadComponent,
+    MatMenuModule,
+    MonitorComponent,
+    MapComponent,
+  ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
-
-export class MainComponent {
-
+export class MainComponent implements OnInit {
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   @ViewChild(MonitorComponent) monitorComponent!: MonitorComponent;
 
-  constructor(private InstructionsService: InstructionsService, private batteryService: BatteryValueService, private dialog: MatDialog) { }
+  constructor(
+    private InstructionsService: InstructionsService,
+    private batteryService: BatteryValueService,
+    private dialog: MatDialog
+  ) {}
 
   // Controlar si la sidebar está expandida o no
   isSideNavExpanded = false;
@@ -64,10 +80,10 @@ export class MainComponent {
 
   // Agregar propiedades para el mando y la batería
   isControllerConnected = true; // Cambiar dinámicamente según el estado real
-  batteryLevel = 55; // Cambiar dinámicamente según el nivel de batería
+  batteryLevel = 50; // Cambiar dinámicamente según el nivel de batería
 
   // Velocidad actual
-  speed: string = "Normal";
+  speed: string = 'Normal';
 
   buttons = [
     { icon: 'speed', label: 'Normal' },
@@ -79,6 +95,7 @@ export class MainComponent {
 
   ngOnInit() {
     setInterval(() => this.getBatteryValue(), 1000);
+    this.openWelcomeModal();
   }
   /**
    * Toggles the expansion state of the sidebar.
@@ -94,13 +111,14 @@ export class MainComponent {
    * Adjusts the width based on whether the sidebar is expanded or collapsed,
    * using predefined minimum and maximum size values.
    * The height remains fixed at 100px.
-   * 
+   *
    * @returns An object containing the dynamic style properties.
    */
   getFooterFigureStyle() {
     return {
-      width: `${this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
-        }%`,
+      width: `${
+        this.isSideNavExpanded ? this.maxSizeSidenav : this.minSizeSidenav
+      }%`,
       height: '100px', // Ajusta la altura según el diseño deseado
     };
   }
@@ -109,7 +127,7 @@ export class MainComponent {
    * Handles changes in the gamepad connection status.
    * Updates the `isControllerConnected` variable based on whether the
    * gamepad is connected or disconnected, and logs the status to the console.
-   * 
+   *
    * @param isConnected Indicates if the gamepad is connected (true) or disconnected (false).
    */
   onGamepadStatusChange(isConnected: boolean): void {
@@ -120,16 +138,15 @@ export class MainComponent {
     }
   }
 
-
   /**
    * @description Handles button click events, triggering specific actions based on the button's label.
-   * Updates the button's icon and label dynamically, and sends corresponding instructions to the backend 
-   * for certain actions such as adjusting speed settings. Prevents event propagation to avoid interference 
+   * Updates the button's icon and label dynamically, and sends corresponding instructions to the backend
+   * for certain actions such as adjusting speed settings. Prevents event propagation to avoid interference
    * with other UI elements like the sidenav.
    *
    * @param {Event} event - The event triggered by the button click.
    * @param {any} button - The button object containing its current label and icon.
- */
+   */
   onButtonClick(event: Event, button: any): void {
     // Detiene la propagación del evento para evitar que afecte al sidenav
     event.stopPropagation();
@@ -163,7 +180,7 @@ export class MainComponent {
         break;
       case 'Rápido':
         this.openModal();
-/*
+        /*
         button.label = 'Lento';
         this.speed = 'Lento';
         this.sendInstruction("SpeedDown");*/
@@ -185,7 +202,6 @@ export class MainComponent {
       default:
         break;
     }
-
   }
 
   /**
@@ -194,7 +210,7 @@ export class MainComponent {
    * Handles the response or error, logging them for debugging purposes.
    *
    * @param {string} speed - The speed value to include in the instruction (e.g., "SLOW", "MEDIUM", "FAST").
- */
+   */
   sendInstruction(inst: string): void {
     //const instruction = { speed: speed };
     const json = {
@@ -206,22 +222,20 @@ export class MainComponent {
       },
       error: (error) => {
         console.error('Error al crear la instrucción:', error);
-      }
+      },
     });
-
   }
 
   /**
    * Adjusts the speed of the vehicle based on the gamepad input.
-   * The speed is changed sequentially between "Lento", "Normal", and "Rápido" 
-   * when the "SpeedUp" command is received, and the speed is decreased sequentially 
-   * when the opposite command is received. It also updates the speed button label 
+   * The speed is changed sequentially between "Lento", "Normal", and "Rápido"
+   * when the "SpeedUp" command is received, and the speed is decreased sequentially
+   * when the opposite command is received. It also updates the speed button label
    * and sends the corresponding instruction to control the vehicle's speed.
    *
    * @param str The gamepad command, either "SpeedUp" or a command to slow down.
    */
   changeSpeedByGamepad(str: String) {
-
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
 
     if (!speedButton) {
@@ -229,36 +243,36 @@ export class MainComponent {
       return;
     }
 
-    if (str === "SpeedUp") {
-      this.sendInstruction("SpeedUp");
+    if (str === 'SpeedUp') {
+      this.sendInstruction('SpeedUp');
       //Change speed to next up
       switch (this.speed) {
         case 'Lento':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-        //  this.sendInstruction("MEDIUM");
+          //  this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Rápido';
           this.speed = 'Rápido';
-        //  this.sendInstruction("FAST");
+          //  this.sendInstruction("FAST");
           break;
         default:
           break;
       }
     } else {
       //Change speed to next down
-      this.sendInstruction("SpeedDown");
+      this.sendInstruction('SpeedDown');
       switch (this.speed) {
         case 'Rápido':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-         // this.sendInstruction("MEDIUM");
+          // this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Lento';
           this.speed = 'Lento';
-       //   this.sendInstruction("SLOW");
+          //   this.sendInstruction("SLOW");
           break;
         default:
           break;
@@ -281,7 +295,7 @@ export class MainComponent {
    */
   defaultConfig() {
     const speedButton = this.buttons.find((btn) => btn.label === this.speed);
-    const playButton = this.buttons.find((btn) => btn.label === "REANUDAR");
+    const playButton = this.buttons.find((btn) => btn.label === 'REANUDAR');
 
     if (!speedButton) {
       console.error('Botón de velocidad no encontrado');
@@ -289,9 +303,9 @@ export class MainComponent {
     }
 
     // velocidad
-    console.log("restablecer normal");
-    this.speed = "Normal";
-    speedButton.label = "Normal";
+    console.log('restablecer normal');
+    this.speed = 'Normal';
+    speedButton.label = 'Normal';
 
     // si esta en pausa -> reanudar
     if (playButton) {
@@ -352,19 +366,27 @@ export class MainComponent {
             console.warn('Valor de batería inesperado:', level);
           }
         }
-        },
-        
+      },
+
       error: (err) => {
         console.error('Error al obtener el nivel de batería:', err);
-      }
+      },
     });
   }
 
   openModal(): void {
     this.dialog.open(DialogContentComponent, {
       width: '400px', // Tamaño del modal
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
     });
   }
 
+  openWelcomeModal(): void {
+    this.dialog.open(ModalComponent, {
+      width: '720px',      // Ancho predeterminado
+      minWidth: '720px',   // Mínimo ancho permitido
+      disableClose: true   // Evita que se cierre al hacer clic fuera
+    });
+  }
+  
 }
