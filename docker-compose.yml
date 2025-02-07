@@ -1,16 +1,18 @@
+version: "3.8"
+
 services:
   backend:
     build: ./backend
     container_name: backend
-    ports:
-      - "8080:8080"
+    network_mode: "host"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/CYCLOPS
+      # Se actualiza la URI para que, al usar host networking, MongoDB se encuentre en localhost.
+      - SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/CYCLOPS
     depends_on:
       - mongo
 
   frontend:
-    build: ./frontend
+    build: ./Frontend
     container_name: frontend
     ports:
       - "80:80"
@@ -28,9 +30,8 @@ services:
   mosquitto:
     image: eclipse-mosquitto:latest
     container_name: mosquitto
-    ports:
-      - "1883:1883"
-      - "9001:9001"
+    network_mode: "host"
+    # Al estar en modo host no se requiere mapear puertos.
     volumes:
       - ./mosquitto/config:/mosquitto/broker
       - ./mosquitto/data:/mosquitto/data
