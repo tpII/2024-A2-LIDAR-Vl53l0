@@ -171,6 +171,7 @@ Se soluciono el Problema del Backend en la notebook
 
 3 de Enero
 Se testeo libreria para anadir el desplazamiento del robot en el mapa.
+Testeo desplazamiento de auto en mapeo.
 
 7 de Enero
 Se incio el testeo de los sensore LiDAR y INA219 en simultaneo
@@ -195,11 +196,24 @@ Correccion de errores en tarea para recibir instrucciones por HTTP
 20 de Enero
 Revision de errores en libreria HTTP y tarea para recibir instrucciones
 
-03 de Enero
-Testeo desplazamiento de auto en mapeo.
-
 23 de Enero
 Modifico para que reciba lista de puntos desde el backend
 Se testeo el ESP32 y funciona
 
+27 de Enero
+Se ensamblo el robot exitosamente, y se comprobo el funcionamiento de todo lo electronico.
 
+31 de Enero
+Se realizo el primer testeo del frontend conectado al Sistema
+Se detecto Memory Leaks en el ESP32
+
+04 de Febrero 
+Se solucionaron los Memory Leaks
+Se incorporo una macro para el envio de mensajes de error, warning e info.
+Se mejoro y termino el servicio gamepad en el frontend.
+Se testeo nuevamente el mediar la abteria y funciona correctamente
+Se agrego un popup (modal) de introduccion al Frontend y uno a los botones inhabilitados
+
+05 al 07 de Febrero
+Correciones varias de cara a la presentacion del proyecto
+Correciones y finalizacion del Informe finalizacion
