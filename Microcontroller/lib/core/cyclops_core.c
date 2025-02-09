@@ -1,3 +1,22 @@
+/**
+ * @file cyclops_core.c
+ * @author Guerrico Leonel (lguerrico@outlook.com), Ossola Florencia (flor.ossola13@gmail.com) 
+ * and Octavio Perez Balcedo
+ * 
+ * @brief Implementation of the Cyclops system's core functions.
+ *
+ * This module handles the initialization of system components,
+ * task creation, and execution of received instructions.
+ *
+ * Features:
+ * - System initialization including MQTT, server, motors, mapping, and lights.
+ * - Task management: creation and abortion of FreeRTOS tasks.
+ * - Instruction processing and execution.
+ *
+ * @date 2025-02-09
+ * @version 1.0
+ */
+
 #include "cyclops_core.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -29,6 +48,20 @@ static void mappingTask(void *);
 static void batteryTask(void *parameter);
 static void checkRAM(void *);
 
+
+/**
+ * @brief Initializes the Cyclops system.
+ * 
+ * This function initializes various system components, including:
+ * - Lights
+ * - Server
+ * - MQTT service
+ * - Motors
+ * - Mapping service
+ * - Battery sensor
+ * 
+ * @return esp_err_t Returns ESP_OK if successful, or an error code if a component fails.
+ */
 esp_err_t system_init()
 {
     esp_err_t err = ESP_OK;
@@ -112,24 +145,37 @@ esp_err_t system_init()
     return err;
 }
 
+/**
+ * @brief Creates the necessary FreeRTOS tasks.
+ * 
+ * This function initializes the background and main tasks required for system operation, including:
+ * - Servo interruption monitoring
+ * - Instruction handling
+ * - Receiving instructions
+ * - Mapping service
+ * - Battery monitoring
+ * - RAM checking
+ * 
+ * @return esp_err_t Returns ESP_OK if all tasks are created successfully, otherwise ESP_FAIL.
+ */
 esp_err_t createTasks()
 {
     // // BACKGROUND TASKs
     BaseType_t task_created;
     task_created = xTaskCreatePinnedToCore(
-        servoInterruptionTask,         // Función de la tarea
-        "ServoInterruptionTask",       // Nombre de la tarea
-        4096,                          // Tamaño de la pila
-        NULL,                          // Argumento de la tarea (NULL si no es necesario)
-        1,                             // Prioridad
-        &servoInterruptionTaskHandler, // Puntero al handle de la tarea (NULL si no es necesario)
-        tskNO_AFFINITY                 // Núcleo (sin afinidad específica)
+        servoInterruptionTask,         
+        "ServoInterruptionTask",       
+        4096,                          
+        NULL,                         
+        1,                             
+        &servoInterruptionTaskHandler, 
+        tskNO_AFFINITY                 
     );
 
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Limit Switch cheking Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
 
     // // MAIN TASKs
@@ -146,7 +192,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Instruction HandlerTask"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -176,7 +222,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Mapping Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL;
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -191,7 +237,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Battery Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL;
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -206,11 +252,16 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating check RAM Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
-    return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
+    return ESP_OK;
 }
 
+/**
+ * @brief Aborts and deletes all active tasks.
+ * 
+ * This function terminates the active FreeRTOS tasks and resets their handlers.
+ */
 void abort_tasks()
 {
     if (servoInterruptionTaskHandler != NULL)
@@ -239,10 +290,15 @@ void abort_tasks()
         mappingTaskHandler = NULL;
     }
 
-    // REST OF TASKS
 }
 
-// TASK BODY
+/**
+ * @brief Task function for monitoring servo interruptions.
+ * 
+ * This task continuously checks the limit switch and executes necessary actions.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void servoInterruptionTask(void *parameter)
 {
     while (1)
@@ -252,6 +308,13 @@ static void servoInterruptionTask(void *parameter)
     }
 }
 
+/**
+ * @brief Task function for receiving instructions via HTTP.
+ * 
+ * This task continuously retrieves incoming instructions from the HTTP interface.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void receiveInstruction(void *parameter)
 {
     esp_err_t err = ESP_OK;
@@ -267,6 +330,13 @@ static void receiveInstruction(void *parameter)
     }
 }
 
+/**
+ * @brief Task function for handling instructions.
+ * 
+ * This task processes received instructions and executes them.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void instructionHandler(void *parameter)
 {
     char inst[20];
@@ -290,6 +360,14 @@ static void instructionHandler(void *parameter)
     }
 }
 
+/**
+ * @brief Executes the received instruction.
+ * 
+ * This function interprets and executes a given instruction related to motor control 
+ * and mapping operations.
+ * 
+ * @param inst Pointer to the instruction string.
+ */
 static void executeInstruction(char *inst)
 {
     if (strncmp(inst, "Brake", 5) == 0)
@@ -359,6 +437,13 @@ static void executeInstruction(char *inst)
     }
 }
 
+/**
+ * @brief Task function for handling battery monitoring.
+ * 
+ * This task reads the battery level periodically and logs any errors.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void batteryTask(void *parameter)
 {
     esp_err_t err = ESP_OK;
@@ -385,6 +470,13 @@ static void batteryTask(void *parameter)
     }
 }
 
+/**
+ * @brief Task function for mapping operations.
+ * 
+ * This task handles mapping-related processes.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void mappingTask(void *parameter)
 {
     uint16_t distance = 0;
@@ -424,7 +516,13 @@ static void mappingTask(void *parameter)
     }
 }
 
-
+/**
+ * @brief Task function for checking available RAM.
+ * 
+ * This task monitors and logs memory usage.
+ * 
+ * @param parameter Unused parameter.
+ */
 static void checkRAM(void *parameter)
 {
     uint16_t percent;
@@ -432,8 +530,8 @@ static void checkRAM(void *parameter)
     while (1)
     {
         percent = (esp_get_free_heap_size() * 100) / 327680;
-        //ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
-        ESP_LOGI(TAG, "Memoria libre en el heap: %d %% **************************************", percent);
+        //ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes >>>>>>>>>", esp_get_free_heap_size());
+        ESP_LOGI(TAG, "Memoria libre en el heap: %d %% >>>>>>>>>", percent);
         if (percent <= 20 && !flag)
         {
             stop_heap_trace();

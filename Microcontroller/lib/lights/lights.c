@@ -95,24 +95,34 @@ esp_err_t error_led_off()
     return gpio_set_level(ERROR_LED, 0);
 }
 
-/**
- * @brief Task to blink the error LED.
- *
- * Alternates the error LED between on and off states with a delay of 500ms.
- * The blinking runs in an infinite loop, controlled by the `active` flag.
- * Ensures the LED turns off when the task stops.
- */
 
+/**
+ * @brief Toggles the error LED on and off at a specified interval.
+ * 
+ * This function starts a FreeRTOS task that continuously blinks the error LED
+ * with the given delay in milliseconds. If the task is already running, it is stopped.
+ * 
+ * @param[in] delay The delay in milliseconds between toggling the LED state.
+ * 
+ * @return 
+ * - `ESP_OK` if the task is successfully started.
+ * - `ESP_ERR_NO_MEM` if memory allocation for the task parameter fails.
+ * - `ESP_FAIL` if the task cannot be created.
+ * 
+ * @note
+ * - Uses FreeRTOS for task management.
+ * - The task runs indefinitely until manually stopped or an error occurs.
+ * - If an error occurs when setting the LED level, the task terminates.
+ */
 esp_err_t led_blink(uint16_t delay_ms)
 {
     if (ledBlinkTaskHandler == NULL)
     {
-        if (delay_ms == 0) // Si el delay es 0, no hace nada
+        if (delay_ms == 0) 
         {
             return ESP_ERR_INVALID_ARG;
         }
 
-        // Reservar memoria para pasar el valor a la tarea
         uint16_t *param = malloc(sizeof(uint16_t));
         if (param == NULL)
         {
@@ -122,7 +132,7 @@ esp_err_t led_blink(uint16_t delay_ms)
 
         if (xTaskCreate(led_blink_task, "LedBlinkTask", 2048, param, 4, &ledBlinkTaskHandler) != pdPASS)
         {
-            free(param); // Liberar memoria si la tarea no se pudo crear
+            free(param); 
             return ESP_FAIL;
         }
         return ESP_OK;
@@ -130,17 +140,32 @@ esp_err_t led_blink(uint16_t delay_ms)
     else
     {
         vTaskDelete(ledBlinkTaskHandler);
-        ledBlinkTaskHandler = NULL;   // Limpiar el manejador de la tarea
-        gpio_set_level(ERROR_LED, 0); // Apagar el LED
+        ledBlinkTaskHandler = NULL;   
+        gpio_set_level(ERROR_LED, 0); 
         return ESP_OK;
     }
 }
 
+
+/**
+ * @brief Task function that blinks the error LED at a specified interval.
+ * 
+ * This function is executed as a FreeRTOS task, turning the error LED on and off 
+ * with a delay defined by the `delay_ms` parameter. The task will continue running 
+ * indefinitely unless an error occurs in `gpio_set_level()`, in which case it terminates.
+ * 
+ * @param[in] parameter A pointer to a dynamically allocated `uint16_t` value 
+ * representing the delay in milliseconds. This memory is freed at the start of the function.
+ * 
+ * @note
+ * - If an error occurs when setting the LED level, the task terminates immediately.
+ * - The task is deleted upon termination.
+ */
 void led_blink_task(void *parameter)
 {
 
     uint16_t delay_ms = *((uint16_t *)parameter);
-    free(parameter); // Liberar memoria reservada
+    free(parameter); 
 
     while (1)
     {
@@ -157,5 +182,5 @@ void led_blink_task(void *parameter)
         vTaskDelay(pdMS_TO_TICKS(delay_ms));
     }
 
-    vTaskDelete(NULL); // Eliminar la tarea cuando termi
+    vTaskDelete(NULL);
 }

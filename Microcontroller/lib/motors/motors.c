@@ -1,13 +1,31 @@
+/**
+ * @file motors.c
+ * @author Octavio Perez Balcedo
+ * @brief Motor control implementation for ESP32.
+ * 
+ * This file contains the implementation of functions to control two DC motors 
+ * using GPIO on an ESP32. The motors can move forward, backward, rotate in place, 
+ * or stop, based on the given commands.
+ * 
+ * @date 2025-02-09
+ * 
+ */
 #include "motors.h"
 
+// Global motor structures for easy control
 MOTOR_STRUCT MOTOR1 = {MOTOR1_PIN1, MOTOR1_PIN2};
 MOTOR_STRUCT MOTOR2 = {MOTOR2_PIN1, MOTOR2_PIN2};
 
-// Función para inicializar los pines
+/**
+ * @brief Initializes the motor control GPIOs.
+ * 
+ * Configures the motor control pins as output and ensures they 
+ * start in a low state to prevent unintended movement.
+ */
 void motors_setup() {
     gpio_config_t io_conf;
 
-    // Configurar los pines de los motores como salidas
+    // Configure motor pins as outputs
     io_conf.intr_type = GPIO_INTR_DISABLE;  // Deshabilitar interrupciones
     io_conf.mode = GPIO_MODE_OUTPUT;        // Configurar como salida
     io_conf.pin_bit_mask = (1ULL << MOTOR1_PIN1) | (1ULL << MOTOR1_PIN2) |
@@ -16,14 +34,20 @@ void motors_setup() {
     io_conf.pull_up_en = 0;                 // Deshabilitar pull-up
     gpio_config(&io_conf);                  // Aplicar configuración
 
-    // Asegurarse de que los pines de los motores estén en estado bajo al inicio (apagados)
+    // Ensure motors are initially off
     gpio_set_level(MOTOR1_PIN1, 0);
     gpio_set_level(MOTOR1_PIN2, 0);
     gpio_set_level(MOTOR2_PIN1, 0);
     gpio_set_level(MOTOR2_PIN2, 0);
 }
 
-// Función controladora de los motores
+/**
+ * @brief Controls the motors based on the given direction.
+ * 
+ * Adjusts the GPIO output levels to move the motors in the specified direction.
+ * 
+ * @param[in] D The movement direction.
+ */
 void motors_command(DIRECTIONS D){
     switch (D){
     case FORWARD:

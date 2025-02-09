@@ -1,3 +1,20 @@
+/**
+ * @file ap_server.c
+ * @author 
+ *      Ossola Florencia (flor.ossola13@gmail.com)
+ * @brief Implementation file for initializing and configuring the WiFi SoftAP server.
+ * 
+ * This file implements the necessary functions to configure and manage a WiFi SoftAP 
+ * server on an ESP32 device. It handles event registration, WiFi initialization, 
+ * client connections, and TCP server setup.
+ * 
+ * This implementation is based on examples provided by the ESP-IDF library, 
+ * customized for this project’s specific requirements.
+ * 
+ * @version 1.0
+ * @date 2024-12-09
+ * 
+ */
 #include "ap_server.h"
 #include "lights.h"
 
@@ -5,20 +22,19 @@ static const char *TAG = "wifi softAP";
 static SemaphoreHandle_t client_connected_semaphore;
 
 static void wifi_event_handler(void*, esp_event_base_t , int32_t , void* );
-static void tcp_server(void *pvParameters);
 
 /**
  * @brief WiFi Event Handler for managing station connections and IP assignment.
  * 
- * This function handles various WiFi events such as station connecting and disconnecting,
- * as well as IP assignment for connected clients. It logs the MAC address and AID of 
- * the connected or disconnected stations and signals when an IP is assigned to a client.
+ * Handles WiFi events, including when a station connects or disconnects, and 
+ * when an IP address is assigned to a connected client. It logs station MAC addresses 
+ * and AID (Association ID) for debugging purposes. When a client receives an IP, 
+ * a semaphore is released to signal successful connection.
  * 
- * @param[in] arg Pointer to the argument passed to the event handler (usually NULL).
- * @param[in] event_base Event base identifier.
- * @param[in] event_id Specific event ID to handle.
- * @param[in] event_data Data associated with the event, such as MAC address and AID.
- * 
+ * @param[in] arg Pointer to additional arguments (usually NULL).
+ * @param[in] event_base Base event type (WiFi or IP).
+ * @param[in] event_id Specific event identifier.
+ * @param[in] event_data Pointer to event-specific data.
  */
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
@@ -37,6 +53,17 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
     }
 }
 
+/**
+ * @brief Initializes the Wi-Fi SoftAP mode.
+ * 
+ * Configures the ESP32 as an Access Point (AP), registering event handlers and 
+ * initializing the necessary components for WiFi functionality. It sets up the AP 
+ * parameters such as SSID, password, channel, and authentication mode.
+ * 
+ * @return 
+ *      - ESP_OK if initialization succeeds.
+ *      - ESP_FAIL if an error occurs.
+ */
 esp_err_t wifi_init_softap(void){
 
     // Inicializa el semáforo binario
@@ -110,81 +137,22 @@ esp_err_t wifi_init_softap(void){
     return ESP_OK;
 }
 
-
-/*
-static void tcp_server(void *pvParameters)
-{
-    char addr_str[128];
-    int keepAlive = 1;
-    int keepIdle = KEEPALIVE_IDLE;
-    int keepInterval = KEEPALIVE_INTERVAL;
-    int keepCount = KEEPALIVE_COUNT;
-    struct sockaddr_storage dest_addr;
-
-    struct sockaddr_in *dest_addr_ip4 = (struct sockaddr_in *)&dest_addr;
-    dest_addr_ip4->sin_addr.s_addr = htonl(INADDR_ANY);
-    dest_addr_ip4->sin_family = AF_INET;
-    dest_addr_ip4->sin_port = htons(PORT);
-    int ip_protocol = IPPROTO_IP;
-    
-    int s = socket(AF_INET, SOCK_STREAM, ip_protocol);
-    if (s < 0) {
-        ESP_LOGE(TAG, "Socket creation failed: errno %d", errno);
-        vTaskDelete(NULL);
-        return;
-    }
-
-    ESP_LOGI(TAG, "Socket created");
-
-    esp_err_t err = bind(s, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Socket unable to bind: err %d", err);
-        goto CLEAN_UP;
-    }
-
-    ESP_LOGI(TAG, "Socket bound: port %d", PORT);
-
-    err = listen(s, 1);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error ocurred during listen: err %d", err);
-        goto CLEAN_UP;
-    }
-
-    while (1) {
-        ESP_LOGI(TAG, "Socket listening");
-
-        struct sockaddr_storage source_addr; // Large enough for IPv4
-        socklen_t addr_len = sizeof(source_addr);
-        int sock = accept(s, (struct sockaddr *)&source_addr, &addr_len);
-        if (sock < 0) {
-            ESP_LOGE(TAG, "Unable to accept connection: errno %d", errno);
-            break;
-        }
-
-        // Set tcp keepalive option
-        setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &keepAlive, sizeof(int));
-        setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &keepIdle, sizeof(int));
-        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &keepInterval, sizeof(int));
-        setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, &keepCount, sizeof(int));
-        // Convert ip address to string
-
-        if (source_addr.ss_family == PF_INET) {
-            inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
-        }
-
-        ESP_LOGI(TAG, "Socket accepted ip address: %s", addr_str);
-
-        shutdown(sock, 0);
-        close(sock);
-    }
-
-    CLEAN_UP:
-        close(s);
-        vTaskDelete(NULL);
-    
-}
-*/
-
+/**
+ * @brief Initializes the server and Wi-Fi SoftAP functionality.
+ * 
+ * This function initializes the Non-Volatile Storage (NVS) and sets up the Wi-Fi SoftAP.
+ * If an issue is detected with NVS (such as no free pages or a new version found), the storage 
+ * is erased and reinitialized. After NVS is successfully initialized, the function calls 
+ * `wifi_init_softap()` to configure and start the SoftAP mode.
+ * 
+ * In case of an error, it logs an appropriate message and returns the error code.
+ * 
+ * @return
+ *      - ESP_OK if initialization is successful
+ *      - ESP_ERR_NVS_NO_FREE_PAGES if NVS has no free pages and requires reinitialization
+ *      - ESP_ERR_NVS_NEW_VERSION_FOUND if a new version of NVS is found and requires erasing
+ *      - ESP_FAIL if Wi-Fi initialization fails
+ */
 esp_err_t initialize_server(void)
 {
     esp_err_t err = nvs_flash_init();
@@ -202,6 +170,16 @@ esp_err_t initialize_server(void)
     }
     return ESP_OK;
 }
+
+/**
+ * @brief Waits for a client connection.
+ * 
+ * This function blocks execution until a client successfully connects to the SoftAP. 
+ * It relies on a binary semaphore, which is released when an IP is assigned to a client.
+ * 
+ * @return 
+ *      - ESP_OK if a client connects successfully.
+ */
 
 esp_err_t wait_for_client_connection() {
     ESP_LOGI(TAG, "Esperando a que un dispositivo se conecte...");

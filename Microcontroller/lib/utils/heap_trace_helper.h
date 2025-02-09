@@ -1,10 +1,21 @@
+/**
+ * @file heap_trace_helper.h
+ * @author Octavio Perez Balcedo
+ * @brief Heap tracing utility for memory leak detection on ESP32.
+ * 
+ * This header file provides functions to start and stop heap tracing
+ * in LEAKS mode, helping detect memory leaks in an ESP32 application.
+ * 
+ * @date 2025-02-09
+ * @version 1.0
+ */
 #ifndef HEAP_TRACE_HELPER_H
 #define HEAP_TRACE_HELPER_H
 
 #include "esp_heap_trace.h"
 #include "esp_err.h"
 
-#define NUM_RECORDS 100
+#define NUM_RECORDS 100 /**< Number of heap trace records stored */
 
 #ifdef __cplusplus
 extern "C" {

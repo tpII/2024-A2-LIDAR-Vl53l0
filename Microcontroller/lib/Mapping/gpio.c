@@ -1,75 +1,34 @@
-// #include "gpio.h"
-
-// #define GPIO_XSHUT_FIRST GPIO_NUM_23 // Cambia esto al número de pin que desees
-// // #define GPIO_XSHUT_SECOND GPIO_NUM_NC // Cambia esto al número de pin que desees
-// // #define GPIO_XSHUT_THIRD GPIO_NUM_NC // Cambia esto al número de pin que desees
-
-// static const char *TAG = "GPIO";
-
-// esp_err_t gpio_init(void)
-// {
-//     // Configuración de los pines GPIO como salidas
-//     esp_err_t res = gpio_set_direction(GPIO_XSHUT_FIRST, GPIO_MODE_OUTPUT);
-//     if (res != ESP_OK) {
-//         ESP_LOGE(TAG, "Error en el inicio del GPIO: direction XSHUT_FIRST");
-//         return res;
-//     }
-//     res = gpio_set_level(GPIO_XSHUT_FIRST, 0);
-//     if (res != ESP_OK) {
-//         ESP_LOGE(TAG, "Error en el inicio del GPIO: level XSHUT_FIRST");
-//         return res;
-//     }
-
-//     // res = gpio_set_direction(GPIO_XSHUT_SECOND, GPIO_MODE_OUTPUT);
-//     // if (res != ESP_OK) {
-//     //     ESP_LOGE(TAG, "Error en el inicio del GPIO: direction XSHUT_SECOND");
-//     //     return res;
-//     // }
-//     // res = gpio_set_level(GPIO_XSHUT_SECOND, 0);
-//     // if (res != ESP_OK) {
-//     //     ESP_LOGE(TAG, "Error en el inicio del GPIO: level XSHUT_SECOND");
-//     //     return res;
-//     // }
-
-//     // res = gpio_set_direction(GPIO_XSHUT_THIRD, GPIO_MODE_OUTPUT);
-//     // if (res != ESP_OK) {
-//     //     ESP_LOGE(TAG, "Error en el inicio del GPIO: direction XSHUT_THIRD");
-//     //     return res;
-//     // }
-//     // res = gpio_set_level(GPIO_XSHUT_THIRD, 0);
-//     // if (res != ESP_OK) {
-//     //     ESP_LOGE(TAG, "Error en el inicio del GPIO: level XSHUT_THIRD");
-//     //     return res;
-//     // }
-
-//     return res;
-// }
-
-// esp_err_t gpio_set_output(gpio_num_t gpio, bool enable)
-// {
-//     esp_err_t res = ESP_FAIL;
-//     if (enable) {
-//         res = gpio_set_level(gpio, 1); // Establecer el nivel alto
-//     } else {
-//         res = gpio_set_level(gpio, 0); // Establecer el nivel bajo
-//     }
-//     return res;
-// }
+/**
+ * @file gpio.c
+ * @author Octavio Perez Balcedo
+ * @brief Implementation of GPIO handling functions for VL53L0X.
+ *
+ * This file contains the implementation of functions to configure and control 
+ * GPIO output pins, ensuring proper initialization and control.
+ *
+ * @date 2025-02-09
+ */
 
 #include "gpio.h"
 #include "esp_err.h"
 
 static const char *TAG = "GPIO";
 
+/**
+ * @brief Initializes the configured GPIO pins as output.
+ *
+ * This function sets up the GPIO pins as output and initializes them to a low state.
+ *
+ * @return ESP_OK on success, ESP_FAIL on error.
+ */
 esp_err_t gpio_init(void)
 {
     gpio_config_t io_conf = {
-        //.pin_bit_mask = (1ULL << GPIO_XSHUT_FIRST) | (1ULL << GPIO_XSHUT_SECOND) | (1ULL << GPIO_XSHUT_THIRD),
-        .pin_bit_mask = (1ULL << GPIO_XSHUT_FIRST),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE
+        .pin_bit_mask = (1ULL << GPIO_XSHUT_FIRST),     /**< Pin bitmask for output configuration. */
+        .mode = GPIO_MODE_OUTPUT,                       /**< Set mode to output. */
+        .pull_up_en = GPIO_PULLUP_DISABLE,              /**< Disable internal pull-up resistor. */
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,          /**< Disable internal pull-down resistor. */
+        .intr_type = GPIO_INTR_DISABLE                  /**< Disable interrupts. */
     };
 
     if (gpio_config(&io_conf) != ESP_OK) {
@@ -77,8 +36,7 @@ esp_err_t gpio_init(void)
         return ESP_FAIL;
     }
 
-    // Asegurar que los pines inicien en nivel bajo
-    //if (gpio_set_level(GPIO_XSHUT_FIRST, 0) != ESP_OK || gpio_set_level(GPIO_XSHUT_SECOND, 0) != ESP_OK || gpio_set_level(GPIO_XSHUT_THIRD, 0) != ESP_OK) {
+    // Ensure the pin starts at a low level
     if (gpio_set_level(GPIO_XSHUT_FIRST, 0) != ESP_OK ) {
         ESP_LOGE(TAG, "Error en el inicio del GPIO: level XSHUT_FIRST");
         return ESP_FAIL;
@@ -87,6 +45,15 @@ esp_err_t gpio_init(void)
     return ESP_OK;
 }
 
+/**
+ * @brief Sets the output state of a specified GPIO pin.
+ *
+ * This function modifies the logic level of a given GPIO pin.
+ *
+ * @param gpio The GPIO pin to modify.
+ * @param enable True to set high (1), false to set low (0).
+ * @return ESP_OK on success, ESP_FAIL if setting the level fails.
+ */
 esp_err_t gpio_set_output(gpio_t gpio, bool enable)
 {
     if (gpio_set_level(gpio, enable ? 1 : 0) == ESP_OK) {

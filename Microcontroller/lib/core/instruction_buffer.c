@@ -1,5 +1,6 @@
 /**
  * @file instruction_buffer.c
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @brief Implementation of a circular buffer for storing instructions.
  *
  * This file contains the implementation of a circular buffer that allows storing
@@ -141,6 +142,16 @@ esp_err_t saveInstruction(char *inst)
     return ESP_FAIL;
 }
 
+/**
+ * @brief Deletes the semaphore used for buffer access control.
+ *
+ * This function safely deletes the semaphore that controls access to the buffer.
+ * It checks if the semaphore exists before attempting deletion.
+ *
+ * @return 
+ *      - `ESP_OK` if the semaphore was successfully deleted.
+ *      - `ESP_FAIL` if the semaphore was `NULL` before deletion.
+ */
 esp_err_t delete_buffer_semaphore()
 {
     if (buffer_access != NULL) {
@@ -152,6 +163,17 @@ esp_err_t delete_buffer_semaphore()
     return ESP_OK;
 }
 
+/**
+ * @brief Clears the instruction buffer and resets indexes.
+ *
+ * This function sets all elements in the `instructions_buffer` array to 0 and 
+ * resets the push and get indexes to their initial state. It ensures safe access 
+ * using a semaphore with a timeout.
+ *
+ * @return 
+ *      - `ESP_OK` if the buffer was successfully cleared.
+ *      - `ESP_ERR_TIMEOUT` if acquiring the semaphore failed within 50ms.
+ */
 esp_err_t clearBuffer() 
 {
 
