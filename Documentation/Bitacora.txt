@@ -217,3 +217,6 @@ Se agrego un popup (modal) de introduccion al Frontend y uno a los botones inhab
 05 al 07 de Febrero
 Correciones varias de cara a la presentacion del proyecto
 Correciones y finalizacion del Informe finalizacion
+
+07 de Febrero
+Proyecto presentado y aprobado

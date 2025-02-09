@@ -30,6 +30,8 @@
 static volatile bool active = false;
 TaskHandle_t ledBlinkTaskHandler = NULL;
 BaseType_t task;
+
+static void led_blink_task(void *);
 /**
  * @brief Initializes the GPIO pins for LED control.
  *

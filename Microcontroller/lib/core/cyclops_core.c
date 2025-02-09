@@ -343,7 +343,7 @@ static void instructionHandler(void *parameter)
     esp_err_t err = ESP_OK;
     while (1)
     {
-        err = getInstruccionMessage(inst);
+        err = getInstructionMessage(inst);
         if (err == ESP_OK)
         {
             executeInstruction(inst);

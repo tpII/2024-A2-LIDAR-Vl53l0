@@ -444,7 +444,7 @@ int16_t readAngle()
     // Calcular velocidad escalada y ángulo
     int64_t temp = ((int64_t)BASE_SPEED * (duty - SERVO_STOP)) * (time_now - time_reference);
     int16_t angle = (int16_t)(((temp / (DIFFERENTIAL * CONVERSION_FACTOR)) + angle_offset) % 360);
-    ESP_LOGE(TAG, "Angle = %" PRIi16, angle);
+    //ESP_LOGE(TAG, "Angle = %" PRIi16, angle);
 
     DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Angle = %" PRIi16, angle));
 

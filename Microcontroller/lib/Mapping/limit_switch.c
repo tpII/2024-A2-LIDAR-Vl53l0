@@ -128,7 +128,7 @@ void check_limit_switch()
         if (limit_switch_triggered)
         {
             DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Limit switch triggered! Servo has reached the target position."));
-            ESP_LOGE(TAG,"LIMIT SWITCH");
+            //ESP_LOGE(TAG,"LIMIT SWITCH");
             servo_invert();
             limit_switch_triggered = false; 
             DEBUGING_ESP_LOG(ESP_LOGW(TAG, "#"));
