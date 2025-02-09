@@ -1,20 +1,21 @@
 /**
  * @file mqtt_server.c
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @brief Implementation of the MQTT client for ESP-IDF
  *
  * This source file contains the implementation of MQTT client functionalities,
  * including connecting to an MQTT broker, publishing messages, subscribing to topics,
  * handling MQTT events, and managing received instructions.
  *
- * @version 1.0
- * @date 2024-12-04
- *
- * @author Guerrico Leonel (lguerrico@outlook.com)
+ * WARNING: The receive instructions function is not currently working, 
+ * due to a conflict in the way we implemented it with FreeRTOS.
+ * It should be checked and correct to MQTT be fully implemented. 
+ * Meanwhile the http_handler library manages the receive instruction.
  *
  * @note Ensure the MQTT broker is reachable and configured properly in `URL`.
  *
- * @copyright
- * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
+ * @version 1.0
+ * @date 2024-12-04
  */
 
 #include "mqtt_server.h"
@@ -155,6 +156,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         DEBUGING_ESP_LOG(ESP_LOGI(TAG, "MQTT_EVENT_DATA - %s",event->topic));
+        //Here should go the code to amnage the receive instruction
         /*if (strncmp(event->topic, "Instruction", event->topic_len) == 0)
         {
             ESP_LOGI(TAG, "Instruction received");
@@ -295,6 +297,9 @@ esp_err_t mqtt_disconnect()
  * Processes messages received on the "Instruction" topic, deserializing JSON data and
  * executing actions based on the instruction content (e.g., restarting the MCU).
  *
+ * WARNING: This function is currently useless. Its causes a conflict with FreeRTOS, 
+ * making the program reboot itself. It should be replaced with another one, to avoid conflict with FreeRTOS.
+ * 
  * @param[in] data Pointer to the received message
  * @param[in] length Length of the message
  */

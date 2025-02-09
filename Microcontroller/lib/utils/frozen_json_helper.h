@@ -8,7 +8,7 @@
  * to ensure memory efficiency in ESP32 applications.
  *
  * @version 1.0
- * @date 2024-12-05
+ * @date 2024-02-03
  *
  * @note
  * - Uses a fixed buffer to avoid dynamic memory allocation.

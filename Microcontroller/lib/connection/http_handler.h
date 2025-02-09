@@ -1,11 +1,17 @@
 /**
  * @file http_handler.h
  * @author Guerrico Leonel (lguerrico99@gmail.com)
- * @date 2025-02-09
+ * 
  * @brief Module for handling instruction retrieval via HTTP.
  * 
  * This file defines functions to send HTTP GET requests and retrieve the latest 
  * instruction from a remote server in an ESP32 environment.
+ * 
+ * @note: This library is a patch for an error in the MQTT implementation  
+ * that makes it impossible for us to receive instructions through it.  
+ * It must be deprecated once it is fixed.  
+ * 
+ * @date 2025-02-09
  */
 
  #ifndef _HTTP_HANDLER_H_

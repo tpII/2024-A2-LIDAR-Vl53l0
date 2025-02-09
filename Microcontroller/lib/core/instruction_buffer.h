@@ -1,5 +1,6 @@
 /**
  * @file instruction_buffer.h
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @brief Circular buffer for storing and retrieving instructions.
  *
  * This library provides an interface for managing a circular buffer that stores
@@ -13,8 +14,6 @@
  * - Ensure to call `initBuffer` before using any other functions in this library.
  * - The buffer has a fixed size of 10 instructions, with each instruction
  *   limited to 40 characters.
- *
- * @author Guerrico Leonel (lguerrico@outlook.com)
  *
  */
 
@@ -67,8 +66,29 @@ esp_err_t getInstruction(char *);
  */
 esp_err_t saveInstruction(char *);
 
+/**
+ * @brief Deletes the semaphore used for buffer access control.
+ *
+ * This function deletes the semaphore responsible for synchronizing access 
+ * to the buffer. It ensures safe deletion by checking if the semaphore exists.
+ *
+ * @return 
+ *      - ESP_OK if the semaphore was successfully deleted.
+ *      - ESP_FAIL if the semaphore was NULL before deletion.
+ */
 esp_err_t delete_buffer_semaphore();
 
+/**
+ * @brief Clears the instruction buffer and resets its indexes.
+ *
+ * This function resets all elements in the `instructions_buffer` array to 0 
+ * and reinitializes the push and get indexes. It ensures safe access 
+ * using a semaphore with a timeout.
+ *
+ * @return 
+ *      - ESP_OK if the buffer was successfully cleared.
+ *      - ESP_ERR_TIMEOUT if acquiring the semaphore failed within 50ms.
+ */
 esp_err_t clearBuffer(void);
 
 #endif

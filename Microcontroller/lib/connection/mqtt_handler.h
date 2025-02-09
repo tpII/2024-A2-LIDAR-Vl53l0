@@ -11,8 +11,6 @@
  * @version 1.0
  * @date 2024-12-04
  * 
- * @copyright
- * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
 
  #ifndef _MQTT_HANDLER_H_

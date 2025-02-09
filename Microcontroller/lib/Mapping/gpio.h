@@ -1,6 +1,6 @@
 /**
  * @file gpio.h
- * @author Guerrico Leonel (lguerrico@outlook.com)
+ * @author Octavio Perez Balcedo
  * @brief GPIO handling module for controlling specific output pins.
  *
  * This file provides functions to initialize and control GPIO pins, avoiding 

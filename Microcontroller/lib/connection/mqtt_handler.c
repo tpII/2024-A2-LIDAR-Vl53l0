@@ -16,8 +16,6 @@
  * @version 1.0
  * @date 2024-12-04
  *
- * @copyright
- * Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  */
 
 #include "mqtt_handler.h"
@@ -262,17 +260,17 @@ esp_err_t sendMappingValue(uint16_t distance, int16_t angle)
 
 esp_err_t sendBatteryLevel(uint8_t batteryLevel)
 {
-    const char *values[1];                                // Tamaño correcto para un solo valor
-    char buffer[6];                                       // Espacio suficiente para representar valores de 0 a 255
-    snprintf(buffer, sizeof(buffer), "%d", batteryLevel); // Usar snprintf para evitar desbordamientos
-    values[0] = buffer;                                   // Asignar al índice válido (0)
+    const char *values[1];                                
+    char buffer[6];                                       
+    snprintf(buffer, sizeof(buffer), "%d", batteryLevel); 
+    values[0] = buffer;                                   
 
     const char *keys[1] = {"level"};
     char *json = NULL;
 
-    // Crear el JSON
+    
     esp_err_t err = create_json_data(&json, keys, values, 1);
-    print_json_data(json); // Revisar si esta función necesita liberación de memoria o copias seguras
+    print_json_data(json); 
 
     if (err != ESP_OK)
     {
@@ -281,7 +279,6 @@ esp_err_t sendBatteryLevel(uint8_t batteryLevel)
         return err;
     }
 
-    // Publicar el mensaje
     err = mqtt_publish(BATTERY_VALUE, json);
     if (err != ESP_OK)
     {

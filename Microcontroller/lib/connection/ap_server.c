@@ -14,8 +14,6 @@
  * @version 1.0
  * @date 2024-12-09
  * 
- * @copyright
- * Copyright (c) 2024 by Ossola Florencia. All rights reserved.
  */
 #include "ap_server.h"
 #include "lights.h"

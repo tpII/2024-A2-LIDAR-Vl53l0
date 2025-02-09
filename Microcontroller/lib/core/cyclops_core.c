@@ -1,6 +1,8 @@
 /**
  * @file cyclops_core.c
- * @author Guerrico Leonel (lguerrico@outlook.com) and Ossola Florencia (flor.ossola13@gmail.com)
+ * @author Guerrico Leonel (lguerrico@outlook.com), Ossola Florencia (flor.ossola13@gmail.com) 
+ * and Octavio Perez Balcedo
+ * 
  * @brief Implementation of the Cyclops system's core functions.
  *
  * This module handles the initialization of system components,
@@ -161,19 +163,19 @@ esp_err_t createTasks()
     // // BACKGROUND TASKs
     BaseType_t task_created;
     task_created = xTaskCreatePinnedToCore(
-        servoInterruptionTask,         // Función de la tarea
-        "ServoInterruptionTask",       // Nombre de la tarea
-        4096,                          // Tamaño de la pila
-        NULL,                          // Argumento de la tarea (NULL si no es necesario)
-        1,                             // Prioridad
-        &servoInterruptionTaskHandler, // Puntero al handle de la tarea (NULL si no es necesario)
-        tskNO_AFFINITY                 // Núcleo (sin afinidad específica)
+        servoInterruptionTask,         
+        "ServoInterruptionTask",       
+        4096,                          
+        NULL,                         
+        1,                             
+        &servoInterruptionTaskHandler, 
+        tskNO_AFFINITY                 
     );
 
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Limit Switch cheking Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
 
     // // MAIN TASKs
@@ -190,7 +192,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Instruction HandlerTask"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -220,7 +222,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Mapping Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL;
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -235,7 +237,7 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating Battery Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL;
     }
 
     task_created = xTaskCreatePinnedToCore(
@@ -250,9 +252,9 @@ esp_err_t createTasks()
     if (task_created != pdPASS)
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "Error Creating check RAM Task"));
-        return ESP_FAIL; // Retorna error si la tarea no se pudo crear
+        return ESP_FAIL; 
     }
-    return ESP_OK; // Retorna éxito si la tarea fue creada correctamente
+    return ESP_OK;
 }
 
 /**
@@ -528,8 +530,8 @@ static void checkRAM(void *parameter)
     while (1)
     {
         percent = (esp_get_free_heap_size() * 100) / 327680;
-        //ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes **************************************", esp_get_free_heap_size());
-        ESP_LOGI(TAG, "Memoria libre en el heap: %d %% **************************************", percent);
+        //ESP_LOGI(TAG, "Memoria libre en el heap: %lu bytes >>>>>>>>>", esp_get_free_heap_size());
+        ESP_LOGI(TAG, "Memoria libre en el heap: %d %% >>>>>>>>>", percent);
         if (percent <= 20 && !flag)
         {
             stop_heap_trace();

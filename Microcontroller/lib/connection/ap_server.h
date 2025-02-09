@@ -27,13 +27,13 @@
 #include "nvs_flash.h"
 #include <portmacro.h>
 
-#define ESP_WIFI_SSID      "Cyclops"//CONFIG_ESP_WIFI_SSID
-#define ESP_WIFI_PASS      "A2TdP2Lidar"//CONFIG_ESP_WIFI_PASSWORD
-#define ESP_WIFI_CHANNEL   1//CONFIG_ESP_WIFI_CHANNEL
-#define MAX_STA_CONN       4//CONFIG_ESP_MAX_STA_CONN
+#define ESP_WIFI_SSID      "Cyclops"        //CONFIG_ESP_WIFI_SSID
+#define ESP_WIFI_PASS      "A2TdP2Lidar"    //CONFIG_ESP_WIFI_PASSWORD
+#define ESP_WIFI_CHANNEL   1                //CONFIG_ESP_WIFI_CHANNEL
+#define MAX_STA_CONN       4                //CONFIG_ESP_MAX_STA_CONN
 
 #define PORT 7777
-#define MAX_NUM_CONNECTIONS 1 //NERVER CHANGE THIS NUMBER
+#define MAX_NUM_CONNECTIONS 1               //NERVER CHANGE THIS NUMBER
 
 
 /**

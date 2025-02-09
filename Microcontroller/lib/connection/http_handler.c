@@ -1,12 +1,18 @@
 /**
  * @file http_handler.c
  * @author Guerrico Leonel (lguerrico99@gmail.com)
- * @date 2025-02-09
+ * 
  * @brief Implementation of the module for retrieving instructions via HTTP.
  * 
  * This file implements the functionality to connect to an HTTP server, fetch 
  * instructions in JSON format, and execute corresponding actions based on the 
  * received data.
+ * 
+ * @note: This library is a patch for an error in the MQTT implementation  
+ * that makes it impossible for us to receive instructions through it.  
+ * It must be deprecated once it is fixed.  
+ * 
+ * @date 2025-02-09
  */
 
 #include "http_handler.h"
@@ -136,6 +142,7 @@ static void decodeInstruction(int length, char *str)
         {
             DEBUGING_ESP_LOG(ESP_LOGW(TAG, "Abortando..."));
             LOG_MESSAGE_W(TAG, "Abortando...");
+            //ABORT IS STILL IN DEVELOPMENT
         }
         else
         {

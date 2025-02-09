@@ -1,5 +1,6 @@
 /**
  * @file i2c.c
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @brief I2C Master Interface Library for ESP32
  * 
  * This library provides initialization and bus management for the I2C master 
@@ -13,10 +14,6 @@
  * 
  * @version 1.0
  * @date 2024-12-05
- * 
- * @author Guerrico Leonel (lguerrico@outlook.com)
- * 
- * @copyright Copyright (c) 2024 by Guerrico Leonel. All rights reserved.
  * 
  * @note 
  * - This library is designed for ESP32 using the ESP-IDF framework.

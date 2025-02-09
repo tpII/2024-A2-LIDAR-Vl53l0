@@ -6,7 +6,7 @@
  * The battery level is calculated based on voltage readings, with a range from 6.4V (0%)
  * to 8.4V (100%).
  *
- * @author [Your Name]
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @date 2025-02-09
  */
 #include "battery.h"
@@ -19,7 +19,7 @@
 #define FULL_CHARGE 8.4                     ///< Full charge voltage (8.4V)
 #define MIN_CHARGE 6.4                      ///< Minimum battery voltage (6.4V, equivalent to 0%)
 
-static const char *TAG = "BATTERY"; ///< Log tag for debugging
+static const char *TAG = "BATTERY";         ///< Log tag for debugging
 
 static ina219_t dev;        ///< INA219 sensor instance
 static float bus_voltage;   ///< Measured bus voltage (V)
@@ -60,11 +60,6 @@ esp_err_t battery_sensor_init()
         LOG_MESSAGE_E(TAG, "INA219 initialization failed");
         return err;
     }
-
-    // ESP_LOGI(TAG, "Configuring INA219");
-    // ESP_ERROR_CHECK(ina219_configure(&dev, INA219_BUS_RANGE_16V, INA219_GAIN_0_125,
-    //                                  INA219_RES_12BIT_1S, INA219_RES_12BIT_1S,
-    //                                  INA219_MODE_CONT_SHUNT_BUS));
 
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Calibrating INA219"));
 

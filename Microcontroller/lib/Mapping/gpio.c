@@ -1,7 +1,7 @@
 /**
  * @file gpio.c
- * @author Guerrico Leonel (lguerrico@outlook.com)
- * @brief Implementation of GPIO handling functions.
+ * @author Octavio Perez Balcedo
+ * @brief Implementation of GPIO handling functions for VL53L0X.
  *
  * This file contains the implementation of functions to configure and control 
  * GPIO output pins, ensuring proper initialization and control.

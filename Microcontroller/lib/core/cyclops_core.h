@@ -1,6 +1,8 @@
 /**
  * @file cyclops_core.h
- * @author Guerrico Leonel (lguerrico@outlook.com) and Ossola Florencia (flor.ossola13@gmail.com)
+ * @author Guerrico Leonel (lguerrico@outlook.com), Ossola Florencia (flor.ossola13@gmail.com) 
+ * and Octavio Perez Balcedo
+ * 
  * @brief Core system initialization and task management for the Cyclops project.
  *
  * This module provides functions for initializing the core services,
