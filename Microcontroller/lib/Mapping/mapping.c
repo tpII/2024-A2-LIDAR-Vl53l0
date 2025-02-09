@@ -178,7 +178,7 @@ static esp_err_t getValue(uint16_t *distance)
         else
         {
             ESP_LOGE(TAG, "Invalid value: %d", val);
-            LOG_MESSAGE_E(TAG,"Invalid value");
+            //LOG_MESSAGE_E(TAG,"Invalid value");
             return ESP_ERR_INVALID_RESPONSE;
         }
     }
