@@ -1,3 +1,14 @@
+/**
+ * @file ina219v2.c
+ * @author 
+ *      Guerrico Leonel (lguerrico@outlook.com)
+ * @brief Implementation of INA219 driver (Limited adaptation).
+ * 
+ * This is a limited adaptation of the original library by UncleRus:
+ * https://github.com/UncleRus/esp-idf-lib/blob/master/components/ina219/ina219.c
+ * 
+ * @date 2025-02-09
+ */
 #include "ina219v2.h"
 #include "i2c.h"
 #include "esp_log.h"
@@ -5,10 +16,32 @@
 
 #define TAG "INA219"
 
-static esp_err_t ina219_write_register(ina219_t *, uint8_t, uint16_t);  // Escribe un registro
-static esp_err_t ina219_read_register(ina219_t *, uint8_t, uint16_t *); // Lee un registro
+/**
+ * @brief Writes a 16-bit value to a specific register of the INA219 sensor.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param reg Register address to write to.
+ * @param value 16-bit value to be written.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
+static esp_err_t ina219_write_register(ina219_t *, uint8_t, uint16_t);
 
-// Inicialización del INA219
+/**
+ * @brief Reads a 16-bit value from a specific register of the INA219 sensor.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param reg Register address to read from.
+ * @param value Pointer to store the read 16-bit value.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
+static esp_err_t ina219_read_register(ina219_t *, uint8_t, uint16_t *);
+
+/**
+ * @brief Initializes the INA219 sensor and sets default configuration.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 esp_err_t ina219_init(ina219_t *dev)
 {
     if (dev == NULL)
@@ -23,11 +56,17 @@ esp_err_t ina219_init(ina219_t *dev)
         return ESP_FAIL;
     }
 
-    // Configuración por defecto del INA219
     return ina219_write_register(dev, INA219_REG_CONFIG, INA219_CONFIG_DEFAULT);
 }
 
-// Escribir en un registro
+/**
+ * @brief Writes a 16-bit value to a specific register of the INA219 sensor.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param reg Register address to write to.
+ * @param value 16-bit value to be written.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t value)
 {
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Enviando a dirección: 0x%02X, Registro: 0x%02X, MSB: 0x%02X, LSB: 0x%02X",
@@ -39,7 +78,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     {
         DEBUGING_ESP_LOG(ESP_LOGE(TAG, "BUS BUSY"));
         LOG_MESSAGE_E(TAG,  "BUS BUSY");
-        return ESP_FAIL; // No se pudo obtener el bus
+        return ESP_FAIL; 
     }
 
     DEBUGING_ESP_LOG(ESP_LOGI(TAG, "Bus obtenido"));
@@ -67,7 +106,7 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
         i2c_give_bus();
         return ret;
     }
-    // Escribir dirección del dispositivo con bit de escritura
+
     ret = i2c_master_write_byte(cmd, (dev->i2c_addr << 1) | I2C_MASTER_WRITE, true);
     if (ret != ESP_OK)
     {
@@ -78,7 +117,6 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
         return ret;
     }
 
-    // Escribir registro y datos
     ret = i2c_master_write(cmd, data, sizeof(data), true);
     if (ret != ESP_OK)
     {
@@ -89,7 +127,6 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
         return ret;
     }
 
-    // Finalizar comunicación I2C
     ret = i2c_master_stop(cmd);
     if (ret != ESP_OK)
     {
@@ -100,7 +137,6 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
         return ret;
     }
 
-    // Ejecutar los comandos en el bus
     ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(1000));
     if (ret != ESP_OK)
     {
@@ -113,8 +149,14 @@ static esp_err_t ina219_write_register(ina219_t *dev, uint8_t reg, uint16_t valu
     return ret;
 }
 
-// Leer un registro
-static esp_err_t ina219_read_register(ina219_t *dev, uint8_t reg, uint16_t *value)
+/**
+ * @brief Reads a 16-bit value from a specific register of the INA219 sensor.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param reg Register address to read from.
+ * @param value Pointer to store the read 16-bit value.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */static esp_err_t ina219_read_register(ina219_t *dev, uint8_t reg, uint16_t *value)
 {
     if (value == NULL || !i2c_get_bus())
     {
@@ -130,7 +172,6 @@ static esp_err_t ina219_read_register(ina219_t *dev, uint8_t reg, uint16_t *valu
 
     esp_err_t ret = ESP_OK;
 
-    // Escritura del registro
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (dev->i2c_addr << 1) | I2C_MASTER_WRITE, true);
     i2c_master_write_byte(cmd, reg, true);
@@ -144,7 +185,6 @@ static esp_err_t ina219_read_register(ina219_t *dev, uint8_t reg, uint16_t *valu
         return ret;
     }
 
-    // Lectura del valor
     cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (dev->i2c_addr << 1) | I2C_MASTER_READ, true);
@@ -164,7 +204,13 @@ static esp_err_t ina219_read_register(ina219_t *dev, uint8_t reg, uint16_t *valu
     return ret;
 }
 
-// Obtener el voltaje del bus
+/**
+ * @brief Reads the bus voltage in volts.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param voltage Pointer to store the bus voltage (V).
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 esp_err_t ina219_get_bus_voltage(ina219_t *dev, float *voltage)
 {
     uint16_t value;
@@ -176,7 +222,13 @@ esp_err_t ina219_get_bus_voltage(ina219_t *dev, float *voltage)
     return ret;
 }
 
-// Obtener el voltaje del shunt
+/**
+ * @brief Reads the shunt voltage in millivolts.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param voltage Pointer to store the shunt voltage (mV).
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 esp_err_t ina219_get_shunt_voltage(ina219_t *dev, float *voltage)
 {
     uint16_t value;
@@ -188,7 +240,13 @@ esp_err_t ina219_get_shunt_voltage(ina219_t *dev, float *voltage)
     return ret;
 }
 
-// Obtener la corriente (requiere calibración previa)
+/**
+ * @brief Reads the current in milliamps.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param current Pointer to store the current (mA).
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 esp_err_t ina219_get_current(ina219_t *dev, float *current)
 {
     uint16_t value;
@@ -200,7 +258,13 @@ esp_err_t ina219_get_current(ina219_t *dev, float *current)
     return ret;
 }
 
-// Calibrar el INA219
+/**
+ * @brief Calibrates the INA219 sensor for accurate current measurement.
+ * 
+ * @param dev Pointer to the INA219 device structure.
+ * @param shunt_resistance The value of the shunt resistor in ohms.
+ * @return ESP_OK on success, ESP_FAIL on failure.
+ */
 esp_err_t ina219_calibrate(ina219_t *dev, float shunt_resistance)
 {
     uint16_t calibration = (uint16_t)(0.04096 / (shunt_resistance * (0.00006))); // Ejemplo para 1mOhm

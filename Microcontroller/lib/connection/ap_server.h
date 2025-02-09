@@ -12,11 +12,7 @@
  * library, which have been customized to meet the requirements of this project.
  * 
  * 
- * @version 1.0
  * @date 2024-12-09
- * 
- * @copyright
- * Copyright (c) 2024 by Ossola Florencia. All rights reserved.
  */
 #ifndef _AP_SERVER_H_
 #define _AP_SERVER_H_

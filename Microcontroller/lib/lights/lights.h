@@ -3,7 +3,7 @@
  * @brief LED control library for ESP32
  * 
  * This library provides functions to initialize and control LEDs on the ESP32.
- * It supports turning an error LED on or off and running a blinking task for the LED.
+ * It supports turning an error LED on and off, and running a blinking task for the LED.
  * 
  * @version 1.0
  * @date 2024-12-05
@@ -59,17 +59,22 @@ esp_err_t error_led_on(void);
 esp_err_t error_led_off(void);
 
 /**
- * @brief Task to blink the error LED.
+ * @brief Starts or stops the error LED blinking task.
  * 
- * This function runs a task that alternates the error LED between on and off 
- * states with a delay of 500ms. The blinking continues indefinitely or until 
- * stopped by external control.
+ * This function starts a FreeRTOS task that blinks the error LED with the specified 
+ * delay in milliseconds. If the task is already running, it is stopped.
+ * 
+ * @param[in] delay The delay in milliseconds between toggling the LED state.
+ * 
+ * @return 
+ * - `ESP_OK` if the task is successfully started.
+ * - `ESP_ERR_NO_MEM` if memory allocation for the task parameter fails.
+ * - `ESP_FAIL` if the task cannot be created.
  * 
  * @note
- * - The task must be created with FreeRTOS task management.
+ * - The task runs indefinitely until manually stopped or an error occurs.
+ * - If an error occurs when setting the LED level, the task terminates.
  */
-void led_blink_task();
-
-esp_err_t led_blink(uint16_t );
+esp_err_t led_blink(uint16_t delay);
 
 #endif

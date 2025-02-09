@@ -1,5 +1,6 @@
 /**
  * @file json_helper_frozen.c
+ * @author Guerrico Leonel (lguerrico@outlook.com)
  * @brief Implementation of JSON Helper Library for ESP32 using Frozen JSON
  *
  * This file contains the implementation of utility functions for creating,
@@ -12,8 +13,6 @@
  * @note
  * - Uses a fixed buffer to avoid dynamic memory allocation.
  * - Ensure JSON strings are well-formed to avoid parsing errors.
- *
- * @author Guerrico Leonel (lguerrico@outlook.com)
  *
  */
 #include "frozen_json_helper.h"
