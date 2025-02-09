@@ -13,8 +13,8 @@
  */
  
 #include "debug_helper.h"
-#include "mqtt_handler.h"
 #include "esp_log.h"
+#include "mqtt_handler.h"
 
 /**
  * @brief Sends a log message to the appropriate logging system.
