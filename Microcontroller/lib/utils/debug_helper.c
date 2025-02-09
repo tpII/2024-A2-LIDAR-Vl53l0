@@ -34,13 +34,13 @@ void LOG_MESSAGE(int level, char *TAG, char *fmt) {
     // Send message based on log level
     switch(level){
         case LOG_ERROR:
-            err = sendErrorMesage(TAG, fmt);
+            err = sendErrorMessage(TAG, fmt);
             break;
         case LOG_WARNING:
-            err = sendWarningMesage(TAG, fmt);
+            err = sendWarningMessage(TAG, fmt);
             break;
         case LOG_INFO:
-            err = sendInfoMesage(TAG, fmt);
+            err = sendInfoMessage(TAG, fmt);
             break;
     }
 
