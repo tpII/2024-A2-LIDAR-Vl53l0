@@ -26,18 +26,21 @@ public class InstructionService {
 
     private final InstructionDAO instructionDAO;
     private MessageChannel mqttOutChannel;
-    private final ReferencePointService referencePointService;
     private final MongoTemplate mongoTemplate;
 
     public InstructionService(InstructionDAO instructionDAO, MongoTemplate mongoTemplate,
-            @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel, ReferencePointService referencePointService) {
+            @Qualifier("mqttOutboundChannel") MessageChannel mqttOuChannel) {
         this.instructionDAO = instructionDAO;
         this.mqttOutChannel = mqttOuChannel;
         this.mongoTemplate = mongoTemplate;
-        this.referencePointService = referencePointService;
 
     }
 
+    /**
+     * Guarda una instrucción en la base de datos y la envía por MQTT.
+     * 
+     * @param instruction La instrucción a guardar y enviar.
+     */
     @Transactional
     public void saveInstruction(Instruction instruction) {
         instructionDAO.save(instruction);
@@ -47,6 +50,11 @@ public class InstructionService {
         sendInstruction(instruction);
     }
 
+    /**
+     * Envía una instrucción a través del canal MQTT.
+     * 
+     * @param instruction La instrucción a enviar.
+     */
     private void sendInstruction(Instruction instruction) {
         // Crear el mensaje a enviar (payload)
         String payload = convertInstructionToPayload(instruction);
@@ -60,6 +68,12 @@ public class InstructionService {
         mqttOutChannel.send(message);
     }
 
+    /**
+     * Convierte una instrucción en una cadena JSON.
+     * 
+     * @param instruction La instrucción a convertir.
+     * @return Representación JSON de la instrucción.
+     */
     private String convertInstructionToPayload(Instruction instruction) {
         // Convertir la instrucción en formato adecuado para enviar (puede ser JSON, por
         // ejemplo)
@@ -72,23 +86,34 @@ public class InstructionService {
         }
     }
 
+    /**
+     * Obtiene una instrucción por su ID.
+     * 
+     * @param id Identificador de la instrucción.
+     * @return Un Optional con la instrucción si se encuentra.
+     */
     public Optional<Instruction> getInstruction(String id) {
         return instructionDAO.findById(id);
     }
 
+    /**
+     * Elimina una instrucción por su ID.
+     * 
+     * @param id Identificador de la instrucción a eliminar.
+     */
     public void deleteInstruction(String id) {
         instructionDAO.deleteById(id);
     }
 
+    /**
+     * Obtiene la última instrucción no leída.
+     * 
+     * @return Un Optional con la última instrucción no leída, si existe.
+     */
     public Optional<Instruction> getLastInstruction() {
-        Optional<LocalDateTime> rp = referencePointService.getReferencePoint();
         Query query = new Query();
-        if (rp.isEmpty()) {
-            query.addCriteria(Criteria.where("read").is(false));
-        } else {
-            query.addCriteria(Criteria.where("read").is(false).and("date")
-                    .gte(rp));
-        }
+        query.addCriteria(Criteria.where("read").is(false));
+
         query.with(Sort.by(Sort.Direction.DESC, "date"));
         query.limit(1);
 

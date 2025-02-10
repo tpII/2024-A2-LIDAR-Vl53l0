@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+//DEPRECATED
 @Service
 public class ReferencePointService {
 

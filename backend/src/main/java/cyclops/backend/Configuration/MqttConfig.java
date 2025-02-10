@@ -25,15 +25,21 @@ import cyclops.backend.services.MessageService;
 import cyclops.backend.services.ReferencePointService;
 import jakarta.annotation.PreDestroy;
 
+/**
+ * Configuration class for MQTT integration.
+ * It sets up the connection to the MQTT broker, manages inbound and outbound
+ * messaging, and monitors connection status.
+ */
 @Configuration
 public class MqttConfig {
-    // "tcp://192.168.4.2:1883"
+
+    // MQTT Broker Information
     private static final String BACKEND_IP = "192.168.4.2";
     private static final String[] serverUri = { "tcp://" + BACKEND_IP + ":1883" };
     private static final String[] RTOPICS = { "Mapping", "Messages", "Battery", "Barrier" };
     private static final String[] STOPICS = { "Instruction" };
-    private static final String BACKEND_ID = "backend-service"; // ID único para el backend
-    private static final int RETRY_INTERVAL_MS = 2000; // Tiempo entre intentos en milisegundos
+    private static final String BACKEND_ID = "backend-service"; // Unique backend ID
+    private static final int RETRY_INTERVAL_MS = 2000; // Retry interval in milliseconds
     private volatile boolean running = true;
 
     private final MappingValueService mappingValueService;
@@ -41,6 +47,9 @@ public class MqttConfig {
     private final BatteryLevelService batteryLevelService;
     private final ReferencePointService referencePointService;
 
+    /**
+     * Constructor with service dependencies.
+     */
     public MqttConfig(MappingValueService mappingValueService, MessageService messageService,
             BatteryLevelService batteryLevelService, ReferencePointService referencePointService) {
         this.mappingValueService = mappingValueService;
@@ -50,6 +59,9 @@ public class MqttConfig {
 
     }
 
+    /**
+     * Creates the MQTT client factory.
+     */
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         waitForBroker();
@@ -63,6 +75,9 @@ public class MqttConfig {
         return factory;
     }
 
+    /**
+     * Waits for the MQTT broker to be available.
+     */
     private void waitForBroker() {
         System.out.println("Esperando a que la IP del host sea " + BACKEND_IP + "...");
         while (!NetworkUtils.isMyIp(BACKEND_IP)) {
@@ -78,13 +93,17 @@ public class MqttConfig {
         System.out.println("La IP del host ahora es " + BACKEND_IP + ". Continuando...");
     }
 
-    // SEND
+    /**
+     * Defines the outbound MQTT message channel.
+     */
     @Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
     }
 
-    // RECEIVE MQTT
+    /**
+     * Configures the MQTT message handler for outbound messages.
+     */
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MqttPahoMessageHandler mqttMessageHandler() {
@@ -95,7 +114,9 @@ public class MqttConfig {
         return messageHandler;
     }
 
-    // Escucha de mensajes entrantes en los tópicos
+    /**
+     * Configures the MQTT inbound message adapter.
+     */
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(BACKEND_ID + "-inbound",
@@ -106,12 +127,17 @@ public class MqttConfig {
         return adapter;
     }
 
-    // Canal de entrada
+    /**
+     * Defines the MQTT input channel.
+     */
     @Bean
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
     }
 
+    /**
+     * Handles incoming MQTT messages.
+     */
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleMqttMessage(@Header("mqtt_receivedTopic") String topic, String payload) {
         System.out.println("Tópico: " + topic + " - Mensaje recibido: " + payload);
@@ -126,13 +152,11 @@ public class MqttConfig {
             case "Battery":
                 saveBatteryLevel(payload);
                 break;
-            case "Barrier":
-                referencePointService.updateReferencePoint();
-                break;
 
         }
     }
 
+    /** Methods to process received messages. **/
     private void saveMappingValue(String payload) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -164,12 +188,17 @@ public class MqttConfig {
         }
     }
 
+    /**
+     * Shutdown hook to stop the service.
+     */
     @PreDestroy
     public void shutdown() {
         running = false;
     }
 
-    // Detecta cambios de conexión y realiza reconexión automática
+    /**
+     * Monitors the MQTT connection and attempts reconnection if needed.
+     */
     private void monitorConnection(MqttPahoMessageDrivenChannelAdapter adapter) {
         new Thread(() -> {
             while (running) {
@@ -193,6 +222,9 @@ public class MqttConfig {
         }).start();
     }
 
+    /**
+     * Handles reconnection attempts.
+     */
     private void reconnect(MqttPahoMessageDrivenChannelAdapter adapter) {
         while (running) {
             try {
