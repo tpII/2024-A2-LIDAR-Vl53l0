@@ -1,3 +1,23 @@
+
+/**
+ * @file vl53l0x.h
+ * @brief VL53L0X Time-of-Flight ranging sensor control library for ESP32
+ * 
+ * This library provides functions to initialize and control the VL53L0X sensor on the ESP32.
+ * It supports configuration of the device and performing a measurement when tasked to.
+ * 
+ * @version 1.0
+ * @date 2021-08-25
+ * 
+ * @note
+ * - Ensure the 'VCC', 'GND', 'SDA' and 'SCL' pins are connected correctly to the hardware.
+ * - Call 'vl53l0x_init' before invoking other functions.
+ * 
+ * @author Artful Bytes
+ * @see https://github.com/artfulbytes
+ * 
+ */
+
 #ifndef VL53L0X_H
 #define VL53L0X_H
 
