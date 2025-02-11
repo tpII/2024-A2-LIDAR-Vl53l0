@@ -1,3 +1,24 @@
+
+/**
+ * @file vl53l0x.c
+ * @brief Implementation of the VL53L0X Time-of-Flight ranging sensor control library for ESP32
+ * 
+ * This file implements the functions for initializing and controlling the VL53L0X sensor. 
+ * It includes basic I2C operations to read the device ID, configure the sensor, and perform
+ * on-demand range measurements.
+ * 
+ * @version 1.0
+ * @date 2021-08-25
+ * 
+ * @note
+ * - Ensure the 'VCC', 'GND', 'SDA' and 'SCL' pins are connected correctly to the hardware.
+ * - Call 'vl53l0x_init' before invoking other functions.
+ * 
+ * @author Artful Bytes
+ * @see https://github.com/artfulbytes
+ * 
+ */
+
 #include "vl53l0x.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
