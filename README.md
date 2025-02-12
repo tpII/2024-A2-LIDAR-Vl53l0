@@ -116,10 +116,10 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 
 ---
 
-<!-- Prerequisitos ESP8266 -->
+<!-- Prerequisitos ESP32 -->
 <h1 id="installation-esp32">🛠️ Instalación y Configuración del ESP32</h1>
 <details>
-  <summary>Para desarrollar el código del ESP32 se utilizó el framework del fabricante Expressif, IDF en la versión 5.2.2 en lenguaje C, y como plataforma VScode con la extension PlatformIO version 3.16</summary>
+  <summary>Instalación y Configuración del ESP32</summary>
   <ol>
     <li>Abre <b>Visual Studio Code</b> y navega a la carpeta del proyecto: <code>2024-A2-LIDAR-VL53L0X</code>.</li>
     <li>Posiciónate en la carpeta <code>Microcontroller</code> (donde se encuentra el código en C).</li>
@@ -132,21 +132,37 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 </details>
 
 ---
-
-<!-- Prerequisitos APLICACION WEB -->
-<h1 id="installation-django-server">🕸️ Instalación y Configuración del Servidor Django</h1>
+<!-- Prerequisitos BROKER MQTT-->
+<h1 id="installation-mosquitto-broker">🕸️ Instalación y Configuración del Broker MQTT</h1>
 <details>
-  <summary>Instalación y Configuración del Servidor Django</summary>
+  <summary>Instalación y Configuración del Broker Mosquitto</summary>
   <ol>
-    <li>Posiciónate en la carpeta <code>ServidorDjango</code> dentro del proyecto.</li>
-    <li>Abre una nueva terminal en Visual Studio Code.</li>
-    <li>Ejecuta el siguiente comando para iniciar el servidor web:</li>
-    <pre><code>python manage.py runserver 0.0.0.0:8000</code></pre>
-    <li>Accede al servidor desde tu navegador en: <a href="http://localhost:8000">http://localhost:8000</a>.</li>
-    <li>Asegúrate de visualizar la interfaz web del servidor correctamente.</li>
+    <li>Descarga el instalador de Mosquitto MQTT Broker desde el sitio oficial de Eclipse Mosquitto: <a href="https://mosquitto.org/download/">https://mosquitto.org/download/</a>.</li>
+    <li>Ejecuta el instalador y sigue las instrucciones para completar la instalación.</li>
+    <li>Dirígete a la carpeta de instalación. Por defecto, se encuentra en:
+      <pre><code>C:\Program Files\mosquitto</code></pre>
+    </li>
+    <li>Configura el Broker editando el archivo <code>mosquitto.conf</code> con un editor de texto (ej. Notepad++ o Visual Studio Code). Añade las siguientes líneas para permitir conexiones anónimas y habilitar la salida de eventos por consola:
+      <pre><code>
+listener 1883
+allow_anonymous true
+log_type all
+connection_messages true
+log_timestamp true
+      </code></pre>
+    </li>
+    <li>Guarda los cambios en el archivo de configuración.</li>
+    <li>Abre una consola en modo administrador y navega hasta la carpeta de instalación:
+      <pre><code>cd "C:\Program Files\mosquitto"</code></pre>
+    </li>
+    <li>Inicia el Broker Mosquitto utilizando el siguiente comando:
+      <pre><code>mosquitto -v -c mosquitto.conf</code></pre>
+      <p>Este comando inicia el Broker en modo verbose, mostrando todos los eventos y conexiones en tiempo real en la consola.</p>
+    </li>
+    <li>El Broker MQTT ahora debería estar en funcionamiento y listo para gestionar las conexiones de los dispositivos ESP32.</li>
   </ol>
-  <p>El servidor estará ahora listo para interactuar con el ESP32.</p>
 </details>
+
 
 ---
 
