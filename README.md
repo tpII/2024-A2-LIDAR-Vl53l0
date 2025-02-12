@@ -91,7 +91,7 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
   <p>El proyecto requiere la instalación de los siguientes componentes de software:</p>
   <ul>
     <li>
-      <b>Visual Studio Code:</b> Editor de código necesario para el desarrollo tanto del frontend en Angular como del firmware para el ESP32.
+      <b>Visual Studio Code:</b> Editor de código necesario para el desarrollo tanto del frontend y backend, como del firmware para el ESP32.
     </li>
     <li>
       <b>PlatformIO:</b> Extensión de Visual Studio Code utilizada para compilar y cargar el firmware en el ESP32.
@@ -114,6 +114,41 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
   </ul>
 </details>
 
+---
+
+<!-- Prerequisitos ESP8266 -->
+<h1 id="installation-esp32">🛠️ Instalación y Configuración del ESP32</h1>
+<details>
+  <summary>Instalación y Configuración del ESP32</summary>
+  <ol>
+    <li>Abre <b>Visual Studio Code</b> y navega a la carpeta del proyecto: <code>2024-A2-LIDAR-VL53L0X</code>.</li>
+    <li>Posiciónate en la carpeta <code>Microcontroller</code> (donde se encuentra el código en C).</li>
+    <li>Conecta el ESP32 a un puerto USB de la computadora.</li>
+    <li>Abrir <b>platformion.ini</b> y modificar <b>upload_port</b> con el numero de puerto al que se conecto el ESP32.</li>
+    <li>Desde el menú inferior de <b>PlatformIO</b>, presiona el botón de subida de programa para compilar y cargar el firmware al ESP32.</li>
+    <li>O en la consola, ejecutar <b>pio run -t upload<b></li>
+  </ol>
+  <p>Tras estos pasos, el ESP32 estará configurado y listo para ejecutar las instrucciones del proyecto.</p>
+</details>
+
+---
+
+<!-- Prerequisitos APLICACION WEB -->
+<h1 id="installation-django-server">🕸️ Instalación y Configuración del Servidor Django</h1>
+<details>
+  <summary>Instalación y Configuración del Servidor Django</summary>
+  <ol>
+    <li>Posiciónate en la carpeta <code>ServidorDjango</code> dentro del proyecto.</li>
+    <li>Abre una nueva terminal en Visual Studio Code.</li>
+    <li>Ejecuta el siguiente comando para iniciar el servidor web:</li>
+    <pre><code>python manage.py runserver 0.0.0.0:8000</code></pre>
+    <li>Accede al servidor desde tu navegador en: <a href="http://localhost:8000">http://localhost:8000</a>.</li>
+    <li>Asegúrate de visualizar la interfaz web del servidor correctamente.</li>
+  </ol>
+  <p>El servidor estará ahora listo para interactuar con el ESP32.</p>
+</details>
+
+---
 
 <!-- video explicativo-->
 <h1 id="video">:clapper: Video del Proyecto </h1>
