@@ -1,0 +1,65 @@
+.messages-container {
+    font-family: 'Courier New', Courier, monospace;
+    background-color:  #fff;
+    color: #213A7D;
+    padding: 10px;
+    border-radius: 5px;
+    height: 90%;
+    width: 85%;
+    overflow-y: scroll; 
+    white-space: pre-wrap; 
+    border: 2px; 
+    /* Personalización de la barra de desplazamiento */
+    scrollbar-width: thin;
+    scrollbar-color: #213A7D white;
+    margin-left: 50px;
+    margin-top: 30px;
+    
+  }
+
+
+  // Mensajes
+  .console-line {
+    margin-bottom: 10px;
+  }
+  
+  .tag {
+    color: #213A7D; 
+  }
+  
+  .type {
+    font-weight: bold;
+  }
+  
+  .message {
+    color: #213A7D; /* Blue for message */
+  }
+  
+  /* Color by type */
+  .info {
+    color: #00ff00; /* Green for info */
+  }
+  
+  .warning {
+    color: #ffcc00; /* Yellow for warning */
+  }
+  
+  .error {
+    color: #ff0000; /* Red for error */
+  }
+  
+  .timestamp {
+    color: gray; 
+    margin-right: 10px;
+    font-style: italic;
+  }
+  
+  .type {
+    display: inline-block;
+    width: 80px;
+  }
+
+  .message {
+    margin-left: 10px; 
+  }
+
