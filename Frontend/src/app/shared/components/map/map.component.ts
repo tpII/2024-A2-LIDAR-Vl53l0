@@ -37,36 +37,26 @@ export class MapComponent implements OnInit {
   //private pointsMap = new Map<string, any>(); // Mapa para graficar puntos únicos
   constructor(private mappingValueService: MappingValueService) {}
 
-    /**
-   * Initializes the component by creating the chart and plotting points from the backend.
-   * This function is triggered when the component is first loaded, and it ensures that the 
-   * chart is created and data is fetched from the backend to be visualized.
+  /**
+   * Initializes the component by creating the chart, fetching points from the backend,
+   * and periodically updating the visualization. Points are retrieved and stored before
+   * being plotted at regular intervals.
    */
     ngOnInit() {
       this.createChart();
-     // this.plotPointsFromBackend();
      setInterval(() => this.receivePointsFromBackend(), 10); // Llama cada 500ms
      setInterval(() => this.plotStoredPoints(), 10); // Graficar cada 100ms
-     // this.simulateData(); //FOR TEST ONLY
     }
 
-  /*receivePointsFromBackend(): void {
-    this.mappingValueService.getMappingValues().subscribe((data) => {
-      console.log("Data receivedX: "+data);
-      if (data && Array.isArray(data)) {
-        // Almacena los nuevos puntos en la lista
-        this.pointsToPlot.push(...data);
-      } else {
-        console.warn('Datos inesperados recibidos del backend:', data);
-      }
-    });
-  }*/
+  /**
+   * Fetches mapping values from the backend and stores them in a list for later visualization.
+   * This function is periodically triggered to ensure new points are continuously added.
+   */
     receivePointsFromBackend(): void {
       this.mappingValueService.getMappingValues().subscribe((data) => {
     
         if (Array.isArray(data) && data.length > 0) {
           data.forEach((point) => {
-            //console.log(point);
             this.pointsToPlot.push(point); // Agrega cada punto individualmente
           });
         } else if (data && data.length != 0) {
@@ -76,6 +66,11 @@ export class MapComponent implements OnInit {
     }
     
 
+  /**
+   * Plots stored points on the map by converting their polar coordinates to Cartesian.
+   * After plotting, the points are removed from the list to prevent duplication.
+   * Each point remains visible for a defined lifetime before being removed.
+   */ 
   plotStoredPoints(): void {
     
     if (!this.pointsToPlot.length || !this.mapping) {
@@ -88,31 +83,18 @@ export class MapComponent implements OnInit {
       const meters = point.distance/1000;
       const { x, y } = this.polarToCartesian(meters, point.angle - 90);
       console.log("Cartesian: ",x,y);
-      // Crear una clave única para identificar el punto
-    //  const key = `${point.angle}-${point.distance}`;
-
-    //  // if (this.pointsMap.has(key)) {
-    //   if (this.pointsMap.has(point.angle)) {
-    //     // Si el punto ya existe, actualiza su posición
-    //     const existingPoint = this.pointsMap.get(point.angle);
-    //     existingPoint
-    //       .attr('cx', x)
-    //       .attr('cy', y);
-    //   } else {
-        // Si no existe, crea un nuevo punto en el mapa
+     
         const newPoint = this.svg
           .append('circle')
           .attr('cx', x)
           .attr('cy', y)
           .attr('r', 3)
           .attr('fill', 'black');
-       //   this.pointsMap.set(key, newPoint);
           this.pointsMap.set(point.angle, newPoint);
           setTimeout(() => {
             newPoint.remove();
           }, this.pointLifetime);
        
-      //}
     });
 
     // Vaciar la lista de puntos ya procesados
@@ -185,45 +167,6 @@ export class MapComponent implements OnInit {
 }
 
 
-  /**             ---DEPRACATED---
-   * Receives data from the backend and plots the points on the map.
-   * Converts polar coordinates (distance, angle) into Cartesian coordinates 
-   * and either updates existing points or creates new ones to display on the map.
-   */
-  plotPointsFromBackend(): void {
-    this.mappingValueService.getMappingValues().subscribe((data) => {
-
-      console.log("Data Received: "+data);
-      if (!this.mapping) { //revisar
-        return; 
-      }
-
-      data.forEach((point: { distance: number; angle: number }) => {
-        // Convertir de polar a cartesiano
-        console.log("d,a: ",point.distance,point.angle);
-        const { x, y } = this.polarToCartesian(point.distance, point.angle);
-  
-        // Graficar el punto en el mapa
-        if (this.pointsMap.has(point.angle)) {
-          // Actualizar el punto existente
-          const existingPoint = this.pointsMap.get(point.angle);
-          existingPoint
-            .attr('cx', x)
-            .attr('cy', y);
-        } else {
-          // Crear un nuevo punto
-          const newPoint = this.svg
-            .append('circle')
-            .attr('cx', x)
-            .attr('cy', y)
-            .attr('r', 4)
-            .attr('fill', 'blue');
-          this.pointsMap.set(point.angle, newPoint);
-        }
-      });
-    });
-  }
-  
   /**
    * Clears all stored points on the map by removing their corresponding graphical elements 
    * from the SVG and resetting the points map.
@@ -238,21 +181,6 @@ export class MapComponent implements OnInit {
     this.pointsMap.clear();
   }
   
-
-  // Simular recepción de datos
-  simulateData() {
-    setInterval(() => {
-      if (!this.mapping) {
-        return; 
-      }
-
-      const distance = Math.random() * this.maxDistance; // Distancia aleatoria entre 0 y 2 metros
-      const angle = Math.round(Math.random() * 360); // Ángulo aleatorio entre 0° y 360°
-
-      const { x, y } = this.polarToCartesian(distance, angle);
-      this.plotPoint(x, y, angle);
-    }, 20); // Recibir datos cada segundo
-  }
 
   /**
    * Converts polar coordinates (distance and angle) to Cartesian coordinates (x, y).
@@ -272,36 +200,6 @@ export class MapComponent implements OnInit {
     return { x, y };
   }
 
-
-  /**                           DEPRECATED
-   * Plots a point on the SVG based on the given x, y coordinates. If a point already exists 
-   * for the given angle, it updates the position of the existing point. Otherwise, it creates 
-   * a new point at the specified coordinates and adds it to the points map.
-   * 
-   * @param x The x-coordinate to place the point.
-   * @param y The y-coordinate to place the point.
-   * @param angle The angle of the point for identification in the map.
-   */
-  plotPoint(x: number, y: number, angle: number) {
-    // Verificar si ya existe un punto para el ángulo dado
-    if (this.pointsMap.has(angle)) {
-      // Actualizar posición del punto existente
-      const existingPoint = this.pointsMap.get(angle);
-      existingPoint
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('fill','black'); 
-    } else {
-      // Crear un nuevo punto y agregarlo al mapa
-      const newPoint = this.svg
-        .append('circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', 4)
-        .attr('fill', 'black');
-      this.pointsMap.set(angle, newPoint);
-    }
-  }
 
   /**
    * Captures the current SVG map as an image, including a border around it. 
@@ -336,30 +234,6 @@ export class MapComponent implements OnInit {
       link.click();
     };
     image.src = `data:image/svg+xml;base64,${btoa(svgString)}`;
-  }
-  
-  
-
-  toggleExpand() {
-    const chart = document.getElementById('chart');
-    if (chart) {
-      chart.classList.toggle('expanded');
-    }
-  }
-
-  
-
-  updateSvgSize(state: 'normal' | 'expanded' | 'shrunk') {
-    const svgElement = d3.select('#chart svg');
-    if (svgElement) {
-      if (state === 'expanded') {
-        svgElement.attr('width', 800).attr('height', 600);
-      } else if (state === 'shrunk') {
-        svgElement.attr('width', 850).attr('height', 850);
-      } else {
-        svgElement.attr('width', 950).attr('height', 850);
-      }
-    }
   }
   
   

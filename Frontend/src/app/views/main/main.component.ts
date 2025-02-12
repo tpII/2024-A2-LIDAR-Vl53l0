@@ -5,6 +5,13 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
+/**
+ * DialogContentComponent
+ * 
+ * This component represents a simple modal dialog that informs the user 
+ * that a function is not yet implemented. It provides a close button 
+ * to dismiss the dialog.
+ */
 @Component({
   selector: 'app-dialog-content',
   styleUrls: ['dialog-content.component.scss'],
@@ -14,11 +21,20 @@ import {
   `,
 })
 export class DialogContentComponent {
+  /**
+   * Constructor of the component.
+   * @param dialogRef Reference to the dialog instance.
+   * @param data Data injected into the dialog (not used in this case).
+   */
   constructor(
     public dialogRef: MatDialogRef<DialogContentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+
+  /**
+   * Closes the dialog when the button is clicked.
+   */
   close(): void {
     this.dialogRef.close();
   }
@@ -93,10 +109,15 @@ export class MainComponent implements OnInit {
     { icon: 'cancel', label: 'RESTABLECER' },
   ];
 
+  /**
+   * Initializes the component by setting up periodic battery value retrieval
+   * and displaying a welcome modal when the component is first loaded.
+   */
   ngOnInit() {
     setInterval(() => this.getBatteryValue(), 1000);
     this.openWelcomeModal();
   }
+  
   /**
    * Toggles the expansion state of the sidebar.
    * If the sidebar is expanded, it collapses, and vice versa.
@@ -166,24 +187,12 @@ export class MainComponent implements OnInit {
         break;
       case 'Lento':
         this.openModal();
-        /*
-        button.label = 'Normal';
-        this.speed = 'Normal';
-        this.sendInstruction("SpeedUp");*/
         break;
       case 'Normal':
         this.openModal();
-        /*
-        button.label = 'Rápido';
-        this.speed = 'Rápido';
-        this.sendInstruction("SpeedUp");*/
         break;
       case 'Rápido':
         this.openModal();
-        /*
-        button.label = 'Lento';
-        this.speed = 'Lento';
-        this.sendInstruction("SpeedDown");*/
         break;
       case 'Guardar Mapeo':
         // Funcion para sacar captura al mapa
@@ -205,14 +214,13 @@ export class MainComponent implements OnInit {
   }
 
   /**
-   * @description Sends a speed instruction to the backend using the InstructionsService.
-   * Constructs an instruction object with the specified speed and makes a HTTP POST request.
-   * Handles the response or error, logging them for debugging purposes.
-   *
-   * @param {string} speed - The speed value to include in the instruction (e.g., "SLOW", "MEDIUM", "FAST").
+   * Sends an instruction to the backend by creating a new instruction object.
+   * The instruction is wrapped in a JSON object and sent via the InstructionsService.
+   * Logs the response on success and logs an error if the request fails.
+   * 
+   * @param inst - The instruction string to be sent.
    */
   sendInstruction(inst: string): void {
-    //const instruction = { speed: speed };
     const json = {
       instruction: inst,
     };
@@ -250,12 +258,10 @@ export class MainComponent implements OnInit {
         case 'Lento':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-          //  this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Rápido';
           this.speed = 'Rápido';
-          //  this.sendInstruction("FAST");
           break;
         default:
           break;
@@ -267,12 +273,10 @@ export class MainComponent implements OnInit {
         case 'Rápido':
           speedButton.label = 'Normal';
           this.speed = 'Normal';
-          // this.sendInstruction("MEDIUM");
           break;
         case 'Normal':
           speedButton.label = 'Lento';
           this.speed = 'Lento';
-          //   this.sendInstruction("SLOW");
           break;
         default:
           break;
@@ -314,47 +318,14 @@ export class MainComponent implements OnInit {
       this.mapComponent.setup_mapping(true);
     }
 
-    //this.sendInstruction("MEDIUM");
     this.resetProcess();
-    //mandar otras instrucciones para restablecer config
   }
 
-  isMapExpanded: boolean = false;
-  isMonitorExpanded: boolean = false;
-  /*
-  @ViewChild(MapComponent) mapComponent!: MapComponent;
-  @ViewChild('monitorComp', { read: ElementRef }) monitorComp!: ElementRef;
-  @ViewChild('mapComp', { read: ElementRef }) mapComp!: ElementRef;
-  toggleExpand(component: 'map' | 'monitor') {
-    if (component === 'map') {
-      this.isMapExpanded = !this.isMapExpanded;
-      this.isMonitorExpanded = false;
-      const state = this.isMapExpanded ? 'expanded' : 'normal';
-      this.mapComponent.updateSvgSize(state);
-    } else if (component === 'monitor') {
-      this.isMonitorExpanded = !this.isMonitorExpanded;
-      this.isMapExpanded = false;
-      const state = this.isMonitorExpanded ? 'shrunk' : 'normal';
-      this.mapComponent.updateSvgSize(state);
-    }
-      */
-  onComponentClick(event: MouseEvent, component: 'map' | 'monitor'): void {
-    // Verifica que el clic se originó directamente en el componente
-    const target = event.target as HTMLElement;
-
-    if (!target.closest('.console-line') && target.tagName !== 'svg') {
-      return;
-    }
-
-    if (component === 'map') {
-      this.isMapExpanded = !this.isMapExpanded;
-      this.isMonitorExpanded = false;
-    } else if (component === 'monitor') {
-      this.isMonitorExpanded = !this.isMonitorExpanded;
-      this.isMapExpanded = false;
-    }
-  }
-
+  /**
+   * Fetches the battery level from the backend and updates the component's batteryLevel property.
+   * It ensures that the received value is valid before updating the state.
+   * Logs a warning if the value is unexpected and an error if the request fails.
+   */
   getBatteryValue(): void {
     this.batteryService.getBatteryValue().subscribe({
       next: (data) => {
@@ -374,6 +345,11 @@ export class MainComponent implements OnInit {
     });
   }
 
+  /**
+   * Opens a generic modal dialog.
+   * Uses the DialogContentComponent as the content of the modal.
+   * The modal has a fixed width and a custom panel class for styling.
+   */
   openModal(): void {
     this.dialog.open(DialogContentComponent, {
       width: '400px', // Tamaño del modal
@@ -381,6 +357,11 @@ export class MainComponent implements OnInit {
     });
   }
 
+  /**
+   * Opens a welcome modal when the component initializes.
+   * Uses the ModalComponent as the content of the modal.
+   * It is not closable by clicking outside the modal.
+   */
   openWelcomeModal(): void {
     this.dialog.open(ModalComponent, {
       width: '720px',      // Ancho predeterminado

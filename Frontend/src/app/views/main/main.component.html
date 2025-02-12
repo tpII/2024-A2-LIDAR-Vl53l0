@@ -79,12 +79,8 @@
   <as-split-area [size]="isSideNavExpanded ? 100 - maxSizeSidenav : 100 - minSizeSidenav">
     <div class="main-content">
       <div id="monitor"> <app-monitor></app-monitor>
-        <!--         [ngClass]="{'expanded': isMonitorExpanded, 'hidden': isMapExpanded}" >
-            <app-monitor (click)="onComponentClick($event, 'monitor')"></app-monitor>-->
       </div>
       <div id="map"><app-map></app-map>
-        <!--   [ngClass]="{'expanded': isMapExpanded, 'shrunk': isMonitorExpanded}" >
-            <app-map (click)="onComponentClick($event, 'map')"></app-map>-->
       </div>
     </div>
   </as-split-area>

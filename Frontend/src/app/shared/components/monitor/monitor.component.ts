@@ -88,12 +88,4 @@ export class MonitorComponent {
     this.messages = []; // Vacía el array de mensajes
   }  
   
-  
-  toggleExpand() {
-    const monitor = document.getElementById('monitor');
-    if (monitor) {
-      monitor.classList.toggle('expanded');
-    }
-  }
-
 }
