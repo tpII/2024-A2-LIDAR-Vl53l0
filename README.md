@@ -39,11 +39,11 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 
 <h1 id="authors">✒️ Autores</h1>
 
-* **Guerrico Leonel** [![Repo](https://badgen.net/badge/icon/Eskliar?icon=github&label)](https://github.com/leonelg99)
+* **Guerrico Leonel** [![Repo](https://badgen.net/badge/icon/leonelg99?icon=github&label)](https://github.com/leonelg99)
 
-* **Octavio Perez Balcedo** [![Repo](https://badgen.net/badge/icon/sauersebastian?icon=github&label)](https://github.com/OctavioPB1)
+* **Octavio Perez Balcedo** [![Repo](https://badgen.net/badge/icon/OctavioPB1?icon=github&label)](https://github.com/OctavioPB1)
   
-*  **Ossola Florecnia** [![Repo](https://badgen.net/badge/icon/LucianoLoyola?icon=github&label)](https://github.com/florencia-ossola)
+*  **Ossola Florecnia** [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/florencia-ossola)
 
 
 <h1 id="coordinador">📌 Coordinador</h1>
