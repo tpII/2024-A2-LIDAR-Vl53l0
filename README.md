@@ -119,7 +119,7 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 <!-- Prerequisitos ESP8266 -->
 <h1 id="installation-esp32">🛠️ Instalación y Configuración del ESP32</h1>
 <details>
-  <summary>Instalación y Configuración del ESP32</summary>
+  <summary>Para desarrollar el código del ESP32 se utilizó el framework del fabricante Expressif, IDF en la versión 5.2.2 en lenguaje C, y como plataforma VScode con la extension PlatformIO version 3.16</summary>
   <ol>
     <li>Abre <b>Visual Studio Code</b> y navega a la carpeta del proyecto: <code>2024-A2-LIDAR-VL53L0X</code>.</li>
     <li>Posiciónate en la carpeta <code>Microcontroller</code> (donde se encuentra el código en C).</li>
