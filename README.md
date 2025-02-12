@@ -1,4 +1,5 @@
 <!-- Titulo del proyecto -->
+
 # Proyecto - A2-LIDAR-VL53L0X - CYCLOPS
 
 <!-- Logo -->
@@ -7,6 +8,7 @@
 </div>
 
 <!-- Descripción del proyecto -->
+
 Originalme **A2-LIDAR-VL53L0X, apodado Cyclops (en honor al héroe de Marvel)**, es un robot vehículo de 3 ruedas, de las cuales dos son motorizadas por motores DC, mientras que la tercera es una rueda loca que permite maniobras ágiles de desplazamiento.
 
 El proyecto se destaca por el uso de un sensor **LiDAR VL53L0X montado sobre un servomotor de giro continuo**, lo que le permite al robot **detectar obstáculos** en su entorno en un radio de **300 grados**. La **MCU ESP32** gestiona todo el funcionamiento, comunicándose con el backend mediante HTTP y MQTT para recibir instrucciones y enviar datos como el nivel de batería, información del sistema y detalles de los obstáculos detectados, respectivamente.
@@ -66,7 +68,6 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
   </ol>
 </details>
 
-
 <!-- Tabla de contenidos -->
 <h1 id="table-of-contents">:book: Tabla de contenidos</h1>
 <details open="open">
@@ -83,8 +84,39 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
   </ol>
 </details>
 
+<!-- Prerequisitos SOFTWARE -->
+<h1 id="prerequisites-software">🛠️ Prerequisitos-Software</h1>
+<details>
+  <summary>Prerequisitos-Software</summary>
+  <p>El proyecto requiere la instalación de los siguientes componentes de software:</p>
+  <ul>
+    <li>
+      <b>Visual Studio Code:</b> Editor de código necesario para el desarrollo tanto del frontend en Angular como del firmware para el ESP32.
+    </li>
+    <li>
+      <b>PlatformIO:</b> Extensión de Visual Studio Code utilizada para compilar y cargar el firmware en el ESP32.
+    </li>
+    <li>
+      <b>Java:</b> Requerido para ejecutar el backend en Spring Boot.
+    </li>
+    <li>
+      <b>Maven:</b> Herramienta de gestión de dependencias y construcción para el backend en Spring Boot.
+    </li>
+    <li>
+      <b>Node.js:</b> Necesario para Angular, incluyendo el uso de npm para la instalación de dependencias.
+    </li>
+    <li>
+      <b>MongoDB:</b> Base de datos NoSQL utilizada para el almacenamiento de datos de la aplicación.
+    </li>
+    <li>
+      <b>Broker Mosquitto:</b> Servidor MQTT utilizado para la comunicación en tiempo real con el ESP32.
+    </li>
+  </ul>
+</details>
+
+
 <!-- video explicativo-->
-<h1 id="video">:clapper: Video Proyecto </h1>
+<h1 id="video">:clapper: Video del Proyecto </h1>
 <p>A continuacion se deja un link, a un video explicativo sobre el robot y su funcionamiento: <a href="https://drive.google.com/file/d/1UwNFf568G4iCPq6gYDLypO1Pdrs1-ocO/view?usp=drive_link">Video</a></p>
 
 <h1 id="bitacora">:bookmark_tabs: Bitácora</h1>
@@ -93,19 +125,19 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 
 <h1 id="authors">✒️ Autores</h1>
 
-| Autor                     | GitHub |
-|----------------------------|--------|
-| **Guerrico Leonel**        | [![Repo](https://badgen.net/badge/icon/leonelg99?icon=github&label)](https://github.com/leonelg99) |
-| **Octavio Perez Balcedo**  | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/OctavioPB1) |
-| **Ossola Florencia**       | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/florencia-ossola) |
+| Autor                     | GitHub                                                                                                           |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Guerrico Leonel**       | [![Repo](https://badgen.net/badge/icon/leonelg99?icon=github&label)](https://github.com/leonelg99)               |
+| **Octavio Perez Balcedo** | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/OctavioPB1)       |
+| **Ossola Florencia**      | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/florencia-ossola) |
 
 ---
 
 <h1 id="coordinador">📌 Coordinador</h1>
 
-| Coordinador               | GitHub |
-|----------------------------|--------|
-| **Alan Fabián Castelli** *Profesor - Ayudante* | [![Repo](https://badgen.net/badge/icon/aCastelli95?icon=github&label)](https://github.com/aCastelli95) |
+| Coordinador                                    | GitHub                                                                                                 |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Alan Fabián Castelli** _Profesor - Ayudante_ | [![Repo](https://badgen.net/badge/icon/aCastelli95?icon=github&label)](https://github.com/aCastelli95) |
 
 <!-- Licencia -->
 <h1 id="license">📄 Licencia</h1>
