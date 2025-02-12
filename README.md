@@ -132,6 +132,7 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 </details>
 
 ---
+
 <!-- Prerequisitos BROKER MQTT-->
 <h1 id="installation-mosquitto-broker">🕸️ Instalación y Configuración del Broker MQTT</h1>
 <details>
@@ -159,8 +160,41 @@ log_timestamp true
       <pre><code>mosquitto -v -c mosquitto.conf</code></pre>
       <p>Este comando inicia el Broker en modo verbose, mostrando todos los eventos y conexiones en tiempo real en la consola.</p>
     </li>
-    <li>El Broker MQTT ahora debería estar en funcionamiento y listo para gestionar las conexiones de los dispositivos ESP32.</li>
+    <li>El Broker MQTT ahora debería estar en funcionamiento y listo para gestionar las conexiones.</li>
   </ol>
+</details>
+
+---
+
+<!-- Prerequisitos APLICACION BACKEND -->
+<h1 id="installation-backend">🔧 Instalación y Configuración del Backend</h1>
+<details>
+  <summary>Instalación y Configuración del Servidor Backend</summary>
+  <ol>
+    <li>Abre Visual Studio Code y clona el repositorio.</li>
+    <li>Posicionate en la carpeta del repositorio: <code>2024-A2-LIDAR-VL53L0X</code>.</li>
+    <li>Accede a la carpeta del backend con el siguiente comando:</li>
+    <pre><code>cd backend</code></pre>
+    <li>En la consola, ejecuta el siguiente comando para instalar las dependencias del proyecto:</li>
+    <pre><code>mvn clean install</code></pre>
+    <li>Para levantar el servidor, ejecuta el siguiente comando:</li>
+    <pre><code>mvn spring-boot:run</code></pre>
+    <li>El servidor se iniciará y quedará a la espera de conectarse a la red del ESP32.</li>
+  </ol>
+  <p>El backend estará listo para funcionar con el ESP32.</p>
+</details>
+
+---
+
+<h1 id="installation-mongodb">📦 Instalación y Configuración de MongoDB</h1>
+<details>
+  <summary>Instalación de MongoDB</summary>
+  <ol>
+    <li>Descarga e instala MongoDB desde el instalador oficial.</li>
+    <li>No es necesaria ninguna configuración adicional, solo asegúrate de habilitar la ejecución en segundo plano.</li>
+    <li>El backend se conectará automáticamente a MongoDB al levantarse el servidor.</li>
+  </ol>
+  <p>MongoDB estará listo para almacenar los datos del proyecto.</p>
 </details>
 
 
