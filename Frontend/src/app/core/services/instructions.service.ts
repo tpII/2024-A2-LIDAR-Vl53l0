@@ -10,6 +10,12 @@ export class InstructionsService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Sends a POST request to the backend to create a new instruction.
+   * If an error occurs during the request, it logs the error to the console and 
+   * returns an observable that throws a custom error with a message indicating 
+   * the failure to create the instruction.
+   */
   createInstruction(inst: any): Observable<any> {
     console.log(inst);
     return this.http.post<any>(this.apiUri, inst).pipe(
