@@ -39,22 +39,22 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
 
 <h1 id="authors">✒️ Autores</h1>
 
-- **Guerrico Leonel** <br>
-  [![Repo](https://badgen.net/badge/icon/leonelg99?icon=github&label)](https://github.com/leonelg99)
+- **Guerrico Leonel**  
+  <img src="https://badgen.net/badge/icon/leonelg99?icon=github&label" style="vertical-align: middle;"> [Repositorio](https://github.com/leonelg99)
 
-- **Octavio Perez Balcedo** <br>
-  [![Repo](https://badgen.net/badge/icon/OctavioPB1?icon=github&label)](https://github.com/OctavioPB1)
+- **Octavio Perez Balcedo**  
+  <img src="https://badgen.net/badge/icon/OctavioPB1?icon=github&label" style="vertical-align: middle;"> [Repositorio](https://github.com/OctavioPB1)
 
-- **Ossola Florencia** <br>
-  [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/florencia-ossola)
+- **Ossola Florencia**  
+  <img src="https://badgen.net/badge/icon/florencia-ossola?icon=github&label" style="vertical-align: middle;"> [Repositorio](https://github.com/florencia-ossola)
 
 ---
 
 <h1 id="coordinador">📌 Coordinador</h1>
 
-- **Alan Fabián Castelli** <br>
-  *Profesor - Ayudante* <br>
-  [![Repo](https://badgen.net/badge/icon/aCastelli95?icon=github&label)](https://github.com/aCastelli95)
+- **Alan Fabián Castelli**  
+  *Profesor - Ayudante*  
+  <img src="https://badgen.net/badge/icon/aCastelli95?icon=github&label" style="vertical-align: middle;"> [Repositorio](https://github.com/aCastelli95)
 
 <!-- Licencia -->
 <h1 id="license">📄 Licencia</h1>
