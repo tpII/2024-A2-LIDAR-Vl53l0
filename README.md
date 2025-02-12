@@ -35,7 +35,13 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
     <p>El proyecto es ideal para aprender acerca de programación de microcontroladores, conexiones hardware, utilizacion de sensores, integracion de Frontend<->Backend<->Hardware,sistemas concurrentes y de tiempo real, testeo y optimizacion de procesos.</p> </ol>
 </details>
 
+<!-- video explicativo-->
+<h1 id="video">:clapper: Video Proyecto </h1>
+<p>A continuacion se deja un link, a un video explicativo sobre el robot y su funcionamiento: <a href="https://drive.google.com/file/d/1lm1mgNGavn7JolaU8XNPaSUfvHQAbiKy/view?usp=drive_link">Video</a></p>
 
+<h1 id="bitacora">:bookmark_tabs: Bitácora</h1>
+
+<p>Como parte del proyecto se redacto una bitacora con el "dia a dia" del mismo: <a href="https://github.com/tpII/2024-A4-QLEARNING-ESP32/wiki/Bitacora-A4-%E2%80%90-Crawler-Robot-con-ESP32)">Bitacora</a>.</p>
 
 <h1 id="authors">✒️ Autores</h1>
 
