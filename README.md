@@ -75,7 +75,10 @@ El objetivo principal de este proyecto fue desarrollar un **robot vehículo capa
   <ol>
     <li><a href="#prerequisites-software">➤ Prerequisitos-Software</a></li>
     <li><a href="#installation-esp32">➤ Instalación y Configuración del ESP32</a></li>
-    <li><a href="#installation-django-server">➤ Instalación y Configuración del Servidor Django</a></li>
+    <li><a href="#installation-mosquitto-broker">➤ Instalación y Configuración del Broker MQTT</a></li>
+    <li><a href="#installation-backend">➤ Instalación y Configuración del Backend</a></li>
+    <li><a href="#installation-mongodb">➤ Instalación y Configuración de MongoDB</a></li>
+    <li><a href="#installation-frontend">➤ Instalación y Configuración del Frontend<</a></li>
     <li><a href="#execution-steps">➤ Pasos para la Ejecución del Proyecto</a></li>
     <li><a href="#video">➤ Video demostrativo</a></li>
     <li><a href="#bitacora">➤ Bitácora</a></li>
@@ -166,7 +169,7 @@ log_timestamp true
 
 ---
 
-<!-- Prerequisitos APLICACION BACKEND -->
+<!-- Prerequisitos BACKEND -->
 <h1 id="installation-backend">🔧 Instalación y Configuración del Backend</h1>
 <details>
   <summary>Instalación y Configuración del Servidor Backend</summary>
@@ -186,6 +189,7 @@ log_timestamp true
 
 ---
 
+<!-- Prerequisitos MongoDB -->
 <h1 id="installation-mongodb">📦 Instalación y Configuración de MongoDB</h1>
 <details>
   <summary>Instalación de MongoDB</summary>
@@ -195,6 +199,28 @@ log_timestamp true
     <li>El backend se conectará automáticamente a MongoDB al levantarse el servidor.</li>
   </ol>
   <p>MongoDB estará listo para almacenar los datos del proyecto.</p>
+</details>
+
+---
+
+<!-- Prerequisitos FRONTEND -->
+<h1 id="installation-frontend">🌐 Instalación y Configuración del Frontend</h1>
+<details>
+  <summary>Instalación y Configuración del Servidor Frontend</summary>
+  <ol>
+    <li>Abre Visual Studio Code y clona el repositorio.</li>
+    <li>Posicionate en la carpeta del repositorio: <code>2024-A2-LIDAR-VL53L0X</code>.</li>
+    <li>Accede a la carpeta del frontend con el siguiente comando:</li>
+    <pre><code>cd Frontend</code></pre>
+    <li>En la consola, ejecuta el siguiente comando para instalar las dependencias del proyecto:</li>
+    <pre><code>npm install</code></pre>
+    <li>Verifica la correcta instalación de Angular ejecutando el siguiente comando:</li>
+    <pre><code>ng version</code></pre>
+    <li>Para levantar el servidor, ejecuta el siguiente comando:</li>
+    <pre><code>ng serve</code></pre>
+    <li>La página estará accesible en el siguiente enlace: <a href="http://localhost:4200">http://localhost:4200</a>.</li>
+  </ol>
+  <p>El frontend estará listo para interactuar con el backend y el ESP32.</p>
 </details>
 
 
