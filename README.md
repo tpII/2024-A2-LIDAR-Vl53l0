@@ -239,7 +239,7 @@ log_timestamp true
 | Autor                     | GitHub                                                                                                           |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | **Guerrico Leonel**       | [![Repo](https://badgen.net/badge/icon/leonelg99?icon=github&label)](https://github.com/leonelg99)               |
-| **Octavio Perez Balcedo** | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/OctavioPB1)       |
+| **Octavio Perez Balcedo** | [![Repo](https://badgen.net/badge/icon/OctavioPB1?icon=github&label)](https://github.com/OctavioPB1)       |
 | **Ossola Florencia**      | [![Repo](https://badgen.net/badge/icon/florencia-ossola?icon=github&label)](https://github.com/florencia-ossola) |
 
 ---
