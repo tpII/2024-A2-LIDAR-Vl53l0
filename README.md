@@ -1,6 +1,6 @@
 <!-- Titulo del proyecto -->
 
-# Proyecto - A2-LIDAR-VL53L0X - CYCLOPS
+# A2-LIDAR-VL53L0X - CYCLOPS
 
 <!-- Logo -->
 <div align="center">
